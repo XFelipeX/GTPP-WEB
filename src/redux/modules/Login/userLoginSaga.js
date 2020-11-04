@@ -8,8 +8,16 @@ export const UserLogin = (info) => {
   }
 }
 
+export const UserLogoff = () => {
+  return (
+    <div>
+      {alert("vc esta saindo")}
+    </div>
+  )
+}
+
 
 export default all([
     takeLatest('LOGIN_REQUEST', UserLogin),
-    //  takeLatest('LOGOFF_REQUEST', UserLogoff),
+     takeLatest('LOGOFF_REQUEST', UserLogoff),
 ])

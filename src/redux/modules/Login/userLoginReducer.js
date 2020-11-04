@@ -13,12 +13,6 @@ const userAuthReducer = (state = initialState, action) => {
         session: action.payload.session,
         administrator: action.payload.administrator
       }
-    case 'LOGOFF_SUCCESS':
-      return {
-        id: 0,
-        session: '',
-        administrator: 0
-      }
     default:
       return state
   }

@@ -6,18 +6,18 @@ export function loginRequest(info){
   }
   export function loginSuccess(info){
     return {
-      type: 'LOGIN_REQUEST',
+      type: 'LOGIN_SUCCESS',
       payload: info
     }
   }
   
-  export function logOffRequest(){
+  export function logoffRequest(){
     return {
       type: 'LOGOFF_REQUEST'
     }
   }
-  export function logOffSuccess(){
+  export function logoffSuccess(){
     return {
-      type: 'LOGOFF_REQUEST'
+      type: 'LOGOFF_SUCCESS'
     }
   }
