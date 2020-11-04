@@ -1,6 +1,8 @@
 import api from '../../services/api';
- 
- async function auth(user,password) {
+
+const token = '';
+
+export default async function auth(user,password) {
     try {
       const {data} = await api.post('http://192.168.0.99:71/GLOBAL/Controller/Login.php?login', {
         "user": user,
@@ -9,18 +11,15 @@ import api from '../../services/api';
       if(data.error === true){
         alert(data.message)
         console.log('entrei no error')
-        return false;
+        return;
       }
-      return true;
-      
+      sessionStorage.setItem('token',data.data);
     } catch (error) {
-        return false;
       alert("Usuario o senha incorretos")
     }
     
   }
 
-  export default auth;
 
 
 //   export const UserLogin = async (user,password) => {

@@ -1,15 +1,38 @@
-import React from 'react';
+import React, { Component } from 'react';
 
-import {Switch,  Route} from "react-router-dom";
+import {Switch,  Route, Redirect} from "react-router-dom";
 
 import Login from './pages/Login'
 import Main from './pages/Main'
+
+
+function takeToken(){
+  let token = sessionStorage.getItem('token');
+  return token;
+}
+
+const PrivateRoute = ({component:Component,...rest}) => (
+  
+
+  <Route
+  {...rest}
+  render={() => 
+  
+    takeToken() != '' ? (
+      <Component/>
+    ) : (
+      <Redirect to={{pathname: "/"}}/>
+    )
+  }
+  />
+);
+
 
 const routes = () => {
   return (
       <Switch>
         <Route exact path="/" component={Login} />
-        <Route path="/main" component={Main} />
+        <PrivateRoute path="/main" component={Main} />
       </Switch>
   );
 }
