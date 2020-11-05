@@ -4,12 +4,10 @@ import {Switch,  Route, Redirect} from "react-router-dom";
 
 import Login from './pages/Login'
 import Main from './pages/Main'
+import Authenticated from './pages/Login/auth'
 
+ 
 
-function takeToken(){
-  let token = sessionStorage.getItem('token');
-  return token;
-}
 
 const PrivateRoute = ({component:Component,...rest}) => (
   
@@ -18,7 +16,7 @@ const PrivateRoute = ({component:Component,...rest}) => (
   {...rest}
   render={() => 
   
-    takeToken() != '' ? (
+    Authenticated() ? (
       <Component/>
     ) : (
       <Redirect to={{pathname: "/"}}/>

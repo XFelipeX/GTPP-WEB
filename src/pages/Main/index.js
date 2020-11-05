@@ -1,16 +1,14 @@
 import React from 'react';
 
-import ButtonLogoff from '../../components/ButtonLogoff'
+
+import Header from '../../components/Header/index'
 
 export default function Main() {
 
-
-
-
  return (
-   <div>
-   <h1>Página principal</h1>
-    <ButtonLogoff/>
-   </div>
+  <div>
+
+    <Header/>
+  </div>
  );
 }

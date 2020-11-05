@@ -16,8 +16,3 @@ export function loginRequest(info){
       type: 'LOGOFF_REQUEST'
     }
   }
-  export function logoffSuccess(){
-    return {
-      type: 'LOGOFF_SUCCESS'
-    }
-  }

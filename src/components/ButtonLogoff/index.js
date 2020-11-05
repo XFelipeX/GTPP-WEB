@@ -1,9 +1,9 @@
 import React from "react";
 import {useDispatch} from 'react-redux';
-import { logoffRequest } from '../../redux/modules/Login/userLoginActions';
+import { logoffRequest } from '../../redux/modules/login/userLoginActions';
 import {useHistory} from 'react-router-dom';
 
-import './index.css'
+import './style.css'
 
 const ButtonLogoff = () => {
 
@@ -11,6 +11,7 @@ const ButtonLogoff = () => {
   let dispatch = useDispatch();
 
   function UserLogoff() {
+    sessionStorage.removeItem('token');
     dispatch(logoffRequest());
     history.push("/");
   }

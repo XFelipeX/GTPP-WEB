@@ -1,31 +1,41 @@
 import React from 'react';
 import {useHistory} from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-
+import { loginRequest } from '../../redux/modules/login/userLoginActions';
 import './style.css';
 import img from '../../assets/art.png';
 import logo from '../../assets/logo.png';
 import api from '../../services/api';
-import { loginRequest } from '../../redux/modules/Login/userLoginActions';
 
-import auth from './auth'
+
+// import auth from './auth'
 
 
 const Login = () => {
 
- 
-  
-  const history = useHistory();
-  const dispatch = useDispatch();
+ const history = useHistory();
+ const dispatch = useDispatch();
 
-
-  function UserLogin(){
-    auth(document.getElementById('user_id'),document.getElementById('password'));
-    let token = sessionStorage.getItem('token');
-    if(token.session!=''){
-      dispatch(loginRequest(token))
-      history.push('/main');  
-    } 
+ const UserLogin = async () => {
+    try {
+      const {data} = await api.post('http://192.168.0.99:71/GLOBAL/Controller/Login.php?login', {
+        "user": document.getElementById('user_name').value,
+        "password": document.getElementById('password').value
+      })
+      if(data.error === true){
+        // alert(data.message)
+        console.log('entrei no error')
+        return;
+      }
+      console.log(data);
+      sessionStorage.setItem('token',data.data.session);
+      dispatch(loginRequest(data.data))
+      history.push('/main');
+      
+    } catch (error) {
+      alert("Usuario o senha incorretos")
+    }
+    
   }
  
       
