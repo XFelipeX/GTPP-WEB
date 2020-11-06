@@ -14,10 +14,6 @@ const userAuthReducer = (state = initialState, action) => {
         session: action.payload.session,
         administrator: action.payload.administrator
       }
-    case 'USER_AUTH':
-      return{
-        auth:''
-      }
     default:
       return state
   }

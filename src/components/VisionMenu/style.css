@@ -1,0 +1,43 @@
+.menuExpanded{
+    display: flex;
+    flex-direction: column;
+    background-color:rgb(168, 168, 168);
+    padding: .5em;
+    border-radius: 5px;
+    font-size: 18px;
+    box-shadow: 0 2px 2px 0 black, 0 3px 3px 0 black;
+    color:black;
+    
+}
+
+.menuExpanded label > input{
+    display: inline-block;
+    margin-right: 5px;
+   
+}
+
+.menuExpanded > select option{
+    background-color:#ccc;
+}
+
+.menuExpanded > select{
+    background-color:#ccc;
+    margin: 2px 0;
+}
+
+.visionMenu > p{
+    box-sizing: border-box;
+    background-color:#ccc;
+    cursor:pointer;
+    display: inline-block;
+    padding:10px 20px;
+    border-radius: 5px;
+    color:black;
+    font-size: 18px;
+}
+
+.visionMenu{
+    box-sizing: border-box;
+    width: 250px;
+    margin-top: 20px;
+}

@@ -5,58 +5,25 @@
     height: 4em;
 }
 
+.create-task{
+    width: 50%;
+    display: flex;
+    justify-content: space-between;
+}
+
 .container-custom{
     height: 4em;
     background-color:#000;
     display: flex;
     margin: 0 auto;
-    width: 1000px;
-    justify-content: space-between;
+    width: 1300px;
+    
 }
 
-
-.createTaskArea ul{
-    padding: 10px 20px;
-    background-color:rgb(0, 162, 255);
-    color:white;
-    font-size:18px;
-    margin-top: 20px;
-    cursor: pointer;
-    border-radius:5px;
-    text-align: center;
-    display: inline-block;
-    width:160px;
-}
-
-.menu{
+.right-area{
+    width: 50%;
     display: flex;
-    flex-direction: column;
-    background-color:#ccc;
-    width: auto;
-    color:black;
-    padding:5px;
-    box-shadow: 0 5px 10px 0;
-    border-radius:2px 2px 5px 5px;
+    justify-content: flex-end;
 }
 
-.menu label{
-    padding:.5em 0;
-    font-size:16px;
-    color:white;
-    text-shadow: 1px 1px black;
-}
 
-.menu button{
-
-    text-transform: uppercase;
-    margin-top: 1em;
-    padding: .5em;
-    font-size:16px;
-    background-color:rgb(105, 163, 18);
-    color:white;
-}
-
-.menu input{
-    width: 150px;
-    padding:.3em .5em;
-}

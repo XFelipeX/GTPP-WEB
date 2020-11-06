@@ -1,0 +1,12 @@
+.buttonFilter{
+    margin-right: 50px;
+    font-size: 18px;
+    padding: 10px 20px;
+    background-color: #ccc;
+    border: none;
+    outline: none;
+}
+
+.buttonFilterArea{
+    margin-top: 20px;
+}
