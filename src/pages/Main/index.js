@@ -2,6 +2,7 @@ import React from 'react';
 
 
 import Header from '../../components/Header/index'
+import TaskTable from '../../components/TaskTable';
 
 export default function Main() {
 
@@ -9,6 +10,7 @@ export default function Main() {
   <div>
 
     <Header/>
+    {/* <TaskTable/> */}
   </div>
  );
 }

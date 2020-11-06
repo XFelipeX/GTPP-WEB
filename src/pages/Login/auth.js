@@ -1,7 +1,3 @@
-import React,{useState} from 'react';
-import { authenticated } from '../../redux/modules/login/userLoginActions';
-
-
 function Authenticated(){
   // const [authenticated,setAuthenticated] = useState(false);
   const token = sessionStorage.getItem('token');

@@ -1,5 +1,5 @@
-import {select,all, call, put, takeLatest} from 'redux-saga/effects'
-
+import {all, takeLatest} from 'redux-saga/effects'
+// import {select,all, call, put, takeLatest} from 'redux-saga/effects'
 
 export const UserLogin = (info) => {
   return {

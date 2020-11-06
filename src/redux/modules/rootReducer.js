@@ -1,8 +1,10 @@
 import { combineReducers} from 'redux';
-import login from './login/userLoginReducer';
-import visionMenu from './visionMenu/visionMenuReducer'
+import userLoginReducer from './login/userLoginReducer';
+import visionMenuReducer from './visionMenu/visionMenuReducer'
+import stateUpdateReducer from './stateUpdate/stateUpdateReducer';
 
 export default combineReducers({
-    login,
-    visionMenu
+    permissions:userLoginReducer,
+    visionMenu:visionMenuReducer,
+    stateUpdate:stateUpdateReducer
 })

@@ -1,6 +1,6 @@
 import React from 'react';
 import {useHistory} from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch,useSelector } from 'react-redux';
 import { loginRequest } from '../../redux/modules/login/userLoginActions';
 import './style.css';
 import img from '../../assets/art.png';
@@ -16,6 +16,9 @@ const Login = () => {
  const history = useHistory();
  const dispatch = useDispatch();
 
+ const {permissions} = useSelector(state => state);
+ console.log(permissions)
+
  const UserLogin = async () => {
     try {
       const {data} = await api.post('http://192.168.0.99:71/GLOBAL/Controller/Login.php?login', {
@@ -27,7 +30,7 @@ const Login = () => {
         console.log('entrei no error')
         return;
       }
-      console.log(data);
+      // console.log(data);
       sessionStorage.setItem('token',data.data.session);
       dispatch(loginRequest(data.data))
       history.push('/main');
