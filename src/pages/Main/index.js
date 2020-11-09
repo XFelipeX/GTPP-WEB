@@ -10,7 +10,7 @@ export default function Main() {
   <div>
 
     <Header/>
-    {/* <TaskTable/> */}
+    <TaskTable/>
   </div>
  );
 }

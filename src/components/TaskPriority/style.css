@@ -1,0 +1,49 @@
+.containerPriority {
+  height: 26px;
+  width: 26px;
+  background-color: block;
+  display: inline-block;
+  border-radius: 6px;
+  position:relative;
+  margin-right: 5px;
+}
+
+@media(max-width: 900px){
+   .containerPriority{
+    display:none;
+   }
+  }
+
+.containerPriority div{
+    cursor:pointer;
+    width:100%;
+    height:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+  }
+
+.options{
+  border-radius: 3px;
+  min-width: 580%;
+  right: 1%;
+  display:block;
+  position: absolute;
+  overflow: auto;
+  z-index: 1;
+  background-color: #202020;
+  box-shadow: 0 2px 3px 0 rgba(0,0,0,.05), 0 3px 10px 0 rgba(0,0,0,.15);
+}
+  
+.options li{
+    padding: 5px;
+    background-color: #202020;
+    display:flex;
+    cursor:pointer;
+}
+
+.options li  div{
+    width: 10%;
+    align-self:center;
+    margin-right: 5px;
+  }

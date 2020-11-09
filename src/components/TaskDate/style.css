@@ -1,0 +1,44 @@
+.containerDate {
+  margin-right: 10px;
+  background-color: #c9c9c9;
+  padding: 0 5px;
+  border-radius: 5px;
+  color: #000;
+  display: inline-block;
+  position: relative;
+}
+.dataShow {
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.addDate {
+  border-radius: 3px;
+  display: block;
+  position: absolute;
+  overflow: auto;
+  z-index: 1;
+  right: 1%;
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.05), 0 3px 10px 0 rgba(0, 0, 0, 0.15);
+  padding: 10px;
+  background-color: #c9c9c9;
+}
+
+.addDate div {
+  display: flex;
+}
+
+.addDate div input {
+  height: 30px;
+  margin-right: 5px;
+  padding: 0 10px;
+}
+
+.addDate div button {
+  width: 70px;
+  height: 30px;
+  background-color: #85be15;
+}

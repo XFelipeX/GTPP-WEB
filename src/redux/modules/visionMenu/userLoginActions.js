@@ -1,4 +1,3 @@
- 
 export function loginRequest(info){
     return {
       type: 'LOGIN_REQUEST',
