@@ -17,18 +17,18 @@ const Task = ({ task }) => {
   const { visionMenu } = useSelector(state => state);
 
  
-  async function loadUserImage() {
-    for (let index = 0; index < userPhotos.length; index++) {
-      if (task.user_id === userPhotos[index].user_id) {
-        setPhoto(userPhotos[index].photo)
-      } else {
-      }
-    }
-  }
+  // async function loadUserImage() {
+  //   for (let index = 0; index < userPhotos.length; index++) {
+  //     if (task.user_id === userPhotos[index].user_id) {
+  //       setPhoto(userPhotos[index].photo)
+  //     } else {
+  //     }
+  //   }
+  // }
 
-  useEffect(() => {
-    loadUserImage()
-  }, []);
+  // useEffect(() => {
+  //   loadUserImage()
+  // }, []);
 
   // setTimeout(() => {
 

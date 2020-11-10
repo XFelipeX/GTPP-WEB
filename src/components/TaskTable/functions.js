@@ -5,8 +5,8 @@ export const loadTask = async (params, order) => {
   const AUTH = sessionStorage.getItem('token');
 
   try {
-    const { data } = await api.get('Task.php', { params: { AUTH: AUTH, col: order.col, order: order.order } });
-    console.log(data)
+    const { data } = await api.get('GTPP/Task.php', { params: { AUTH: AUTH, col: 1, order: order.order, app_id: 3 } });
+    // console.log(data)
     return data;
   } catch (error) {
     return [{}];
@@ -14,10 +14,10 @@ export const loadTask = async (params, order) => {
 }
 
 export const loadTaskStates = async params => {
-  const AUTH = params.session
-
+  const AUTH = sessionStorage.getItem('token');
   try {
-    const { data } = await api.get('TaskState.php', { params: { AUTH: AUTH } })
+    const { data } = await api.get('GTPP/TaskState.php', { params: { AUTH: AUTH, app_id:3 } })
+    // console.log(data)
     return data;
   } catch (error) {
     return [{}];
@@ -28,7 +28,7 @@ export const loadUserImages = async params => {
   const AUTH = params.session
 
   try {
-    const { data } = await api.get('http://192.168.0.99:71/GLOBAL/Controller/EmployeePhoto.php', {params: {"AUTH": AUTH, "all": 1}})
+    const { data } = await api.get('http://192.168.0.99:71/GLOBAL/Controller/EmployeePhoto.php', {params: {"AUTH": AUTH, "all": 1, "app_id":3}})
     return data;
   } catch (error) {
     console.log(error)

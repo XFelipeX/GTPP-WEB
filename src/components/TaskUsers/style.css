@@ -1,0 +1,142 @@
+.containerUsers{
+  margin-right: 15px;
+  display:flex;
+  width: 60px;
+  justify-content:space-around;
+}
+  @media(max-width: 900px){
+    .containerUsers{
+    display:none;
+    }
+  }
+
+.vinculatedUsers{
+  display: inline-block;
+  position:relative;
+  width: 25px;
+  height:25px;
+  border-radius: 100%;
+  background-color: #c9c9c9;
+  color: #000;
+}
+ .vinculatedUsers div{
+    width: 100%;
+    height: 100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+  }
+
+
+.userList{
+  display: inline-block;
+  position:relative;
+  width: 25px;
+  height:25px;
+  border-radius: 100%;
+  background-color: #c9c9c9;
+  color: #000;
+}
+.userList div{
+    width: 100%;
+    height: 100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+  }
+
+.userList ul{
+    border-radius: 3px;
+  width: 260px;
+  right: 1%;
+  display: block;
+  position: absolute;
+  overflow: auto;
+  z-index: 1;
+  background-color: #2B2B2B;
+  box-shadow: 0 2px 3px 0 rgba(0,0,0,.05), 0 3px 10px 0 rgba(0,0,0,.15);
+}
+
+.userList li{
+    padding: 5px;
+    display:flex;
+    align-items:center;
+}
+
+.userList li img{
+      margin-right:2px;
+      border-radius: 100%;
+    }
+   
+.userList li p{
+      white-space: nowrap; 
+      width: 150px;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      margin-right:10px;
+      font-size: 14px;
+      color: #c9c9c9;
+      font-weight: 500;
+    }
+    
+.userList li button{
+      padding: 3px;
+      background-color: #85BE15;
+      transition: background-color .25s;
+}
+
+.userList li button:hover{
+    background-color: black;
+  }
+
+
+.vinculatedList {
+  
+  border-radius: 3px;
+  width: 220px;
+  right: 1%;
+  display: block;
+  position: absolute;
+  overflow: auto;
+  z-index: 1;
+  background-color: #2B2B2B;
+  box-shadow: 0 2px 3px 0 rgba(0,0,0,.05), 0 3px 10px 0 rgba(0,0,0,.15);
+}
+.vinculatedList li{
+    padding: 5px;
+    display:flex;
+    align-items:center;
+}
+
+.vinculatedList li img{
+      margin-right:2px;
+      border-radius: 100%;
+    }
+
+.vinculatedList li p{
+      white-space: nowrap; 
+      width: 100px;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      margin-right:10px;
+      font-size: 14px;
+      color: #c9c9c9;
+      font-weight: 500;
+      
+    }
+
+.vinculatedList button{
+      width: 100px;
+      margin: 60%;
+      padding: 3px;
+      background-color: #d22e2e;
+      transition: background-color .25s;
+}
+
+.vinculatedList button:hover{
+    background-color: #420b0b;
+  }
+    
+ 

@@ -9,7 +9,7 @@ import './style.css';
 const TaskDate = ({ task }) => {
 
   const { permissions } = useSelector(state => state);
-  const [show, setShow] = useState(false);
+  const [open, setOpen] = useState(false);
   const date = new Date(task.final_date);
   const final_date = formatDate();
   const dispatch = useDispatch();
@@ -25,7 +25,7 @@ const TaskDate = ({ task }) => {
           "days": parseInt(input)
         }).then(() => {
          dispatch(updateTask())
-         setShow(false);
+        // setShow(false);
          input.value = null
         })
       } catch (error) {
@@ -58,17 +58,21 @@ const TaskDate = ({ task }) => {
 
   return (
     <div className="containerDate" >
-      <div onClick={() => setShow(!show)} className="dataShow">
+      <div onClick={() => setOpen(!open)} className="dataShow">
         <h2>
           {final_date} 
         </h2>
       </div>
-      <div className="addDate" show={show}>
+      {open ? (
+         <div className="addDate">
         <div>
           <input placeholder="Adicionar dias" type="number" id = {'date' + task.id} />
           <button onClick={() => updateDate()}>Atualizar</button>
         </div>
-      </div>
+      </div>) : null
+
+      }
+     
     </div>
   );
 }

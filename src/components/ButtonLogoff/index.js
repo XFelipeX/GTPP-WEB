@@ -1,6 +1,6 @@
 import React from "react";
 import {useDispatch} from 'react-redux';
-import { logoffRequest } from '../../redux/modules/login/userLoginActions';
+import { logOff } from '../../redux/userAuth/userAuthActions';
 import {useHistory} from 'react-router-dom';
 
 import './style.css'
@@ -12,14 +12,14 @@ const ButtonLogoff = () => {
 
   function UserLogoff() {
     sessionStorage.removeItem('token');
-    dispatch(logoffRequest());
+    // dispatch(logOff);
     history.push("/");
   }
 
   return (
     <div>
 
-      <button type="button" onClick={() => UserLogoff()} className="buttonLogoff">
+      <button type="button" onClick={() => {UserLogoff()}} className="buttonLogoff">
         sair
       </button>
     </div>

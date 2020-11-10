@@ -1,7 +1,7 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { loginRequest } from "../../redux/modules/login/userLoginActions";
+import { logIn } from "../../redux/userAuth/userAuthActions";
 import "./style.css";
 import img from "../../assets/art.png";
 import logo from "../../assets/logo.png";
@@ -42,7 +42,7 @@ const Login = () => {
       }
       // console.log(data);
       sessionStorage.setItem("token", data.data.session);
-      dispatch(loginRequest(data.data));
+      dispatch(logIn(data.data));
       history.push("/main");
       
       })();

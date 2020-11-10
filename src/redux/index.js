@@ -1,5 +1,7 @@
-export { updateTask } from './modules/stateUpdate/stateUpdateActions';
-export { setOrder, setCol, setDateVisi, setPriorityVisi, setStateVisi, setVincVisi, setCompanyVisi } from './modules/visionMenu/visionMenuActions';
-export { setPhotos } from './modules/userPhotos/userPhotosActions';
-export { getStates } from './modules/taskStates/taskStatesActions';
+export { logIn, logOff } from './userAuth/userAuthActions';
+export { getStates } from './taskStates/taskStatesActions';
+export { updateTask } from './stateUpdate/stateUpdateActions';
+export { setOrder, setCol, setDateVisi, setPriorityVisi, setStateVisi, setVincVisi, setCompanyVisi } from './visionMenu/visionMenuActions';
+export { setPhotos } from './userPhotos/userPhotosActions';
+export { getDepts } from './taskDepts/taskDeptsActions';
 

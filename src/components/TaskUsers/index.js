@@ -18,15 +18,16 @@ let TaskUsers = ({ task }) => {
   
   const [vinculatedUsers, setVinculatedUsers] = useState([]);
   const [showUsers, setShowUsers] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   
   async function loadVinculateUsers() {
-    const { data } = await api.get('Task_User.php', {
+    const { data } = await api.get('GTPP/Task_User.php', {
       params: {
         "AUTH": permissions.session,
         "task_id": task.id,
-        "list_user": ''
+        "list_user": '',
+        "app_id":3
       }
     })
     // console.log(data);
@@ -36,9 +37,9 @@ let TaskUsers = ({ task }) => {
   
   
   async function changeUser(id) {
-    await api.put(`Task_User.php?AUTH=${permissions.session}`, {
+    await api.put(`GTPP/Task_User.php?AUTH=${permissions.session}&app_id=3`, {
       "task_id": task.id,
-      "user_id": id
+      "user_id": id,
     }).then(dispatch(updateTask()))
   }
   
@@ -57,10 +58,10 @@ let TaskUsers = ({ task }) => {
   return (
     <div className="containerUsers">
       <div className="vinculatedUsers" >
-        <div  onClick={() => setIsOpen(!isOpen) } >
+        <div  onClick={() => setOpen(!open) } >
           <p>{vinculatedUsers.length}</p>
         </div>
-        <ul className="vinculatedList" show={isOpen}>
+        <ul className="vinculatedList" show={open}>
           {vinculatedUsers.map(user => (
             <React.Fragment>
               {userPhotos.map(userPhoto => (
@@ -80,8 +81,10 @@ let TaskUsers = ({ task }) => {
           ))}
         </ul>
       </div>
-      <div className="userList"  show={showUsers}>
-        <div onClick={() => setShowUsers(!showUsers)}>
+
+      {open ? (
+        <div className="userList" >
+        <div onClick={() => {}}>
           <img src={userImg} alt="" width="" />
         </div>
         <ul>
@@ -104,6 +107,8 @@ let TaskUsers = ({ task }) => {
           ))}
         </ul>
       </div>
+      ) : null}
+      
     </div>
   );
 }

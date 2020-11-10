@@ -49,7 +49,9 @@ const TaskState = ({ task }) => {
         <React.Fragment key={state.id}>
           {
             state.id === task.state_id ?
-              <button className="buttonState" color={state.color}>
+              
+              <button className="buttonState" onLoad={`$("buttonState").css("background-color", state.color)`}>
+                {console.log(state.color)}
                 <h2>{state.description}</h2>
               </button> :
               null

@@ -14,7 +14,7 @@ const TaskPriority = ({ task }) => {
   const { permissions } = useSelector(state => state);
   const dispatch = useDispatch();
 
-  const [show, setShow] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const updatePriority = async (id) => {
     console.log(id, "entrei")
@@ -29,7 +29,7 @@ const TaskPriority = ({ task }) => {
         "user_id": task.user_id,
       }).then(() => {
         dispatch(updateTask())
-        setShow(false);
+        //setShow(false);
       });
 
     } catch (error) {
@@ -43,10 +43,12 @@ const TaskPriority = ({ task }) => {
 
   return (
     <div className="containerPriority" value={task.priority}>
-      <div onClick={() => setShow(!show)}>
+      <div onClick={() => setOpen(!open)}>
         <img src={task.priority === 0 ? lowPriority : task.priority === 1 ? medPriority : highPriority} alt="prioridade" />
       </div>
-      <ul className="options" show={show}>
+
+      {open ? (
+        <ul className="options">
         <li onClick={() => updatePriority(0)}>
           <div>
             <img src={lowPriority} alt="prioridade" />
@@ -66,6 +68,9 @@ const TaskPriority = ({ task }) => {
           Alta Prioridade
         </li>
       </ul>
+
+      ) : null}
+      
     </div>
   );
 }

@@ -12,7 +12,7 @@ const TaskTable = () => {
     const {permissions} = useSelector(state => state);
     const {stateUpdate} = useSelector(state => state);
     const {visionMenu} = useSelector(state => state);
-    console.log(permissions)
+    // console.log(permissions)
     const dispatch = useDispatch();
 
     const [tasks,setTasks] = useState([]);
@@ -27,31 +27,34 @@ const TaskTable = () => {
         });
     },[stateUpdate]);
 
-    // useEffect(() => {
-    //     loadTaskStates(permissions).then(response => {
-    //         if(response.error === true){
-    //             alert('error')
-    //         }else{
-    //             dispatch(getStates(response.data));
-    //         }
-    //     });
-    // },[])
+    useEffect(() => {
+        loadTaskStates(permissions).then(response => {
+            if(response.error === true){
+                alert('error')
+            }else{
+                dispatch(getStates(response.data));
+            }
+        });
+    },[])
 
-    // useEffect(() => {
-    //     loadUserImages(permissions).then(response => {
-    //       if (response.error === true) {
-    //         alert('teste')
-    //       } else {
-    //         dispatch(setPhotos(response.data))
-    //       }
-    //     });
-    //   }, []);
+    loadTaskStates(permissions);
+
+
+    useEffect(() => {
+        loadUserImages(permissions).then(response => {
+          if (response.error === true) {
+            alert('teste')
+          } else {
+            dispatch(setPhotos(response.data))
+          }
+        });
+      }, []);
 
       return (
           <ul className="taskList">
-            {/* {tasks.map(task => 
+            {tasks.map(task => 
                 <Task task={task} key={task.id} />
-            )} */}
+            )}
           </ul>
       )
 }
