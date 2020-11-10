@@ -49,9 +49,9 @@ const TaskTable = () => {
 
       return (
           <ul className="taskList">
-            {tasks.map(task => 
-                {/* <Task task={task} key={task.id} /> */}
-            )}
+            {/* {tasks.map(task => 
+                <Task task={task} key={task.id} />
+            )} */}
           </ul>
       )
 }

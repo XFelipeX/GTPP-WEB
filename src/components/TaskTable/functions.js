@@ -2,10 +2,10 @@ import api from '../../services/api';
 // import Task from '../Task';
 
 export const loadTask = async (params, order) => {
-  const AUTH = params.session;
+  const AUTH = sessionStorage.getItem('token');
 
   try {
-    const { data } = await api.get('Task.php', { params: { AUTH: '9h6bc2ok1k2a30q7epj21siita', col: 1, order: 'asc' } });
+    const { data } = await api.get('Task.php', { params: { AUTH: AUTH, col: order.col, order: order.order } });
     console.log(data)
     return data;
   } catch (error) {
