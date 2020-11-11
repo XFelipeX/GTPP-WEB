@@ -48,8 +48,8 @@ const Task = ({ task }) => {
         {visionMenu.vinc === true ? <TaskUsers task={task} /> : null}
         {visionMenu.priority === true ? <TaskPriority task={task} /> : null}
         {visionMenu.state === true ? <TaskState task={task} /> : null}
-        {visionMenu.date === true ? <TaskDate task={task} /> : null}
-        <h2>{task.progress}%</h2>
+        {visionMenu.date === true ? <TaskDate task={task} /> : null} 
+        { <h2>{task.progress}%</h2>}
       </div>
       
     </li>

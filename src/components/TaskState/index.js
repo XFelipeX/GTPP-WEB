@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
+import './style.css';
 import api from '../../services/api';
 import { updateTask } from '../../redux';
 
@@ -16,7 +16,7 @@ const TaskState = ({ task }) => {
 
   const updateState = async (id) => {
     try {
-      api.put(`Task.php?AUTH=${permissions.session}`, {
+      const {data} = api.put(`GTPP/Task.php?AUTH=${permissions.session}&app_id=3`, {
         "id": task.id,
         "description": task.description,
         "full_description": task.full_description,
@@ -30,11 +30,15 @@ const TaskState = ({ task }) => {
         setShow(false);
       });
 
+      console.log(data);
     } catch (error) {
       alert(error);
     }
   }
 
+  // let stateColors ={
+  //   backgroundColor:'red',
+  // }
  
 
  
@@ -44,21 +48,21 @@ const TaskState = ({ task }) => {
 //   })
 
   return (
-    <div className="menu" >
+    <ul className="menu" >
       {taskStates.map(state => (
         <React.Fragment key={state.id}>
           {
             state.id === task.state_id ?
               
-              <button className="buttonState" onLoad={`$("buttonState").css("background-color", state.color)`}>
-                {console.log(state.color)}
+              <button className="buttonState" style={{backgroundColor:'#'+state.color}}>
+                {/* {console.log(state.color)} */}
                 <h2>{state.description}</h2>
               </button> :
               null
           }
         </React.Fragment>
       ))}
-    </div>
+    </ul>
   );
 }
 

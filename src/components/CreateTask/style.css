@@ -9,9 +9,10 @@
     text-align: center;
     display: inline-block;
     width:160px;
+    z-index: 2;
 }
 
-.menu{
+.menuCreateTask{
     display: flex;
     flex-direction: column;
     background-color:#ccc;
@@ -22,14 +23,14 @@
     border-radius:2px 2px 5px 5px;
 }
 
-.menu label{
+.menuCreateTask label{
     padding:.5em 0;
     font-size:16px;
-    color:white;
-    text-shadow: 1px 1px black;
+    color:black;
+    text-shadow: 1px 1px white;
 }
 
-.menu button{
+.menuCreateTask button{
 
     text-transform: uppercase;
     margin-top: 1em;
@@ -39,7 +40,11 @@
     color:white;
 }
 
-.menu input{
+.menuCreateTask input{
     width: 150px;
     padding:.3em .5em;
+}
+
+.createTaskArea{
+    z-index: 2;
 }

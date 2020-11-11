@@ -34,9 +34,9 @@ const Login = () => {
                 console.log(err)
             });
 
-
+            console.log(data);
       if (data.error === true) {
-        // alert(data.message)
+        //alert(data.message)
         console.log("entrei no error");
         return;
       }

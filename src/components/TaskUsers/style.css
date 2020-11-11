@@ -16,7 +16,7 @@
   width: 25px;
   height:25px;
   border-radius: 100%;
-  background-color: #c9c9c9;
+  background-color: #ccc;
   color: #000;
 }
  .vinculatedUsers div{
@@ -93,7 +93,7 @@
 
 
 .vinculatedList {
-  
+  z-index: 1;
   border-radius: 3px;
   width: 220px;
   right: 1%;
@@ -101,7 +101,7 @@
   position: absolute;
   overflow: auto;
   z-index: 1;
-  background-color: #2B2B2B;
+  background-color: rgb(90, 90, 90);
   box-shadow: 0 2px 3px 0 rgba(0,0,0,.05), 0 3px 10px 0 rgba(0,0,0,.15);
 }
 .vinculatedList li{

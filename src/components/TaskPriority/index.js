@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateTask } from '../../redux'
-
+import './style.css';
 import lowPriority from '../../assets/Path1.png';
 import medPriority from '../../assets/Path2.png';
 import highPriority from '../../assets/Arrows.png';
@@ -19,7 +19,7 @@ const TaskPriority = ({ task }) => {
   const updatePriority = async (id) => {
     console.log(id, "entrei")
     try {
-      api.put(`Task.php?AUTH=${permissions.session}`, {
+      api.put(`GTPP/Task.php?AUTH=${permissions.session}&app_id=3`, {
         "id": task.id,
         "description": task.description,
         "full_description": task.full_description,
@@ -29,7 +29,7 @@ const TaskPriority = ({ task }) => {
         "user_id": task.user_id,
       }).then(() => {
         dispatch(updateTask())
-        //setShow(false);
+        setOpen(false);
       });
 
     } catch (error) {
