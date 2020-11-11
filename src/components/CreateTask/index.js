@@ -1,11 +1,15 @@
 import React, { useState } from "react";
-import { useEffect, useSelector } from "react-redux";
+import { useEffect, useSelector,useDispatch } from "react-redux";
 import "./style.css";
 import api from "../../services/api";
+import { updateTask } from "../../redux";
 
 let CreateTask = () => {
+  const dispatch = useDispatch();
+
   const [dateInitial, setDateInitial] = useState("");
   const [dateFinal, setDateFinal] = useState("");
+  const [priority, setPriority] = useState("");
 
   const [open, setOpen] = useState(false);
   //const {permissions} = useSelector(state => state);
@@ -31,7 +35,7 @@ let CreateTask = () => {
               method: "post",
               body: JSON.stringify({
                 description: description,
-                priority: "",
+                priority: priority,
                 initial_date: `${dateInitial}`,
                 final_date: `${dateFinal}`,
               }),
@@ -42,7 +46,7 @@ let CreateTask = () => {
             })
             .then((r) => {
               return r;
-            })
+            }).then(() => dispatch(updateTask))
             .catch((err) => {
               console.log(err);
             });
@@ -88,6 +92,13 @@ let CreateTask = () => {
               setDateFinal(e.target.value);
             }}
           />
+          <label htmlFor="">Prioridade</label>
+          <select onChange={ e => setPriority(e.target.value)}>
+            <option value="">Selecione a prioridade</option>
+            <option value="1">Baixa Prioridade</option>
+            <option value="2">Média Prioridade</option>
+            <option value="3">Alta Prioridade</option>
+          </select>
           <button type="button" onClick={createTask}>
             Criar
           </button>
