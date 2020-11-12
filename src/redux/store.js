@@ -8,6 +8,7 @@ import stateUpdateReducer from './stateUpdate/stateUpdateReducer';
 import visionMenuReducer from './visionMenu/visionMenuReducer';
 import userPhotosReducer from './userPhotos/userPhotosReducer';
 import taskDeptsReducer from './taskDepts/taskDeptsReducer'
+import taskCompaniesReducer from './taskCompanies/taskCompaniesReducer';
 
 const rootReducer = combineReducers({
   permissions: userAuthReducer,
@@ -15,7 +16,8 @@ const rootReducer = combineReducers({
   stateUpdate: stateUpdateReducer,
   visionMenu: visionMenuReducer,
   userPhotos: userPhotosReducer,
-taskDepts : taskDeptsReducer,   
+  taskDepts : taskDeptsReducer, 
+  taskCompanies : taskCompaniesReducer,
 })
 
 const persistConfig = {

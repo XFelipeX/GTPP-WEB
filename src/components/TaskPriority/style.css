@@ -26,18 +26,16 @@
 .options{
   border-radius: 3px;
   min-width: 580%;
-  right: 1%;
   display:block;
   position: absolute;
   overflow: auto;
   z-index: 1;
-  background-color: #202020;
-  box-shadow: 0 2px 3px 0 rgba(0,0,0,.05), 0 3px 10px 0 rgba(0,0,0,.15);
+  background-color: #353535;
+  
 }
   
 .options li{
     padding: 5px;
-    background-color: #202020;
     display:flex;
     cursor:pointer;
 }
