@@ -1,4 +1,4 @@
-.createTaskArea ul{
+.createTaskArea > ul{
     padding: 10px 20px;
     background-color:rgb(0, 162, 255);
     color:white;
@@ -45,8 +45,29 @@
     padding:.3em .5em;
 }
 
-
-
 .createTaskArea{
     z-index: 2;
+}
+
+.menuPriority li{
+    align-items: center;
+    width: 180px;
+    padding: 3px;
+    cursor: pointer;
+    background-color: white;
+    text-align: left;
+    font-size: 16px;
+    border-bottom:1px solid #353535;
+}
+
+.menuPriority li:first-child{
+    text-align:center;
+    color:white;
+    padding: 5px;
+    border-radius:3px;
+    background-color: #353535;
+}
+
+.menuPriority li img{
+    margin:0 10px;
 }

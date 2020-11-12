@@ -1,18 +1,21 @@
 .containerDate {
   margin:0 20px;
-  background-color: #c9c9c9;
   padding: 0 5px;
   border-radius: 5px;
   color: #000;
-  display: inline-block;
+  display: flex;
+  justify-content: space-between;
   position: relative;
 }
 .dataShow {
   cursor: pointer;
-  width: 100%;
+  width: 90px;
   height: 100%;
   display: flex;
   align-items: center;
+  background-color: #c9c9c9;
+  padding: 5px;
+  border-radius: 2px;
 }
 
 .addDate {
@@ -41,4 +44,13 @@
   width: 70px;
   height: 30px;
   background-color: #85be15;
+}
+
+.initialDate{
+  width: 90px;
+  padding: 5px;
+  display: inline-block;
+  margin-right: 20px;
+  background-color: #c9c9c9;
+  border-radius: 2px;
 }

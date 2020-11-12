@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useEffect, useSelector,useDispatch } from "react-redux";
 import "./style.css";
+import lowPriority from '../../assets/Path1.png';
+import medPriority from '../../assets/Path2.png';
+import highPriority from '../../assets/Arrows.png';
 import api from "../../services/api";
 import { updateTask } from "../../redux";
 
@@ -12,7 +15,8 @@ let CreateTask = () => {
   const [priority, setPriority] = useState("");
 
   const [open, setOpen] = useState(false);
-  //const {permissions} = useSelector(state => state);
+  const [showPriority, setShowPriority] = useState(false);
+
   const auth = sessionStorage.getItem("token");
 
   function showMenu() {
@@ -45,23 +49,41 @@ let CreateTask = () => {
               return response.json();
             })
             .then((r) => {
+              setOpen(false);
+              dispatch(updateTask());
               return r;
-            }).then(() => dispatch(updateTask))
+            })
             .catch((err) => {
               console.log(err);
             });
 
           console.log(data);
-          // if (data.erro === true) {
-          //   //alert(data.message)
-          //   console.log("entrei no error");
-          //   return;
-          // }
         })();
       } catch (error) {
         console.log(error);
       }
     }
+  }
+
+  let changePriority = (e) =>{
+    let select = document.getElementById('selectOption');
+
+    let selectValue = select.value;
+    let selectText = select.innerHTML;
+    
+    let aux;
+
+    aux = e.target.value;
+    e.target.value = selectValue;
+    select.value = aux;
+
+    aux = e.target.innerHTML;
+    e.target.innerText = selectText;
+    select.innerHTML = aux;
+
+    setShowPriority(false);
+    setPriority(select.value);
+
   }
 
   return (
@@ -76,7 +98,7 @@ let CreateTask = () => {
             id="taskDescription"
             placeholder="Nome da tarefa"
           />
-          <label htmlFor="">Data ínicio</label>
+          <label htmlFor="">Data Ínicio</label>
           <input
             type="date"
             id="startDate"
@@ -84,7 +106,7 @@ let CreateTask = () => {
               setDateInitial(e.target.value);
             }}
           />
-          <label htmlFor="">Data Final</label>
+          <label htmlFor="">Data Fim</label>
           <input
             type="date"
             id="finalDate"
@@ -93,12 +115,20 @@ let CreateTask = () => {
             }}
           />
           <label htmlFor="">Prioridade</label>
-          <select onChange={ e => setPriority(e.target.value)}>
-            <option value="">Selecione a prioridade</option>
-            <option value="1">Baixa Prioridade</option>
-            <option value="2">Média Prioridade</option>
-            <option value="3">Alta Prioridade</option>
-          </select>
+          <ul className="menuPriority">
+            <li value="" onClick={() => setShowPriority(!showPriority)} id="selectOption">Selecione a prioridade</li>
+            {showPriority ? (
+              <>
+              <li value="0" onClick={(e) => changePriority(e)}><img src={lowPriority} />Baixa</li>
+            <li value="1" onClick={(e) => changePriority(e)}><img src={medPriority} />Média</li>
+            <li value="2" onClick={(e) => changePriority(e)}><img src={highPriority} />Alta</li>
+              </>
+            )
+             : null
+            
+            }
+            
+          </ul>
           <button type="button" onClick={createTask}>
             Criar
           </button>

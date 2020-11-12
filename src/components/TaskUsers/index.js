@@ -31,6 +31,13 @@ let TaskUsers = ({ task }) => {
     setVinculatedUsers(data.data);
   }
 
+  let loadUsersAmount = () => {
+      let count = 0;
+      vinculatedUsers.forEach(e => e.check === true ? count++ : 0);
+
+      return count;
+  }
+
   async function changeUser(id) {
     await api
       .put(`GTPP/Task_User.php?AUTH=${permissions.session}&app_id=3`, {
@@ -56,7 +63,8 @@ let TaskUsers = ({ task }) => {
     <div className="containerUsers">
       <div className="vinculatedUsers">
         <div onClick={() => setOpen(!open)}>
-          <p>{vinculatedUsers.length}</p>
+          {/* <p>{vinculatedUsers.length}</p> */}
+          {loadUsersAmount()}
         </div>
         { open ? (
           <ul className="vinculatedList" show={open}>
@@ -65,8 +73,8 @@ let TaskUsers = ({ task }) => {
               {userPhotos.map((userPhoto) => (
                 <>
                   {user.user_id == userPhoto.user_id &&
-                  user.check === true &&
-                  user.user_id != permissions.id ? (
+                  user.check === true
+                 ? (
                     <li>
                       <img
                         src={userPhoto.photo}
@@ -75,9 +83,10 @@ let TaskUsers = ({ task }) => {
                         alt=""
                       />
                       <p>{user.name}</p>
-                      <button onClick={() => changeUser(user.user_id)}>
+                      {user.user_id != permissions.id ? (<button onClick={() => changeUser(user.user_id)}>
                         Remover
-                      </button>
+                      </button>) : null}
+                      
                     </li>
                   ) : null}
                 </>
