@@ -5,7 +5,8 @@ import {
   SET_PRIORITY_VISIBLE, 
   SET_STATE_VISIBLE, 
   SET_VINC_VISIBLE, 
-  SET_COMPANY_VISIBLE 
+  SET_COMPANY_VISIBLE,
+  SET_SHOP_VISIBLE 
 } from './visionMenuTypes';
 
 export const setOrder = (info) => {
@@ -52,6 +53,13 @@ export const setVincVisi = (value) => {
 export const setCompanyVisi = (value) => {
   return {
     type: SET_COMPANY_VISIBLE,
+    payload:value
+  }
+}
+
+export const setShopVisi = (value) => {
+  return {
+    type: SET_SHOP_VISIBLE,
     payload:value
   }
 }

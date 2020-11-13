@@ -4,8 +4,8 @@ import {useSelector, useDispatch} from 'react-redux';
 import './style.css';
 
 import Task from '../Task';
-import {loadTask,loadTaskStates,loadUserImages, loadCompanies} from './functions'
-import {getStates,setPhotos, getCompanies,getTask} from '../../redux'
+import {loadTask,loadTaskStates,loadUserImages, loadCompanies,loadShop} from './functions'
+import {getStates,setPhotos, getCompany,getTask,getShop} from '../../redux'
 import TaskCompany from '../TaskCompany';
 
 const TaskTable = () => {
@@ -32,16 +32,27 @@ const TaskTable = () => {
         });
     },[stateUpdate]);
 
-    // useEffect(() => {
-    //     loadCompanies().then(response => {
-    //         if(response.error === true){
-    //             alert('error')
-    //         }else{
-    //             //console.log(response.data);
-    //            dispatch(getCompanies(response.data));
-    //         }
-    //     });
-    // },[])
+    useEffect(() => {
+        loadCompanies().then(response => {
+            if(response.error === true){
+                alert('error')
+            }else{
+                //console.log(response.data);
+               dispatch(getCompany(response.data));
+            }
+        });
+    },[])
+
+    useEffect(() => {
+        loadShop().then(response => {
+            if(response.error === true){
+                alert('error')
+            }else{
+                //console.log(response.data);
+               dispatch(getShop(response.data));
+            }
+        });
+    },[])
 
     useEffect(() => {
         loadTaskStates(permissions).then(response => {

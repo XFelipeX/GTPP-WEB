@@ -1,15 +1,24 @@
-import { SET_ORDER, SET_COL, SET_DATE_VISIBLE, SET_PRIORITY_VISIBLE, SET_STATE_VISIBLE, SET_VINC_VISIBLE, SET_COMPANY_VISIBLE } from './visionMenuTypes'
+import {
+  SET_ORDER,
+  SET_COL,
+  SET_DATE_VISIBLE,
+  SET_PRIORITY_VISIBLE,
+  SET_STATE_VISIBLE,
+  SET_VINC_VISIBLE,
+  SET_COMPANY_VISIBLE,
+  SET_SHOP_VISIBLE
+} from "./visionMenuTypes";
 
 const initialState = {
-  col: 'priority',
-  order: 'desc',
-  company: '',
-  shop: '',
+  col: "priority",
+  order: "desc",
+  company: "",
+  shop: "",
   priority: true,
   state: true,
   date: true,
-  vinc: true
-}
+  vinc: true,
+};
 
 const visionMenuReducer = (state = initialState, action) => {
   // console.log(action)
@@ -17,43 +26,48 @@ const visionMenuReducer = (state = initialState, action) => {
     case SET_ORDER:
       return {
         ...state,
-        order: action.payload
-      }
+        order: action.payload,
+      };
 
     case SET_COL:
       return {
         ...state,
-        col: action.payload
-      }
+        col: action.payload,
+      };
     case SET_DATE_VISIBLE:
       return {
         ...state,
-        date: action.payload
-      }
+        date: action.payload,
+      };
     case SET_PRIORITY_VISIBLE:
-      return{
+      return {
         ...state,
-        priority: action.payload
-      }
+        priority: action.payload,
+      };
     case SET_STATE_VISIBLE:
-      return{
+      return {
         ...state,
-        state: action.payload
-      }
+        state: action.payload,
+      };
     case SET_VINC_VISIBLE:
-      return{
+      return {
         ...state,
-        vinc: action.payload
-      }
+        vinc: action.payload,
+      };
     case SET_COMPANY_VISIBLE:
-        return {
-          ...state,
-          company: action.payload
-        }
-        
+      return {
+        ...state,
+        company: action.payload,
+      };
+    case SET_SHOP_VISIBLE:
+      return {
+        ...state,
+        shop: action.payload,
+      };
+
     default:
-      return state
+      return state;
   }
-}
+};
 
 export default visionMenuReducer;

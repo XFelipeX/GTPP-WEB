@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import {useDispatch, useSelector} from 'react-redux';
-import {setCol, setOrder, updateTask, setStateVisi, setDateVisi, setVincVisi, setPriorityVisi, setCompanyVisi} from '../../redux';
+import {setCol, setOrder, updateTask, setStateVisi, setDateVisi, setVincVisi, setPriorityVisi, setCompanyVisi,setShopVisi} from '../../redux';
 import './style.css'
 
 let VisionMenu = () =>{
@@ -29,6 +29,10 @@ let VisionMenu = () =>{
 
   const setStateVisibility = (value) => {
     dispatch(setStateVisi(value))
+  }
+
+  const setShopVisibility = (value) => {
+    dispatch(setShopVisi(value))
   }
 
   const setCompanyVisibility = (value) => {
@@ -61,7 +65,7 @@ let VisionMenu = () =>{
           Companhia
           </label>
           <label htmlFor="">
-          <input type="checkbox" id="shop"/>
+          <input type="checkbox" id="shop" onChange={e => setShopVisibility(e.target.checked)} checked={visionMenu.shop}/>
           Loja
           </label>
           <label htmlFor="">
@@ -83,8 +87,8 @@ let VisionMenu = () =>{
           <p>Ordenar por:</p>
           <select onChange={ e => changeCol(e.target.value)}>
             <option value="">Selecione uma opção</option>
-            <option value="priority">Prioridade</option>
-            <option value="state">Estado</option>
+            <option value="1">Prioridade</option>
+            <option value="3">Estado</option>
           </select>
           <select onChange={ e => changeOrder(e.target.value)}>
             <option value="">Selecione uma opção</option>
