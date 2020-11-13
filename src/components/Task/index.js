@@ -6,7 +6,7 @@ import TaskState from '../TaskState';
 import TaskPriority from '../TaskPriority';
 import TaskDate from '../TaskDate';
 import TaskUsers from '../TaskUsers';
-import TaskCompanies from '../TaskCompany';
+import TaskCompany from '../TaskCompany';
 // import TaskDept from '../TaskDept'
 
 
@@ -48,7 +48,7 @@ const Task = ({ task }) => {
         
       </div>
       <div className="taskContent">
-        {visionMenu.taskCompanies == true ? <TaskCompanies task={task}/> : null}
+        {visionMenu.company === true ? <TaskCompany task={task}/> : null}
         {visionMenu.vinc === true ? <TaskUsers task={task} /> : null}
         {visionMenu.state === true ? <TaskState task={task} /> : null}
         {visionMenu.date === true ? <TaskDate task={task} /> : null} 

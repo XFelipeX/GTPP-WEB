@@ -5,3 +5,4 @@ export { setOrder, setCol, setDateVisi, setPriorityVisi, setStateVisi, setVincVi
 export { setPhotos } from './userPhotos/userPhotosActions';
 export { getDepts } from './taskDepts/taskDeptsActions';
 export { getCompanies } from './taskCompanies/taskCompaniesActions';
+export { getTask } from './tasks/taskActions';

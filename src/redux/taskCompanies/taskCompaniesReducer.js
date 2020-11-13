@@ -6,6 +6,7 @@ const initialState = [{
 }]
 
 const taskCompaniesReducer = (state = initialState, action) => {
+    //console.log('redux aqui' + action.payload)
     switch(action.type){
         case GET_COMPANIES:
             return action.payload

@@ -1,8 +1,7 @@
 .buttonState{
   background-color: rgba(184, 146, 146, 0.867);
-  cursor: pointer;
   width: 120px;
- 
+  cursor: default;;
   padding:0 5px;
   height:25px;
   font-size:14px;

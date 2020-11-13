@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import {useDispatch, useSelector} from 'react-redux';
-import {setCol, setOrder, updateTask, setStateVisi, setDateVisi, setVincVisi, setPriorityVisi,  } from '../../redux';
+import {setCol, setOrder, updateTask, setStateVisi, setDateVisi, setVincVisi, setPriorityVisi, setCompanyVisi} from '../../redux';
 import './style.css'
 
 let VisionMenu = () =>{
@@ -31,6 +31,10 @@ let VisionMenu = () =>{
     dispatch(setStateVisi(value))
   }
 
+  const setCompanyVisibility = (value) => {
+    dispatch(setCompanyVisi(value))
+  }
+
   const setDateVisibility = (value) => {
     dispatch(setDateVisi(value))
   }
@@ -53,7 +57,7 @@ let VisionMenu = () =>{
         <ul className="menuExpanded">
           <p htmlFor="">Itens na linha: </p>
           <label htmlFor="">
-          <input type="checkbox" id="company"/>
+          <input type="checkbox" id="company" onChange={e => setCompanyVisibility(e.target.checked)} checked={visionMenu.company} />
           Companhia
           </label>
           <label htmlFor="">

@@ -4,28 +4,44 @@ import {useSelector, useDispatch} from 'react-redux';
 import './style.css';
 
 import Task from '../Task';
-import {loadTask,loadTaskStates,loadUserImages} from './functions'
-import {getStates,setPhotos} from '../../redux'
+import {loadTask,loadTaskStates,loadUserImages, loadCompanies} from './functions'
+import {getStates,setPhotos, getCompanies,getTask} from '../../redux'
+import TaskCompany from '../TaskCompany';
 
 const TaskTable = () => {
 
     const {permissions} = useSelector(state => state);
     const {stateUpdate} = useSelector(state => state);
     const {visionMenu} = useSelector(state => state);
+
     // console.log(permissions)
     const dispatch = useDispatch();
 
     const [tasks,setTasks] = useState([]);
+    // const [companies, setCompanies] = useState([]);
 
     useEffect(() =>{
         loadTask(permissions, visionMenu).then(response => {
             if (response.error === true){
                 alert('error')
             }else{
+                
                 setTasks(response.data);
+                dispatch(getTask(response.data));
             }
         });
     },[stateUpdate]);
+
+    // useEffect(() => {
+    //     loadCompanies().then(response => {
+    //         if(response.error === true){
+    //             alert('error')
+    //         }else{
+    //             //console.log(response.data);
+    //            dispatch(getCompanies(response.data));
+    //         }
+    //     });
+    // },[])
 
     useEffect(() => {
         loadTaskStates(permissions).then(response => {
@@ -37,7 +53,7 @@ const TaskTable = () => {
         });
     },[])
 
-    loadTaskStates(permissions);
+    
 
 
     useEffect(() => {
