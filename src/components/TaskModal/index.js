@@ -8,7 +8,7 @@ let TaskModal = ({id = 'modal',taskId}) => {
 // console.log(taskId)
 
   const dispatch = useDispatch();
-  const {tasks} = useSelector((state) => state);  
+//   const {tasks} = useSelector((state) => state);  
   const {taskVisible} = useSelector((state) => state);
 
 //   console.log(taskVisible);

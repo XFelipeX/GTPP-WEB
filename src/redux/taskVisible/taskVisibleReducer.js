@@ -14,7 +14,17 @@ const taskVisibleReducer = (state = initialState, action) => {
       return{
           ...state,
           id:action.id,
-          description:action.description  
+          description:action.description, 
+          full_description:action.full_description,
+          initial_date:action.initial_date,
+          final_date:action.final_date,
+          state_id:action.state_id,
+          priority:action.priority,
+          user_id:action.user_name,
+          comshopdepsub_id:action.comshopdepsub_id,
+          state_description:action.state_description,
+          progress:action.progress,
+          expire:action.expire 
       }  
     default:
       return state
