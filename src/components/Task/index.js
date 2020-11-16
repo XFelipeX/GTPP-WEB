@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
-
 import './style.css';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import TaskState from '../TaskState';
 import TaskPriority from '../TaskPriority';
 import TaskDate from '../TaskDate';
 import TaskUsers from '../TaskUsers';
 import TaskCompany from '../TaskCompany';
 import TaskShop from '../TaskShop';
+import TaskModal from '../TaskModal';
+import {taskInfoShow} from '../../redux'
 // import TaskDept from '../TaskDept'
 
 
@@ -17,6 +18,9 @@ const Task = ({ task }) => {
 
   const { userPhotos } = useSelector(state => state);
   const { visionMenu } = useSelector(state => state);
+  const { taskVisible } = useSelector(state => state);
+ 
+  const dispatch = useDispatch();
 
  
   async function loadUserImage() {
@@ -38,15 +42,15 @@ const Task = ({ task }) => {
 
   return (
     <li className="containerTask">
-    
-      <div className="taskName">
       {visionMenu.priority === true ? <TaskPriority task={task} /> : null}
+      <div className="taskName">
+      
         <div className="tooltip" >
           <img src={photo} alt="" width='30' height='30' />
           <span className="tooltiptext">{task.user_name}</span>
         </div>
-        <h2 >{task.description}</h2>
-        
+        <h2 onClick={() => {dispatch(taskInfoShow(task))}}>{task.description}</h2>
+        {taskVisible ? <TaskModal/> : null}
       </div>
       <div className="taskContent">
         {visionMenu.shop === true ? <TaskShop task={task}/> : null}

@@ -8,6 +8,8 @@ import './style.css';
 
 const TaskDate = ({ task }) => {
 
+  // console.log(task);
+
   const { permissions } = useSelector(state => state);
   const [open, setOpen] = useState(false);
   const initial_date = formatDate(task.initial_date)

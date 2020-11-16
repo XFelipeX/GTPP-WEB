@@ -34,7 +34,15 @@
 }
 .taskName h2 {
   margin-left: 10px;
+  padding:5px;
+  border-radius: 3px;
+  cursor: pointer;
 }
+
+.taskName h2:hover{
+  background-color: #3b6895;
+}
+
 .taskName .tooltip {
   position: relative;
   display: inline-block;
