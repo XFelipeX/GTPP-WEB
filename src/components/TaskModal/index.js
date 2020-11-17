@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "./style.css";
 import { taskVisibleUpdate } from "../../redux";
+import { AiOutlineClockCircle } from "react-icons/ai";
+import { FaTrash } from "react-icons/fa";
+import {BiCommentAdd} from 'react-icons/bi';
 
 let TaskModal = ({ id = "modal", taskId }) => {
   // console.log(taskId)
@@ -30,8 +33,12 @@ let TaskModal = ({ id = "modal", taskId }) => {
         <div className="modalContent">
           <div className="taskInfo">
             <div className="row">
-              <h2><h1>Início </h1>22/12/2020</h2>
-              <h2><h1>Fim </h1>28/12/2020</h2>
+              <h2>
+                <h1>Início </h1>22/12/2020
+              </h2>
+              <h2>
+                <h1>Fim </h1>28/12/2020
+              </h2>
 
               <button className="buttonState">
                 <h2>State</h2>
@@ -94,20 +101,51 @@ let TaskModal = ({ id = "modal", taskId }) => {
                   </ul>
                 ) : null}
               </div>
-              
+
               <div className="rowControlDescription">
                 <button className="btnSaveDescription">Salvar</button>
                 <button className="btnEditDescription">Editar</button>
               </div>
             </div>
             <div className="usersVinculated">
-                <div className="user">
-                    <h1>usuários</h1>
-                </div>
+              <div className="user">
+                <h1>usuários</h1>
+              </div>
             </div>
           </div>
 
-          <div className="taskTopicList"></div>
+          <div className="taskTopicList">
+            <h1>
+              Itens da tarefa em 50% <AiOutlineClockCircle />
+            </h1>
+            <div className="topicList">
+              <div className="topic">
+                <label>
+                  <input type="checkbox" />
+                  Tópico
+                </label>
+                <FaTrash />
+              </div>
+                
+              <div className="topic">
+              <label>
+                <input type="checkbox" />
+                Tópico
+              </label>
+              <FaTrash />
+              </div>
+
+
+             
+            </div>
+
+            <div className="addTopic">
+                  <input type="text" size="10"/>
+                  <div>
+                  <button><BiCommentAdd size="30"/></button>
+                  </div>
+            </div>
+          </div>
 
           {/* <h1>{taskVisible.id}</h1>
           <h1>{taskVisible.description}</h1> */}

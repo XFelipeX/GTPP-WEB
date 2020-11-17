@@ -220,3 +220,32 @@
     background-color:  #8c8c8c;
     cursor: pointer;
 }
+
+.topic{
+    margin: 0 auto;
+    width: 90%;
+    color: white;
+    border-bottom: 2px solid #3b6895;
+    display: flex;
+    justify-content: space-around;
+    background-color: #353535;
+}
+
+/* Adicionar tópico */
+
+.addTopic{
+    position: relative;
+    top: 19em;
+    display: flex;
+    justify-content: center;
+}
+
+.addTopic input{
+    width: 50%;
+}
+
+.addTopic button{
+    font-size: 19px;
+    margin-left: 1em;
+    padding: 5px;
+}
