@@ -1,3 +1,4 @@
+/* Config do modal */
 .modal{
     border:2px solid black;
     width: 100%;
@@ -6,7 +7,7 @@
     top: 0;
     left: 0;
     z-index: 10;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.2);
     display: flex;
     justify-content: center;
 }
@@ -16,7 +17,7 @@
     text-align: center;
     width: 60%;
     color: #000;
-    height: 60%;
+    height: 40%;
     background-color: #fff;
     border-radius: 20px;
 }
@@ -35,9 +36,9 @@
     position: absolute;
     display: flex;
     align-items: center;
-    top: 89px;
+    top: 12px;
 
-    right: calc(18% + 64px);
+    right: 2em;
     cursor: pointer;
     width: 2.5px;
     height: 24px;
@@ -52,7 +53,170 @@
     transform: rotate(-45deg);
 }
 
+/* Modal Header */
+.modalHeader{
+    position: relative;
+    top: 0em;
+    border-radius: 17px 17px 0 0;
+    width: 100%;
+    height: 5em;
+    background-color: #2b2b2b;
+}
+
+.modalHeader > h1{
+    text-transform: uppercase;
+    color:white;
+    position: absolute;
+    left: 1em;
+    top: 2em;
+}
+
+/* Modal Conteúdo */
 .modalContent{
+    height: 100%;
     text-align: center;
     background-color:#ddd;
+    display: flex;
+    border-radius: 0 0 19px 17px;
+}
+
+/* Informações da task | aba*/
+.modalContent .taskInfo{
+    width: 50%;
+    background-color: #4b4b4b;
+    height: calc(100%);
+    border-radius: 0 0 0 17px;
+}
+
+.modalContent .taskInfo{
+    padding: 1em;
+    color: white;
+    text-align: left;
+    justify-content: space-evenly;
+}
+
+.modalContent .taskInfo > .row{
+    content: ' ';
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.modalContent .taskInfo .comshopsubArea .row{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modalContent .taskInfo .comshopsubArea{
+    margin: 2em 0 0 1em;
+}
+
+.modalContent .taskInfo .comshopsubArea .row .col select{
+    margin: 1em 0 0 0;
+    padding: 5px;
+    border-radius: 5px;
+    width: 180px;
+}
+
+.modalContent .taskInfo .comshopsubArea .row .col:first-child{
+    width: 50%;
+}
+
+.modalContent .taskInfo .comshopsubArea .row .col:nth-child(2){
+    width: 40%;
+}
+
+.modalContent .taskInfo > h2{
+    height: .5em;
+}
+
+/* aréa do checklist dos tópicos da tarefa */
+.modalContent .taskTopicList{
+    width: 50%;
+    height: calc(100%);
+    background-color: rgb(140, 140, 140);
+    border-radius: 0 0 17px 0;
+}
+
+.menuDept input{
+    
+    position: relative;
+    left: 4em;
+}
+
+.rowDept{
+    display: inline-block;
+    float: right;
+}
+
+.rowDept p{
+    bottom: 10px;
+    right: 31px;
+    position: relative;
+    font-size: 13.30px;
+    padding: 5px;
+    border-radius: 3px;
+    color: black;
+    display: inline-block;
+   background-color: #ddd;
+   cursor: pointer;
+}
+
+.menuDept{
+    display: flex;
+    flex-direction: column;
+    width: 120px;
+    position: relative;
+    left: 155px;
+    color: white;
+    bottom: 34px;
+    border-radius: 3px;
+    padding: 3px;
+    background-color: #2b2b2b;
+    overflow: none;
+}
+
+.menuDept li{
+    width: 110px;
+    display: inline-block;
+    border-bottom:2px solid #3b6895 ;
+}
+
+/* botões */
+
+.rowControlDescription{
+    display: flex;
+}
+
+.btnSaveDescription{
+    margin-top: .5em;
+    font-size: 16px;
+    padding: 5px;
+    color: white;
+    background-color:#69a312 ;
+}
+
+.btnEditDescription{
+    margin-top: .5em;
+    margin-left: 1em;
+    font-size: 16px;
+    padding: 5px;
+    color: white;
+    background-color:#00a2ff ;
+}
+
+/* Área de usuários vinculados */
+.usersVinculated{
+    position: relative;
+    top: 5em;
+    display: flex;
+}
+
+.user{
+    margin: 0 0 0 1em;
+    padding: 10px;
+    border-radius: 3px;
+    background-color:  #8c8c8c;
+    cursor: pointer;
 }

@@ -32,7 +32,7 @@
   padding: 0 5px;
   align-items: center;
 }
-.taskName h2 {
+.taskName > h2 {
   margin-left: 10px;
   padding:5px;
   border-radius: 3px;

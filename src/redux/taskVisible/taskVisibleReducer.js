@@ -13,18 +13,18 @@ const taskVisibleReducer = (state = initialState, action) => {
     case TASKINFO:
       return{
           ...state,
-          id:action.id,
-          description:action.description, 
-          full_description:action.full_description,
-          initial_date:action.initial_date,
-          final_date:action.final_date,
-          state_id:action.state_id,
-          priority:action.priority,
-          user_id:action.user_name,
-          comshopdepsub_id:action.comshopdepsub_id,
-          state_description:action.state_description,
-          progress:action.progress,
-          expire:action.expire 
+          id:action.info.id,
+          description:action.info.description, 
+          full_description:action.info.full_description,
+          initial_date:action.info.initial_date,
+          final_date:action.info.final_date,
+          state_id:action.info.state_id,
+          priority:action.info.priority,
+          user_id:action.info.user_name,
+          comshopdepsub_id:action.info.comshopdepsub_id,
+          state_description:action.info.state_description,
+          progress:action.info.progress,
+          expire:action.info.expire 
       }  
     default:
       return state
