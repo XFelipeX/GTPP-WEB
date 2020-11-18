@@ -22,7 +22,7 @@ const TaskDate = ({ task }) => {
       alert('não pode ser menor ou igual a zero');
     }else{
       try {
-        await api.put(`Task.php?AUTH=${permissions.session}`, {
+        await api.put(`GTPP/Task.php?AUTH=${permissions.session}&app_id=3`, {
           "task_id": task.id,
           "days": parseInt(input)
         }).then(() => {

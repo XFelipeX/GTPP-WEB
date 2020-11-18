@@ -17,9 +17,10 @@
     text-align: center;
     width: 60%;
     color: #000;
-    height: 40%;
+    max-height: 40%;
     background-color: #fff;
     border-radius: 20px;
+    
 }
 
 .modal .modalContainer .modalClose{
@@ -61,6 +62,7 @@
     width: 100%;
     height: 5em;
     background-color: #2b2b2b;
+    border-bottom:3px solid #00a2ff;
 }
 
 .modalHeader > h1{
@@ -78,13 +80,14 @@
     background-color:#ddd;
     display: flex;
     border-radius: 0 0 19px 17px;
+    overflow: auto;
 }
 
 /* Informações da task | aba*/
 .modalContent .taskInfo{
     width: 50%;
     background-color: #4b4b4b;
-    height: calc(100%);
+    height:100%;
     border-radius: 0 0 0 17px;
 }
 
@@ -134,7 +137,7 @@
 /* aréa do checklist dos tópicos da tarefa */
 .modalContent .taskTopicList{
     width: 50%;
-    height: calc(100%);
+    height: 100%;
     background-color: rgb(140, 140, 140);
     border-radius: 0 0 17px 0;
 }
@@ -188,11 +191,23 @@
 /*Descricao*/
 .taskDescription{
     display: flex;
+    z-index: 5;
 }
 
 .taskDescription h1{
    margin-right: 1em;
 }
+
+.menuDescription{
+    position: absolute;
+    background-color: #353535;
+    max-height: 300px;
+    padding: 10px;
+    left: 33em;
+    z-index: 5;
+    border-radius: 5px;
+}
+
 
 /* botões */
 
@@ -215,6 +230,10 @@
     padding: 5px;
     color: white;
     background-color:#00a2ff ;
+}
+
+.btnEdit{
+    cursor: pointer;
 }
 
 /* Área de usuários vinculados */
@@ -263,7 +282,7 @@
 }
 
 .topicList{
-    max-height: 500px;
+    max-height: 300px;
     overflow: auto;
 }
 
@@ -273,8 +292,9 @@
 }
 
 .addTopic{
-    position: relative;
-    top: 16em;
+    position: absolute;
+    top: 32em;
+    left: 64em;
     display: flex;
     justify-content: center;
     align-items: center;

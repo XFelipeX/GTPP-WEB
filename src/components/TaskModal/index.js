@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { loadTaskItems } from "./functions";
 import "./style.css";
 import userImg from "../../assets/user@2x.png";
 import { taskVisibleUpdate } from "../../redux";
@@ -9,16 +10,32 @@ import { BiCommentAdd } from "react-icons/bi";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import { BiEdit } from "react-icons/bi";
 
-let TaskModal = ({ id = "modal", taskId }) => {
+let TaskModal = ({ id = "modal" }) => {
   // console.log(taskId)
 
   const dispatch = useDispatch();
   //   const {tasks} = useSelector((state) => state);
   const { taskVisible } = useSelector((state) => state);
-  const { taskStates } = useSelector(state => state);
+  const { taskStates } = useSelector((state) => state);
   const [showDept, setShowDept] = useState(false);
+  const [showDesc, setShowDesc] = useState(false);
+  const [taskItem, setTaskItem] = useState([{}]);
 
-  console.log(taskVisible);
+  // console.log(taskVisible);
+
+  useEffect(() => {
+    loadTaskItems(taskVisible.id).then((response) => {
+      if (response.error === true) {
+        //alert("error");
+      } else {
+        //console.log(response.data);
+        setTaskItem(response.data);
+      }
+    });
+  }, []);
+
+  console.log(taskItem);
+
   const handleOutsideClick = (e) => {
     if (e.target.id === id) dispatch(taskVisibleUpdate());
   };
@@ -37,35 +54,47 @@ let TaskModal = ({ id = "modal", taskId }) => {
         <div className="modalContent">
           <div className="taskInfo">
             <div className="row">
-              <h2>
-                <h1>Início </h1>{taskVisible.initial_date}
-              </h2>
-              <h2>
-                <h1>Fim </h1>{taskVisible.final_date}
-              </h2>
+              <h1>Início : {taskVisible.initial_date}</h1>
+              <h1>Fim : {taskVisible.final_date}</h1>
 
-              {taskStates.map(state => (
-        <React.Fragment key={state.id}>
-          {
-            state.id === taskVisible.state_id ?
-              
-              <button className="buttonState stateControl" style={{backgroundColor:'#'+state.color}}>
-                {/* {console.log(state.color)} */}
-                <h2>{state.description}</h2>
-              </button> :
-              null
-          }
-        </React.Fragment>
-      ))}
+              {taskStates.map((state) => (
+                <React.Fragment key={state.id}>
+                  {state.id === taskVisible.state_id ? (
+                    <button
+                      className="buttonState stateControl"
+                      style={{ backgroundColor: "#" + state.color }}
+                    >
+                      {/* {console.log(state.color)} */}
+                      <h2>{state.description}</h2>
+                    </button>
+                  ) : null}
+                </React.Fragment>
+              ))}
             </div>
 
             <div className="comshopsubArea">
               <div className="row">
                 <div className="col taskDescription">
                   <h1>Descrição</h1>
-                  <BiEdit size="22"/>
+                  <BiEdit
+                    size="22"
+                    onClick={() => setShowDesc(!showDesc)}
+                    className="btnEdit"
+                  />
+                  {showDesc ? (
+                    <ul className="menuDescription">
+                      <li>
+                        <textarea
+                          rows="5"
+                          value={taskVisible.full_description}
+                        ></textarea>
+                      </li>
+                      <li>
+                        <button className="btnSaveDescription">Salvar</button>
+                      </li>
+                    </ul>
+                  ) : null}
                 </div>
-                
               </div>
               <div className="row">
                 <div className="col">
@@ -128,22 +157,18 @@ let TaskModal = ({ id = "modal", taskId }) => {
 
           <div className="taskTopicList">
             <div className="taskTopicTop">
-              <h1>Itens da tarefa em 50%</h1>
+              <h1>Itens da tarefa em {taskVisible.progress}%</h1>
               <AiOutlineClockCircle size="23" color="#353535" />
             </div>
 
             <div className="topicList">
-              <div className="topic">
-                <input type="checkbox" />
-                <label>Tópico</label>
-                <FaTrash />
-              </div>
-
-              <div className="topic">
-                <input type="checkbox" />
-                <label>Tópico</label>
-                <FaTrash />
-              </div>
+              {taskItem.map((item) => (
+                <div className="topic" key={item.id}>
+                  <input type="checkbox" checked={item.check}/>
+                  <label htmlFor="">{item.description}</label>
+                  <FaTrash/>
+                </div>
+              ))}
             </div>
 
             <div className="addTopic">
