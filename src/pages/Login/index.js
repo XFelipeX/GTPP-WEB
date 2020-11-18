@@ -34,9 +34,9 @@ const Login = () => {
                 console.log(err)
             });
 
-            console.log(data);
+           // console.log(data);
       if (data.error === true) {
-        //alert(data.message)
+        alert("usuário e/ou senha incorretos")
         console.log("entrei no error");
         return;
       }

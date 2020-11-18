@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "./style.css";
+import userImg from "../../assets/user@2x.png";
 import { taskVisibleUpdate } from "../../redux";
 import { AiOutlineClockCircle } from "react-icons/ai";
 import { FaTrash } from "react-icons/fa";
-import {BiCommentAdd} from 'react-icons/bi';
+import { BiCommentAdd } from "react-icons/bi";
+import { AiOutlineUserAdd } from "react-icons/ai";
+import { BiEdit } from "react-icons/bi";
 
 let TaskModal = ({ id = "modal", taskId }) => {
   // console.log(taskId)
@@ -12,6 +15,7 @@ let TaskModal = ({ id = "modal", taskId }) => {
   const dispatch = useDispatch();
   //   const {tasks} = useSelector((state) => state);
   const { taskVisible } = useSelector((state) => state);
+  const { taskStates } = useSelector(state => state);
   const [showDept, setShowDept] = useState(false);
 
   console.log(taskVisible);
@@ -23,7 +27,7 @@ let TaskModal = ({ id = "modal", taskId }) => {
     <div id={id} className="modal" onClick={handleOutsideClick}>
       <div className="modalContainer">
         <div className="modalHeader">
-          <h1>Nome da tarefa</h1>
+          <h1>{taskVisible.description}</h1>
           <button
             className="modalClose"
             onClick={() => dispatch(taskVisibleUpdate())}
@@ -34,28 +38,36 @@ let TaskModal = ({ id = "modal", taskId }) => {
           <div className="taskInfo">
             <div className="row">
               <h2>
-                <h1>Início </h1>22/12/2020
+                <h1>Início </h1>{taskVisible.initial_date}
               </h2>
               <h2>
-                <h1>Fim </h1>28/12/2020
+                <h1>Fim </h1>{taskVisible.final_date}
               </h2>
 
-              <button className="buttonState">
-                <h2>State</h2>
-              </button>
+              {taskStates.map(state => (
+        <React.Fragment key={state.id}>
+          {
+            state.id === taskVisible.state_id ?
+              
+              <button className="buttonState stateControl" style={{backgroundColor:'#'+state.color}}>
+                {/* {console.log(state.color)} */}
+                <h2>{state.description}</h2>
+              </button> :
+              null
+          }
+        </React.Fragment>
+      ))}
             </div>
 
             <div className="comshopsubArea">
               <div className="row">
-                <div className="col">
+                <div className="col taskDescription">
                   <h1>Descrição</h1>
-                  <textarea
-                    cols="36"
-                    rows="7"
-                    readOnly
-                    onClick={() => {}}
-                  ></textarea>
+                  <BiEdit size="22"/>
                 </div>
+                
+              </div>
+              <div className="row">
                 <div className="col">
                   <select>
                     <option>Selecione a companhia</option>
@@ -66,13 +78,6 @@ let TaskModal = ({ id = "modal", taskId }) => {
                   <select>
                     <option>Selecione a loja</option>
                   </select>
-
-                  {/* <select>
-                  <option>Selecione os Departamentos</option>
-                  <input type="checkbox"/>
-                  <option>Frugal</option>
-                  <option>Hetros</option>
-                </select> */}
                 </div>
               </div>
               <div className="rowDept">
@@ -102,48 +107,52 @@ let TaskModal = ({ id = "modal", taskId }) => {
                 ) : null}
               </div>
 
-              <div className="rowControlDescription">
+              {/* <div className="rowControlDescription">
                 <button className="btnSaveDescription">Salvar</button>
                 <button className="btnEditDescription">Editar</button>
-              </div>
+              </div> */}
             </div>
             <div className="usersVinculated">
               <div className="user">
-                <h1>usuários</h1>
+                <div>
+                  <img src={userImg} alt="" width="" />
+                </div>
+              </div>
+              <div className="addUser">
+                <div>
+                  <AiOutlineUserAdd size="20" />
+                </div>
               </div>
             </div>
           </div>
 
           <div className="taskTopicList">
-            <h1>
-              Itens da tarefa em 50% <AiOutlineClockCircle />
-            </h1>
+            <div className="taskTopicTop">
+              <h1>Itens da tarefa em 50%</h1>
+              <AiOutlineClockCircle size="23" color="#353535" />
+            </div>
+
             <div className="topicList">
               <div className="topic">
-                <label>
-                  <input type="checkbox" />
-                  Tópico
-                </label>
+                <input type="checkbox" />
+                <label>Tópico</label>
                 <FaTrash />
               </div>
-                
+
               <div className="topic">
-              <label>
                 <input type="checkbox" />
-                Tópico
-              </label>
-              <FaTrash />
+                <label>Tópico</label>
+                <FaTrash />
               </div>
-
-
-             
             </div>
 
             <div className="addTopic">
-                  <input type="text" size="10"/>
-                  <div>
-                  <button><BiCommentAdd size="30"/></button>
-                  </div>
+              <label>Add item</label>
+              <input type="text" size="10" />
+
+              <button>
+                <BiCommentAdd size="27" color="#353535" />
+              </button>
             </div>
           </div>
 
