@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loadTaskItems } from "./functions";
+import { loadTaskItems, changeItemChecked} from "./functions";
 import "./style.css";
 import userImg from "../../assets/user@2x.png";
 import { taskVisibleUpdate } from "../../redux";
@@ -17,11 +17,18 @@ let TaskModal = ({ id = "modal" }) => {
   //   const {tasks} = useSelector((state) => state);
   const { taskVisible } = useSelector((state) => state);
   const { taskStates } = useSelector((state) => state);
+  const {stateUpdate} = useSelector(state => state);
+  const {taskItemControl} = useSelector(state => state);
   const [showDept, setShowDept] = useState(false);
   const [showDesc, setShowDesc] = useState(false);
   const [taskItem, setTaskItem] = useState([{}]);
 
+
   // console.log(taskVisible);
+
+  // function changeChecked(taskId,itemId,check){
+  //   changeItemChecked(taskId,itemId,check);
+  // }
 
   useEffect(() => {
     loadTaskItems(taskVisible.id).then((response) => {
@@ -32,9 +39,14 @@ let TaskModal = ({ id = "modal" }) => {
         setTaskItem(response.data);
       }
     });
-  }, []);
+  }, [stateUpdate]);
 
-  console.log(taskItem);
+  // useEffect(() => {
+  //   function changeChecked(taskId,itemId,check){
+  //     changeItemChecked(taskId,itemId,check);
+  //   }
+    
+  // },[])
 
   const handleOutsideClick = (e) => {
     if (e.target.id === id) dispatch(taskVisibleUpdate());
@@ -164,7 +176,7 @@ let TaskModal = ({ id = "modal" }) => {
             <div className="topicList">
               {taskItem.map((item) => (
                 <div className="topic" key={item.id}>
-                  <input type="checkbox" checked={item.check}/>
+                  <input type="checkbox" checked={item.check} onChange={() => changeItemChecked(taskVisible.id,item.id,!item.check)}/>
                   <label htmlFor="">{item.description}</label>
                   <FaTrash/>
                 </div>

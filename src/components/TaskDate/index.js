@@ -25,6 +25,7 @@ const TaskDate = ({ task }) => {
         await api.put(`GTPP/Task.php?AUTH=${permissions.session}&app_id=3`, {
           "task_id": task.id,
           "days": parseInt(input)
+          
         }).then(() => {
          dispatch(updateTask())
         // setShow(false);

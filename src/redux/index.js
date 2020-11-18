@@ -17,4 +17,5 @@ export { getCompany } from "./taskCompany/taskCompanyActions";
 export { getTask } from "./tasks/taskActions";
 export { getShop } from "./taskShop/taskShopActions";
 export { taskVisibleUpdate } from "./taskVisible/taskVisibleActions";
-export { taskInfoShow } from './taskVisible/taskVisibleActions';
+export { taskInfoShow } from "./taskVisible/taskVisibleActions";
+export { setItemCheck } from "./taskItem/taskItemActions";
