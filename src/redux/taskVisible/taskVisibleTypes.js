@@ -1,2 +1,3 @@
 export const TASKVISIBLE = "TASKVISIBLE";
 export const TASKINFO = "TASKINFO";
+export const TASKPROGRESS = "TASKPROGRESS";

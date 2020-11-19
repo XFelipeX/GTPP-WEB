@@ -30,6 +30,7 @@ const TaskTable = () => {
                 dispatch(getTask(response.data));
             }
         });
+        // console.log('passou no loadtask')
     },[stateUpdate]);
 
     useEffect(() => {

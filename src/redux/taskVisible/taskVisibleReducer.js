@@ -1,18 +1,18 @@
 import { TASKVISIBLE } from './taskVisibleTypes';
-import {TASKINFO} from './taskVisibleTypes'
+import {TASKINFO} from './taskVisibleTypes';
+import {TASKPROGRESS} from './taskVisibleTypes';
 
 const initialState = false;
 
 
 
 const taskVisibleReducer = (state = initialState, action) => {
-  // console.log(action.payload);
+  console.log(action.info);
   switch (action.type) {
     case TASKVISIBLE:
       return !state 
     case TASKINFO:
       return{
-          ...state,
           id:action.info.id,
           description:action.info.description, 
           full_description:action.info.full_description,
@@ -26,6 +26,11 @@ const taskVisibleReducer = (state = initialState, action) => {
           progress:action.info.progress,
           expire:action.info.expire 
       }  
+    case TASKPROGRESS:
+      return {
+        ...state,
+        progress: action.progress
+      }
     default:
       return state
   }

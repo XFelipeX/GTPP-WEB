@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loadTaskItems, changeItemChecked} from "./functions";
 import {updateTask} from '../../redux';
-import {taskInfoShow} from '../../redux';
+import {taskInfoShow,taskProgress,getTask,} from '../../redux';
 import "./style.css";
 import userImg from "../../assets/user@2x.png";
 import { taskVisibleUpdate } from "../../redux";
@@ -11,6 +11,8 @@ import { FaTrash } from "react-icons/fa";
 import { BiCommentAdd } from "react-icons/bi";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import { BiEdit } from "react-icons/bi";
+import {setItemCheck} from '../../redux';
+import {loadTask} from './functions';
 
 let TaskModal = ({ id = "modal" }) => {
   // console.log(taskId)
@@ -21,35 +23,86 @@ let TaskModal = ({ id = "modal" }) => {
   const { taskStates } = useSelector((state) => state);
   const {stateUpdate} = useSelector(state => state);
   const {taskItemControl} = useSelector(state => state);
+  const [progress,setProgress] = useState();
   const [showDept, setShowDept] = useState(false);
   const [showDesc, setShowDesc] = useState(false);
-  const [taskItem, setTaskItem] = useState([{}]);
+  const [taskItem, setTaskItem] = useState([]);
+  // const [checkItems,setCheckItems] = useState([]);
+  const [actionCheck, setActionCheck] = useState(false);
+
+
+  useEffect(() =>{
+    loadTask().then(response => {
+        if (response.error === true){
+            alert('error')
+        }else{
+            dispatch(getTask(response.data));
+            tasks.map((task) => (
+              task.id === taskVisible.id ? (
+                dispatch(taskInfoShow(task))
+              ): null
+            ))
+        }
+    });
+    console.log('passou no loadtask')
+},[stateUpdate]);
 
 
   // console.log(taskVisible);
 
-  function changeChecked(taskId,itemId,check){
+  // let changeChecked = (taskId,itemId,check) =>{
+  //   // dispatch(updateTask());
+  //   console.log(taskVisible.progress + "antes")
+  //   changeItemChecked(taskId,itemId,!check);
+  //   // console.log(!check);
+  //   dispatch(updateTask());
+  //   console.log(taskVisible.progress + "depois")
+  // }
+
+  // useEffect(() => {
+    
+  //   updateTaskVisible();
+  // },[stateUpdate]);
+
+
+  function changeInputCheck(e,taskId,itemId){
+    // console.log(e)
+    let check = !e;
+    check = 
     changeItemChecked(taskId,itemId,check);
+    // e.target.setAttribute("checked",check);
+    
+    
     dispatch(updateTask());
+    // console.log(e)
   }
+  
+    
+  // useEffect(() => {
+  //   tasks.map((task) => (
+  //     task.id === taskVisible.id ? (
+  //       dispatch(taskInfoShow(task))
+  //     ): null
+  //   ))
+  // },[stateUpdate])
+ 
 
   useEffect(() => {
    
-  },[]);
-
-  useEffect(() => {
     loadTaskItems(taskVisible.id).then((response) => {
       if (response.error === true) {
         //alert("error");
       } else {
         //console.log(response.data);
+        // dispatch(setItemCheck(response.data));
+        // console.log(taskVisible);
         setTaskItem(response.data);
         
-        {tasks.map((task) => (
-          task.id === taskVisible.id ? dispatch(taskInfoShow(task)) : null
-        ))}
+  
+        // console.log(taskItemControl);
+      
         
-        // console.log(taskVisible.progress)
+         console.log(taskVisible.progress)
       }
     });
 
@@ -197,8 +250,10 @@ let TaskModal = ({ id = "modal" }) => {
                   {/* {console.log(item)} */}
              
                   <div className="topic" key={item.id}>
-                  {console.log(item.check)}
-                  <input type="checkbox"  onChange={() => {changeChecked(taskVisible.id,item.id,!(item.check))}} checked={item.check}/>
+                  {/* {console.log(item.check)} */}
+            
+                  <input type="checkbox" onChange={(e) => {changeInputCheck(item.check,taskVisible.id,item.id)}}  checked={item.check}/>
+                  {/* <input type="checkbox"  onChange={() => {changeChecked(taskVisible.id,item.id,item.check)}} checked={item.check}/> */}
                   <label htmlFor="">{item.description}</label>
                   <FaTrash/>
                 </div>

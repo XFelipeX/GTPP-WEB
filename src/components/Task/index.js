@@ -19,6 +19,7 @@ const Task = ({ task }) => {
   const { userPhotos } = useSelector(state => state);
   const { visionMenu } = useSelector(state => state);
   const { taskVisible } = useSelector(state => state);
+  const {stateUpdate} = useSelector(state => state);
  
   const dispatch = useDispatch();
 
@@ -36,9 +37,7 @@ const Task = ({ task }) => {
     loadUserImage()
   }, []);
 
-  setTimeout(() => {
 
-  }, 200);
 
   return (
     <li className="containerTask">

@@ -19,3 +19,4 @@ export { getShop } from "./taskShop/taskShopActions";
 export { taskVisibleUpdate } from "./taskVisible/taskVisibleActions";
 export { taskInfoShow } from "./taskVisible/taskVisibleActions";
 export { setItemCheck } from "./taskItem/taskItemActions";
+export { taskProgress } from './taskVisible/taskVisibleActions';
