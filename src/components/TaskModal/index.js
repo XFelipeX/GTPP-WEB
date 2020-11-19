@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loadTaskItems, changeItemChecked} from "./functions";
+import {updateTask} from '../../redux';
 import "./style.css";
 import userImg from "../../assets/user@2x.png";
 import { taskVisibleUpdate } from "../../redux";
@@ -21,14 +22,16 @@ let TaskModal = ({ id = "modal" }) => {
   const {taskItemControl} = useSelector(state => state);
   const [showDept, setShowDept] = useState(false);
   const [showDesc, setShowDesc] = useState(false);
+  const [check,setCheck] = useState(false);
   const [taskItem, setTaskItem] = useState([{}]);
 
 
   // console.log(taskVisible);
 
-  // function changeChecked(taskId,itemId,check){
-  //   changeItemChecked(taskId,itemId,check);
-  // }
+  function changeChecked(taskId,itemId,check){
+    changeItemChecked(taskId,itemId,check);
+    dispatch(updateTask());
+  }
 
   useEffect(() => {
     loadTaskItems(taskVisible.id).then((response) => {
@@ -37,6 +40,7 @@ let TaskModal = ({ id = "modal" }) => {
       } else {
         //console.log(response.data);
         setTaskItem(response.data);
+        
       }
     });
   }, [stateUpdate]);
@@ -176,7 +180,7 @@ let TaskModal = ({ id = "modal" }) => {
             <div className="topicList">
               {taskItem.map((item) => (
                 <div className="topic" key={item.id}>
-                  <input type="checkbox" checked={item.check} onChange={() => changeItemChecked(taskVisible.id,item.id,!item.check)}/>
+                  <input type="checkbox"  onChange={() => changeChecked(taskVisible.id,item.id,!item.check)} checked={item.check}/>
                   <label htmlFor="">{item.description}</label>
                   <FaTrash/>
                 </div>
