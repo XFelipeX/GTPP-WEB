@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loadTaskItems, changeItemChecked} from "./functions";
 import {updateTask} from '../../redux';
+import {taskInfoShow} from '../../redux';
 import "./style.css";
 import userImg from "../../assets/user@2x.png";
 import { taskVisibleUpdate } from "../../redux";
@@ -15,14 +16,13 @@ let TaskModal = ({ id = "modal" }) => {
   // console.log(taskId)
 
   const dispatch = useDispatch();
-  //   const {tasks} = useSelector((state) => state);
+    const {tasks} = useSelector((state) => state);
   const { taskVisible } = useSelector((state) => state);
   const { taskStates } = useSelector((state) => state);
   const {stateUpdate} = useSelector(state => state);
   const {taskItemControl} = useSelector(state => state);
   const [showDept, setShowDept] = useState(false);
   const [showDesc, setShowDesc] = useState(false);
-  const [check,setCheck] = useState(false);
   const [taskItem, setTaskItem] = useState([{}]);
 
 
@@ -34,6 +34,10 @@ let TaskModal = ({ id = "modal" }) => {
   }
 
   useEffect(() => {
+   
+  },[]);
+
+  useEffect(() => {
     loadTaskItems(taskVisible.id).then((response) => {
       if (response.error === true) {
         //alert("error");
@@ -41,8 +45,16 @@ let TaskModal = ({ id = "modal" }) => {
         //console.log(response.data);
         setTaskItem(response.data);
         
+        {tasks.map((task) => (
+          task.id === taskVisible.id ? dispatch(taskInfoShow(task)) : null
+        ))}
+        
+        // console.log(taskVisible.progress)
       }
     });
+
+   
+   
   }, [stateUpdate]);
 
   // useEffect(() => {
@@ -178,12 +190,22 @@ let TaskModal = ({ id = "modal" }) => {
             </div>
 
             <div className="topicList">
-              {taskItem.map((item) => (
-                <div className="topic" key={item.id}>
-                  <input type="checkbox"  onChange={() => changeChecked(taskVisible.id,item.id,!item.check)} checked={item.check}/>
+              
+              {taskItem.map(item => (
+                  item.id !=null ?
+                  <>
+                  {/* {console.log(item)} */}
+             
+                  <div className="topic" key={item.id}>
+                  {console.log(item.check)}
+                  <input type="checkbox"  onChange={() => {changeChecked(taskVisible.id,item.id,!(item.check))}} checked={item.check}/>
                   <label htmlFor="">{item.description}</label>
                   <FaTrash/>
                 </div>
+            
+              
+                  </>
+                  : null
               ))}
             </div>
 
