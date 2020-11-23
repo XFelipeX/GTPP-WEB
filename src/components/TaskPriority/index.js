@@ -16,26 +16,72 @@ const TaskPriority = ({ task }) => {
 
   const [open, setOpen] = useState(false);
 
-  const updatePriority = async (id) => {
-    console.log(id, "entrei")
-    try {
-      api.put(`GTPP/Task.php?AUTH=${permissions.session}&app_id=3`, {
-        "id": task.id,
-        "description": task.description,
-        "full_description": task.full_description,
-        "final_date": task.final_date,
-        "state": task.state_id,
-        "priority": id,
-        "user_id": task.user_id,
-      }).then(() => {
-        dispatch(updateTask())
-        setOpen(false);
-      });
 
-    } catch (error) {
-      alert(error);
-    }
+  async function updatePriority(id) {
+      const auth = sessionStorage.getItem('token');
+      try {
+        let data = {};
+        (async () => {
+          data = await fetch(
+            "http://192.168.0.99:71/GLOBAL/Controller/GTPP/Task.php?AUTH=" +
+              auth +
+              "&app_id=3",
+            {
+              method: "put",
+              body: JSON.stringify({
+                 id:task.id,
+                 description: task.description,
+                 priority:id
+              }),
+            }
+          )
+            .then((response) => {
+              return response.json();
+            })
+            .then((r) => {
+              setOpen(false);
+              dispatch(updateTask());
+              return r;
+            })
+            .catch((err) => {
+              // console.log(err);
+            });
+
+          if(data.error===true){
+            alert("Somente o criador da tarefa ou administrador pode fazer isto!")
+          }
+        })();
+      } catch (error) {
+        console.log(error);
+      }
+    
   }
+
+  // const updatePriority = async (id) => {
+  //   // console.log(id, "entrei")
+    
+
+    
+
+  //   //  try{
+  //   //   const data = await api.put(`GTPP/Task.php?AUTH=${permissions.session}&app_id=3`, {
+        // "id":task.id,
+        // "description": task.description,
+        // "priority":id
+  //   //   }).then((response) => {
+  //   //     dispatch(updateTask())
+  //   //     setOpen(false);
+  //   //     return response;
+  //   //   })
+
+  //   //   console.log(data);
+  //   //  }catch(error){
+  //   //    console.log(error.message);
+  //   //  } 
+     
+  //     // console.log(message);
+
+  // }
 
 //   let domNode = useClickOutside(() =>{
 //     setShow(false)

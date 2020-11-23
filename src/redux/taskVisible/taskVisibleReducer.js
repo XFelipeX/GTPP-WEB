@@ -7,7 +7,7 @@ const initialState = false;
 
 
 const taskVisibleReducer = (state = initialState, action) => {
-  console.log(action.info);
+  // console.log(action.info);
   switch (action.type) {
     case TASKVISIBLE:
       return !state 

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loadTaskItems, changeItemChecked} from "./functions";
-import {updateTask} from '../../redux';
-import {taskInfoShow,taskProgress,getTask,} from '../../redux';
+import api from "../../services/api";
+import { addItem, changeItemChecked, deleteItem } from "./functions";
+import { updateTask } from "../../redux";
+import { taskInfoShow, taskProgress, getTask } from "../../redux";
 import "./style.css";
 import userImg from "../../assets/user@2x.png";
 import { taskVisibleUpdate } from "../../redux";
@@ -11,42 +12,39 @@ import { FaTrash } from "react-icons/fa";
 import { BiCommentAdd } from "react-icons/bi";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import { BiEdit } from "react-icons/bi";
-import {setItemCheck} from '../../redux';
-import {loadTask} from './functions';
+import { setItemCheck } from "../../redux";
+import { loadTask } from "./functions";
 
 let TaskModal = ({ id = "modal" }) => {
-  // console.log(taskId)
-
   const dispatch = useDispatch();
-    const {tasks} = useSelector((state) => state);
+  const [newItem, setNewItem] = useState("");
+  const { tasks } = useSelector((state) => state);
   const { taskVisible } = useSelector((state) => state);
   const { taskStates } = useSelector((state) => state);
-  const {stateUpdate} = useSelector(state => state);
-  const {taskItemControl} = useSelector(state => state);
-  const [progress,setProgress] = useState();
+  const { stateUpdate } = useSelector((state) => state);
+  const { taskItemControl } = useSelector((state) => state);
+  const [progress, setProgress] = useState();
   const [showDept, setShowDept] = useState(false);
   const [showDesc, setShowDesc] = useState(false);
-  const [taskItem, setTaskItem] = useState([]);
-  // const [checkItems,setCheckItems] = useState([]);
-  const [actionCheck, setActionCheck] = useState(false);
+  const [taskItem, setTaskItem] = useState([{}]);
 
+  // console.log(taskVisible.id);
 
-  useEffect(() =>{
-    loadTask().then(response => {
-        if (response.error === true){
-            alert('error')
-        }else{
-            dispatch(getTask(response.data));
-            tasks.map((task) => (
-              task.id === taskVisible.id ? (
-                dispatch(taskInfoShow(task))
-              ): null
-            ))
-        }
-    });
-    console.log('passou no loadtask')
-},[stateUpdate]);
-
+  //   useEffect(() =>{
+  //     loadTask().then(response => {
+  //         if (response.error === true){
+  //             alert('error')
+  //         }else{
+  //             dispatch(getTask(response.data));
+  //             tasks.map((task) => (
+  //               task.id === taskVisible.id ? (
+  //                 dispatch(taskInfoShow(task))
+  //               ): null
+  //             ))
+  //         }
+  //     });
+  //     console.log('passou no loadtask')
+  // },[stateUpdate]);
 
   // console.log(taskVisible);
 
@@ -60,24 +58,21 @@ let TaskModal = ({ id = "modal" }) => {
   // }
 
   // useEffect(() => {
-    
+
   //   updateTaskVisible();
   // },[stateUpdate]);
 
-
-  function changeInputCheck(e,taskId,itemId){
+  function changeInputCheck(e, taskId, itemId) {
     // console.log(e)
     let check = !e;
-    check = 
-    changeItemChecked(taskId,itemId,check);
+
+    changeItemChecked(taskId, itemId, check);
     // e.target.setAttribute("checked",check);
-    
-    
+
     dispatch(updateTask());
     // console.log(e)
   }
-  
-    
+
   // useEffect(() => {
   //   tasks.map((task) => (
   //     task.id === taskVisible.id ? (
@@ -85,37 +80,76 @@ let TaskModal = ({ id = "modal" }) => {
   //     ): null
   //   ))
   // },[stateUpdate])
- 
 
-  useEffect(() => {
-   
-    loadTaskItems(taskVisible.id).then((response) => {
-      if (response.error === true) {
+  async function loadTaskItems() {
+    const AUTH = sessionStorage.getItem("token");
+    try {
+      const { data } = await api.get("GTPP/TaskItem.php", {
+        params: { AUTH: AUTH, app_id: 3, task_id: taskVisible.id },
+      });
+      // console.log(data)
+      if (data.error === true) {
         //alert("error");
       } else {
         //console.log(response.data);
         // dispatch(setItemCheck(response.data));
         // console.log(taskVisible);
-        setTaskItem(response.data);
-        
-  
-        // console.log(taskItemControl);
-      
-        
-         console.log(taskVisible.progress)
-      }
-    });
+        setTaskItem(data.data);
+        tasks.map((task) =>
+          task.id === taskVisible.id
+            ? dispatch(taskInfoShow(task))
+            : // console.log(task.progress)
+              null
+        );
 
-   
-   
+        // console.log(taskItemControl);
+
+        //  console.log(taskVisible.progress)
+      }
+    } catch (error) {
+      alert("error");
+    }
+  }
+
+  useEffect(() => {
+    loadTaskItems();
+
+    // loadTaskItems(taskVisible.id).then((response) => {
+    //   if (response.error === true) {
+    //     //alert("error");
+    //   } else {
+    //     //console.log(response.data);
+    //     // dispatch(setItemCheck(response.data));
+    //     // console.log(taskVisible);
+    //     setTaskItem(response.data);
+
+    //     // console.log(taskItemControl);
+
+    //      console.log(taskVisible.progress)
+    //   }
+    // });
   }, [stateUpdate]);
 
   // useEffect(() => {
   //   function changeChecked(taskId,itemId,check){
   //     changeItemChecked(taskId,itemId,check);
   //   }
-    
+
   // },[])
+
+  function deleteItemTopic(e, taskId, itemId) {
+    e.preventDefault();
+    deleteItem(taskId, itemId);
+    dispatch(updateTask());
+  }
+
+  function addNewItem(taskId, description) {
+    if (description!=='') {
+      addItem(taskId, description);
+      dispatch(updateTask());
+      setNewItem('');
+    }
+  }
 
   const handleOutsideClick = (e) => {
     if (e.target.id === id) dispatch(taskVisibleUpdate());
@@ -243,32 +277,49 @@ let TaskModal = ({ id = "modal" }) => {
             </div>
 
             <div className="topicList">
-              
-              {taskItem.map(item => (
-                  item.id !=null ?
+              {taskItem.map((item) =>
+                item.id != null ? (
                   <>
-                  {/* {console.log(item)} */}
-             
-                  <div className="topic" key={item.id}>
-                  {/* {console.log(item.check)} */}
-            
-                  <input type="checkbox" onChange={(e) => {changeInputCheck(item.check,taskVisible.id,item.id)}}  checked={item.check}/>
-                  {/* <input type="checkbox"  onChange={() => {changeChecked(taskVisible.id,item.id,item.check)}} checked={item.check}/> */}
-                  <label htmlFor="">{item.description}</label>
-                  <FaTrash/>
-                </div>
-            
-              
+                    {/* {console.log(item)} */}
+
+                    <div className="topic" key={item.id}>
+                      {/* {console.log(item.check)} */}
+
+                      <input
+                        type="checkbox"
+                        onChange={(e) => {
+                          changeInputCheck(item.check, taskVisible.id, item.id);
+                        }}
+                        checked={item.check}
+                      />
+                      {/* <input type="checkbox"  onChange={() => {changeChecked(taskVisible.id,item.id,item.check)}} checked={item.check}/> */}
+                      <label htmlFor="">{item.description}</label>
+                      <a
+                        href=""
+                        onClick={(e) =>
+                          deleteItemTopic(e, taskVisible.id, item.id)
+                        }
+                      >
+                        <FaTrash color="#ff5251" />
+                      </a>
+                    </div>
                   </>
-                  : null
-              ))}
+                ) : null
+              )}
             </div>
 
             <div className="addTopic">
               <label>Add item</label>
-              <input type="text" size="10" />
+              <input
+                type="text"
+                size="10"
+                name="newItem"
+                id="newItem"
+                value={newItem}
+                onChange={(e) => setNewItem(e.target.value)}
+              />
 
-              <button>
+              <button onClick={() => addNewItem(taskVisible.id, newItem)}>
                 <BiCommentAdd size="27" color="#353535" />
               </button>
             </div>
