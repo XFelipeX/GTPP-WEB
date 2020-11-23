@@ -65,9 +65,9 @@ const TaskPriority = ({ task }) => {
 
   //   //  try{
   //   //   const data = await api.put(`GTPP/Task.php?AUTH=${permissions.session}&app_id=3`, {
-        // "id":task.id,
-        // "description": task.description,
-        // "priority":id
+  //       "id":task.id,
+  //       "description": task.description,
+  //       "priority":id
   //   //   }).then((response) => {
   //   //     dispatch(updateTask())
   //   //     setOpen(false);
