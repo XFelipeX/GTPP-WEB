@@ -1,3 +1,11 @@
+/* aréa do checklist dos tópicos da tarefa */
+.taskTopicList{
+    width: 50%;
+    height: 100%;
+    background-color: rgb(140, 140, 140);
+    border-radius: 0 0 17px 0;
+}
+
 .topic{
     padding: 5px;
     margin: 0 auto;
