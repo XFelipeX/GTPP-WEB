@@ -77,10 +77,9 @@
 .modalContent{
     height: 100%;
     text-align: center;
-    background-color:#ddd;
     display: flex;
     border-radius: 0 0 19px 17px;
-    overflow: auto;
+    overflow: none;
 }
 
 /* Informações da task | aba*/
@@ -92,6 +91,7 @@
 }
 
 .modalContent .taskInfo{
+    overflow: auto;
     padding: 1em;
     color: white;
     text-align: left;

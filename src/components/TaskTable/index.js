@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-
+import api from '../../services/api'
 import './style.css';
 
 import Task from '../Task';
@@ -13,6 +13,8 @@ const TaskTable = () => {
     const {permissions} = useSelector(state => state);
     const {stateUpdate} = useSelector(state => state);
     const {visionMenu} = useSelector(state => state);
+    const {taskVisible} = useSelector(state => state);
+    const [vinculatedUsers,setVinculatedUsers] = useState([{}]);
 
     // console.log(permissions)
     const dispatch = useDispatch();
@@ -65,18 +67,40 @@ const TaskTable = () => {
         });
     },[])
 
-    
-
-
-    useEffect(() => {
-        loadUserImages(permissions).then(response => {
-          if (response.error === true) {
-            alert('teste')
-          } else {
-            dispatch(setPhotos(response.data))
-          }
+    async function loadVinculateUsers() {
+        const { data } = await api.get("GTPP/Task_User.php", {
+          params: {
+            AUTH: permissions.session,
+            task_id: taskVisible.id,
+            list_user: "",
+            app_id: 3,
+          },
         });
-      }, []);
+        console.log(data.data);
+        setVinculatedUsers(data.data);
+      }
+
+      useEffect(() => {
+        loadVinculateUsers();
+      },[])
+
+    
+      console.log(vinculatedUsers)
+
+    // useEffect(() => {
+       
+    //     vinculatedUsers.map(user => {
+    //         loadUserImages(permissions,user.user_id).then(response => {
+    //             if (response.error === true) {
+    //               alert('teste')
+    //             } else {
+    //                 console.log(response.data)
+    //               dispatch(setPhotos(response.data))
+    //             }
+    //           });
+    //     })
+        
+    //   }, []);
 
       return (
           <ul className="taskList">

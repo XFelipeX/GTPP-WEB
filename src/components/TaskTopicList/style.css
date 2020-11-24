@@ -4,6 +4,7 @@
     height: 100%;
     background-color: rgb(140, 140, 140);
     border-radius: 0 0 17px 0;
+    overflow: auto;
 }
 
 .topic{
@@ -38,12 +39,10 @@
 }
 
 .addTopic{
-    position: absolute;
-    top: 32em;
-    left: 64em;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 1em 0;
 }
 
 .addTopic label{

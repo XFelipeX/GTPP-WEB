@@ -118,7 +118,6 @@ const TaskTopicList = () => {
           type="text"
           size="10"
           name="newItem"
-          id="newItem"
           value={newItem}
           onChange={(e) => setNewItem(e.target.value)}
         />

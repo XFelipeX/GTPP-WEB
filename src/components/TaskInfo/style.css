@@ -1,7 +1,7 @@
 .menuDept input{
     
     position: relative;
-    left: 4em;
+    left: 8em;
 }
 
 .rowDept{
@@ -27,21 +27,20 @@
 .menuDept{
     display: flex;
     flex-direction: column;
-    width: 120px;
-    position: relative;
-    left: 155px;
+    width: 157px;
+    position: absolute;
+    left: -8px;
     color: white;
-    bottom: 34px;
+    bottom: -76px;
     border-radius: 3px;
     padding: 3px;
     background-color: #2b2b2b;
-    overflow: none;
 }
 
 .menuDept li{
-    width: 110px;
+    width: 144px;
     display: inline-block;
-    border-bottom:2px solid #3b6895 ;
+    border-bottom: 2px solid #3b6895;
 }
 
 /*Descricao*/
@@ -95,7 +94,7 @@
 /* Área de usuários vinculados */
 .usersVinculated{
     position: relative;
-    top:8em;
+    top: 8em;
     width: 100%;
 }
 
