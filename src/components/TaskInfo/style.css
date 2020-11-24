@@ -95,22 +95,40 @@
 /* Área de usuários vinculados */
 .usersVinculated{
     position: relative;
-    top: 9em;
-    display: flex;
+    top:8em;
+    width: 100%;
 }
 
 .user{
-    margin: 0 0 0 1em;
-    padding: 10px 12px;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    overflow-x: scroll;
+    width: 100%;
+}
+
+.userControl{
+    margin: 0 1em .5em 0;
+    
+    background-size: cover;
+    min-width: 30px;
+    min-height: 33px;
+    max-width: 30px;
+    max-height: 33px;
+    
+}
+
+.userControl > img{
     border-radius: 50%;
-    background-color:  #8c8c8c;
-    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    
 }
 
 .addUser{
     margin: 0 0 0 2em;
     padding: 10px;
-    border-radius: 50%;
+   
     cursor: pointer;
     color: white;
     background-color: #3b6895;
