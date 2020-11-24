@@ -1,0 +1,60 @@
+.topic{
+    padding: 5px;
+    margin: 0 auto;
+    width: 90%;
+    color: white;
+    border-bottom: 2px solid #3b6895;
+    display: flex;
+    justify-content: space-between;
+    background-color: #353535;
+}
+
+/* Adicionar tópico */
+
+.taskTopicTop{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+.topicList{
+    max-height: 300px;
+    overflow: auto;
+}
+
+.taskTopicTop h1{
+    color: white;
+    margin: 0 1em 0 0;
+}
+
+.addTopic{
+    position: absolute;
+    top: 32em;
+    left: 64em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.addTopic label{
+    text-shadow: 2px 2px black;
+    color: white;
+    margin: 0 1em 0 0;
+}
+
+.addTopic input{
+    font-size: 16px;
+    width: 300px;
+    color: white;
+    padding: 5px;
+    background-color: #4b4b4b;
+}
+
+.addTopic button{
+    background-color: transparent;
+
+    margin-left: 1em;
+    padding: 2px;
+}
