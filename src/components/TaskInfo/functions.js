@@ -18,3 +18,19 @@ export const updateDescription = async (taskId, description) => {
     console.log(error.message);
   }
 };
+
+export function formatDate(props) {
+    const date = new Date(props)
+    var day = date.getDate();
+    day++
+    if(day < 10){
+      day = "0" + day
+    }
+    var month = date.getMonth();
+    month++
+    if(month < 10){
+      month = "0" + month
+    }
+    var year = date.getFullYear();
+    return day +  "/" + month + "/" + year;
+  }

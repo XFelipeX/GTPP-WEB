@@ -3,7 +3,7 @@ import { AiOutlineUserAdd } from "react-icons/ai";
 import { BiEdit } from "react-icons/bi";
 import { useDispatch,useSelector} from 'react-redux';
 import {updateTask} from '../../redux';
-import {updateDescription} from './functions';
+import {updateDescription,formatDate} from './functions';
 import userImg from "../../assets/user@2x.png";
 import './style.css';
 
@@ -16,6 +16,10 @@ const TaskInfo = () => {
     const [showDesc, setShowDesc] = useState(false);
     const [showDept, setShowDept] = useState(false);
 
+    //formatando datas
+    const dateInitial = formatDate(taskVisible.initial_date);
+    const dateFinal = formatDate(taskVisible.final_date);
+
     function updateFullDescription(taskId,description){
         updateDescription(taskId,description);
         setShowDesc(false);
@@ -25,8 +29,8 @@ const TaskInfo = () => {
     return(
         <div className="taskInfo">
             <div className="row">
-              <h1>Início : {taskVisible.initial_date}</h1>
-              <h1>Fim : {taskVisible.final_date}</h1>
+              <h1>Início : {dateInitial}</h1>
+              <h1>Fim : {dateFinal}</h1>
 
               {taskStates.map((state) => (
                 <React.Fragment key={state.id}>
