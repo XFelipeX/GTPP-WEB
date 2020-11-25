@@ -26,9 +26,9 @@ export const loadTaskStates = async params => {
 
 export const loadUserImages = async (params,id) => {
   const AUTH = params.session
-  console.log("chegou aqui")
+  // console.log("chegou aqui")
   try {
-    const { data } = await api.get('http://192.168.0.99:71/GLOBAL/Controller/EmployeePhoto.php', {params: {"AUTH": AUTH, "id": id, "app_id":3}})
+    const  {data}  = await api.get('http://192.168.0.99:71/GLOBAL/Controller/EmployeePhoto.php', {params: {"AUTH": AUTH, "id": id, "app_id":3}})
     return data;
   } catch (error) {
     console.log(error)
