@@ -29,7 +29,7 @@
 }
 
 .topicList{
-    max-height: 300px;
+    height: 290px;
     overflow: auto;
 }
 
@@ -44,6 +44,7 @@
     align-items: center;
     padding: 1em 0;
 }
+
 
 .addTopic label{
     text-shadow: 2px 2px black;

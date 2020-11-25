@@ -148,7 +148,7 @@ const TaskInfo = () => {
         <div className="user">
           
 
-          {vinculatedUsers.map((user) => (
+          {/* {vinculatedUsers.map((user) => (
             <React.Fragment>
               {userPhotos.map((userPhoto) => (
                 <>
@@ -180,7 +180,7 @@ const TaskInfo = () => {
                 </>
               ))}
             </React.Fragment>
-          ))}
+          ))} */}
         </div>
         {/* <div className="addUser">
                 <div>

@@ -4,7 +4,7 @@ import './style.css';
 import api from "../../services/api";
 
 import userImg from "../../assets/user@2x.png";
-import { updateTask } from "../../redux";
+import { getVinculatedUsers, updateTask } from "../../redux";
 
 // import useClickOutside from '../Button/index'
 
@@ -29,6 +29,7 @@ let TaskUsers = ({ task }) => {
       },
     });
     // console.log(data);
+    dispatch(getVinculatedUsers(data.data));
     setVinculatedUsers(data.data);
   }
 

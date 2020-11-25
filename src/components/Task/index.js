@@ -8,7 +8,7 @@ import TaskUsers from '../TaskUsers';
 import TaskCompany from '../TaskCompany';
 import TaskShop from '../TaskShop';
 import TaskModal from '../TaskModal';
-import {taskInfoShow} from '../../redux'
+import {taskInfoShow, updateTask} from '../../redux'
 // import TaskDept from '../TaskDept'
 
 
@@ -48,7 +48,7 @@ const Task = ({ task }) => {
           <img src={photo} alt="" width='30' height='30' />
           <span className="tooltiptext">{task.user_name}</span>
         </div>
-        <h2 onClick={() => {dispatch(taskInfoShow(task))}}>{task.description}</h2>
+        <h2 onClick={() => {dispatch(taskInfoShow(task), dispatch(updateTask()))}}>{task.description}</h2>
         {taskVisible ? <TaskModal/> : null}
       </div>
       <div className="taskContent">

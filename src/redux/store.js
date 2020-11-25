@@ -13,6 +13,7 @@ import tasks from './tasks/taskReducer';
 import taskShopReducer from './taskShop/taskShopReducer';
 import taskVisibleReducer from './taskVisible/taskVisibleReducer'
 import taskItemReducer from './taskItem/taskItemReducer';
+import vinculatedUsersReducer from './vinculatedUsers/vinculatedUsersReducer';
 
 const rootReducer = combineReducers({
   permissions: userAuthReducer,
@@ -26,6 +27,7 @@ const rootReducer = combineReducers({
   taskShop : taskShopReducer,
   taskVisible : taskVisibleReducer,
   taskItemControl: taskItemReducer,
+  vinculatedUsers:vinculatedUsersReducer,
 })
 
 const persistConfig = {
