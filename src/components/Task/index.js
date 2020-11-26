@@ -9,6 +9,7 @@ import TaskCompany from '../TaskCompany';
 import TaskShop from '../TaskShop';
 import TaskModal from '../TaskModal';
 import {taskInfoShow, updateTask} from '../../redux'
+import {AiOutlineUser} from 'react-icons/ai';
 // import TaskDept from '../TaskDept'
 
 
@@ -26,10 +27,26 @@ const Task = ({ task }) => {
  
   async function loadUserImage() {
     for (let index = 0; index < userPhotos.length; index++) {
-      if (task.user_id === userPhotos[index].user_id) {
-        setPhoto(userPhotos[index].photo)
-      } else {
+      // console.log(userPhotos[index].photo);
+
+      if(userPhotos[index].photo==null){
+        // console.log(userPhotos[index].photo);
+       
+          setPhoto(null);
+          return;
+        
+      }else{
+        if (task.user_id == userPhotos[index].user_id) {
+          // console.log(userPhotos[index].photo);
+          setPhoto(userPhotos[index].photo)
+          return;
+        } else {
+          // setPhoto(null);
+        }
+
       }
+
+      
     }
   }
 
@@ -45,10 +62,25 @@ const Task = ({ task }) => {
       <div className="taskName">
       
         <div className="tooltip" >
-          <img src={photo} alt="" width='30' height='30' />
+          {photo == null ? (
+            
+                          <AiOutlineUser
+                            size="35"
+                            style={{
+                              backgroundColor: "#353535",
+                              borderRadius: "50%",
+                            }}
+                            alt=""
+                            title=""
+                          />
+                        
+          ): (
+            <img src={photo} alt="" width='30' height='30' />
+          )}
+          
           <span className="tooltiptext">{task.user_name}</span>
         </div>
-        <h2 onClick={() => {dispatch(taskInfoShow(task), dispatch(updateTask()))}}>{task.description}</h2>
+        <h2 onClick={() => {dispatch(taskInfoShow(task))}}>{task.description}</h2>
         {taskVisible ? <TaskModal/> : null}
       </div>
       <div className="taskContent">

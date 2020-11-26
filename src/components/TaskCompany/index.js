@@ -23,7 +23,7 @@ const TaskCompany = ({ task }) => {
 
   useEffect(() => {
     updateCompany();
-  }, [stateUpdate]);
+  }, []);
 
   return (
     <div className="containerCompany">

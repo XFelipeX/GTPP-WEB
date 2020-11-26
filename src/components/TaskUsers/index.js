@@ -51,7 +51,7 @@ let TaskUsers = ({ task }) => {
 
   useEffect(() => {
     loadVinculateUsers();
-  }, [stateUpdate]);
+  }, []);
 
   //    const domNode = useClickOutside(()=>{
   //       setShowUsers(false);
@@ -60,6 +60,9 @@ let TaskUsers = ({ task }) => {
   //     const doNode = useClickOutside(()=>{
   //       setIsOpen(false)
   //     })
+
+
+  // console.log(userPhotos);
 
   return (
     <div className="containerUsers">
@@ -73,12 +76,16 @@ let TaskUsers = ({ task }) => {
           {vinculatedUsers.map((user) => (
             <React.Fragment>
               {userPhotos.map((userPhoto) => (
+                
                 <>
                   {user.user_id == userPhoto.user_id &&
                   user.check === true
                  ? (
                     <li>
+
+
                       <img
+                      
                         src={userPhoto.photo}
                         width="35"
                         height="35"

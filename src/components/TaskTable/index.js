@@ -29,7 +29,7 @@ const TaskTable = () => {
   const { taskVisible } = useSelector((state) => state);
   const { vinculatedUsers } = useSelector((state) => state);
   const [takePhotos, setTakePhotos] = useState([]);
-  var takePhoto = [{}];
+  // var takePhoto = [{}];
   // const [vinculatedUsers,setVinculatedUsers] = useState([{}]);
 
   // console.log(permissions)
@@ -117,7 +117,7 @@ const TaskTable = () => {
       const AUTH = sessionStorage.getItem("token");
       let data = {};
       (async () => {
-        let {photo,user_id} = await fetch(
+        let data = await fetch(
           "http://192.168.0.99:71/GLOBAL/Controller/EmployeePhoto.php?AUTH=" +
             AUTH +
             "&app_id=3&id=" +
@@ -135,19 +135,32 @@ const TaskTable = () => {
           });
 
         // console.log(data);
-        let obj;
-        if(photo!=null && user_id!=null){
-            obj = {"user_id":user_id,"photo":photo}
-            setTakePhotos(takePhotos,obj);
-        }
-        // console.log(user_id,photo)
+        // if(data.photo!==null){
+        //   data.photo = convertImage(data.photo);
+        //   setTakePhotos(oldarray => [...oldarray,data]);
+        // }
 
-        // console.log(obj)
-        takePhoto.push(obj);
+   
+          data.photo = convertImage(data.photo);
+          setTakePhotos(oldarray => [...oldarray,data]);
+        
+        
+        // take.push(data);
+        // let obj;
+        // if(photo!=null && user_id!=null){
+        //     obj = {"user_id":user_id,"photo":photo}
+        //     setTakePhotos(takePhotos,obj);
+        // }
+        // // console.log(user_id,photo)
+
+        // // console.log(obj)
+        // takePhoto.push(obj);
         // setTakePhotos(takePhotos+1);  
         // console.log(takePhotos);
 
         // takePhoto.push(data);
+
+        // callback(data);
         
         // takeData(data);
 
@@ -156,8 +169,6 @@ const TaskTable = () => {
           alert("error asasd");
      
           return;
-        }else{
-            return takePhoto;
         }
         // console.log(data);
     
@@ -174,22 +185,36 @@ const TaskTable = () => {
 
   useEffect(() => {
     vinculatedUsers.forEach(user => {
-     loadImages(user.user_id); 
+     loadImages(user.user_id);
  
     })
 
-    // console.log(takePhoto)
-    // dispatch(setPhotos)
+    // takePhoto.push(response);
+    // console.log(takePhotos)
+    // dispatch(setPhotos(takePhotos));
   },[])
 
+  useEffect(() => {
+    dispatch(setPhotos(takePhotos));
+  },[takePhotos])
 
-  function takeData(param){
-    takePhoto.push(param);
-    console.log(takePhoto);
+
+  function convertImage(src){
+    if(src!=null){
+      var image = new Image();
+    image.src = 'data:image/jpeg;base64, '+src;
+    return image.src;
+    }else{
+      return null;
+    }
+    
+
   }
 
- 
-  console.log(takePhoto)
+  function showImages(){
+
+  }
+
 
   return (
     <ul className="taskList">

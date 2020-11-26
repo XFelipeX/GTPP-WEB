@@ -21,7 +21,7 @@ const TaskShop = ({ task }) => {
 
   useEffect(() => {
     showShop();
-  }, [stateUpdate]);
+  }, []);
 
   return (
     <div className="containerShop">
