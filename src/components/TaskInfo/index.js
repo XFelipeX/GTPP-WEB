@@ -49,7 +49,7 @@ const TaskInfo = () => {
 
   useEffect(() => {
     loadVinculateUsers();
-  }, [stateUpdate]);
+  }, []);
 
   return (
     <div className="taskInfo">
@@ -186,6 +186,7 @@ const TaskInfo = () => {
                 <div>
                   <AiOutlineUserAdd size="20" />
                 </div>
+              </div>
               </div> */}
       </div>
     </div>

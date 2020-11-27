@@ -9,14 +9,24 @@ const TaskShop = ({ task }) => {
 
   const { tasks } = useSelector((state) => state);
   const { stateUpdate } = useSelector((state) => state);
+  const initialState = () => [];
   const [shops, setShops] = useState([]);
 
   async function showShop() {
-    const { data } = await api.get("Com_sho_dep_sub.php", {
-      params: { AUTH: permissions.session, app_id: 3 },
-    });
-
-    setShops(data.data);
+    try{
+      const { data } = await api.get("Com_sho_dep_sub.php", {
+        params: { AUTH: permissions.session, app_id: 3 },
+      });
+      if(data.error==true||data==null){
+        console.log(data.error);
+        return data;
+      }
+      setShops(data.data);
+    }catch(error){
+      console.log(error)
+      return [{}];
+    }
+   
   }
 
   useEffect(() => {
@@ -26,8 +36,10 @@ const TaskShop = ({ task }) => {
   return (
     <div className="containerShop">
       <div className="shop">
-        {shops.map((shop) => {
-          <React.Fragment>
+       
+        { shops ? 
+          shops.map((shop) => {
+          <React.Fragment key={shop.id}>
             {tasks.map((task) => {
               <>
                 {shop.id === task.comshopdepsub_id ? (
@@ -36,7 +48,7 @@ const TaskShop = ({ task }) => {
               </>;
             })}
           </React.Fragment>;
-        })}
+        }) : null}
       </div>
 
     </div>

@@ -1,6 +1,7 @@
 import { TASKVISIBLE } from './taskVisibleTypes';
 import {TASKINFO} from './taskVisibleTypes';
 import {TASKPROGRESS} from './taskVisibleTypes';
+import {UPDATETASKVISIBLE} from './taskVisibleTypes';
 
 const initialState = false;
 
@@ -31,6 +32,11 @@ const taskVisibleReducer = (state = initialState, action) => {
         ...state,
         progress: action.progress
       }
+    case UPDATETASKVISIBLE:
+        return {
+          ...state,
+          progress: action.progress
+        }
     default:
       return state
   }

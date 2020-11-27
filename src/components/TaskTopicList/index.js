@@ -14,6 +14,7 @@ const TaskTopicList = () => {
   const { tasks } = useSelector((state) => state);
   const [newItem, setNewItem] = useState("");
   const [taskItem, setTaskItem] = useState([{}]);
+  const [infoTask,setInfoTask] = useState({});
   const dispatch = useDispatch();
 
   async function loadTaskItems() {
@@ -30,19 +31,23 @@ const TaskTopicList = () => {
         // dispatch(setItemCheck(response.data));
         // console.log(taskVisible);
         setTaskItem(data.data);
-        tasks.map((task) =>
-          task.id === taskVisible.id
-            ? dispatch(taskInfoShow(task))
-            : // console.log(task.progress)
-              null
-        );
+        
+        // tasks.map((task) =>
+        //   task.id === taskVisible.id
+        //     ? dispatch(taskInfoShow(task))
+        //     : // console.log(task.progress)
+        //       null
+        // );
 
         // console.log(taskItemControl);
 
         //  console.log(taskVisible.progress)
       }
+
+      return data;
     } catch (error) {
-      alert("error");
+      alert("error items");
+      return [{}];
     }
   }
 
@@ -59,7 +64,8 @@ const TaskTopicList = () => {
 
   useEffect(() => {
     loadTaskItems();
-  }, [stateUpdate]);
+    // dispatch(setInfoTask(taskItem));
+  }, [infoTask]);
 
   function addNewItem(taskId, description) {
     if (description !== "") {
@@ -75,10 +81,21 @@ const TaskTopicList = () => {
     dispatch(updateTask());
   }
 
+  useEffect(() => {
+    async function loadTaskVisible(){
+      let AUTH = sessionStorage.getItem('token');
+      let {data} = await api.get('GTPP/Task.php?AUTH='+AUTH+'&app_id=3&mobile=1&task_id='+taskVisible.id);
+      setInfoTask(data.data);
+      console.log(data);
+    }
+
+    loadTaskVisible();
+  },[stateUpdate])
+
   return (
     <div className="taskTopicList">
       <div className="taskTopicTop">
-        <h1>Itens da tarefa em {taskVisible.progress}%</h1>
+        <h1>Itens da tarefa em {infoTask.percent}%</h1>
         <AiOutlineClockCircle size="23" color="#353535" />
       </div>
 

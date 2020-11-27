@@ -24,13 +24,14 @@ let TaskUsers = ({ task }) => {
       params: {
         AUTH: permissions.session,
         task_id: task.id,
-        list_user: "",
+        list_user:"",
         app_id: 3,
       },
     });
     // console.log(data);
     dispatch(getVinculatedUsers(data.data));
     setVinculatedUsers(data.data);
+    console.log(vinculatedUsers)
   }
 
   let loadUsersAmount = () => {
@@ -51,7 +52,7 @@ let TaskUsers = ({ task }) => {
 
   useEffect(() => {
     loadVinculateUsers();
-  }, []);
+  }, [stateUpdate]);
 
   //    const domNode = useClickOutside(()=>{
   //       setShowUsers(false);
@@ -72,15 +73,17 @@ let TaskUsers = ({ task }) => {
           {loadUsersAmount()}
         </div>
         { open ? (
-          <ul className="vinculatedList" show={open}>
+          <ul className="vinculatedList" >
           {vinculatedUsers.map((user) => (
+            
             <React.Fragment>
               {userPhotos.map((userPhoto) => (
                 
                 <>
-                  {user.user_id == userPhoto.user_id &&
+                  {user.user_id === userPhoto.user_id &&
                   user.check === true
                  ? (
+                
                     <li>
 
 

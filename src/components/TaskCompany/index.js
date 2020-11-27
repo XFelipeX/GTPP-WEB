@@ -28,7 +28,8 @@ const TaskCompany = ({ task }) => {
   return (
     <div className="containerCompany">
       <div className="company">
-        {companies.map((company) => {
+        { companies ?
+          companies.map((company) => {
           <React.Fragment>
             {tasks.map((task) => {
               <>
@@ -38,7 +39,7 @@ const TaskCompany = ({ task }) => {
               </>;
             })}
           </React.Fragment>;
-        })}
+        }) : null}
       </div>
     </div>
   );
