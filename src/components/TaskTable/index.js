@@ -18,24 +18,29 @@ import {
   getTask,
   getShop,
   getVinculatedUsers,
+  taskVisibleUpdate,
+  taskInfoShow
 } from "../../redux";
 import TaskCompany from "../TaskCompany";
 import { BiPhotoAlbum } from "react-icons/bi";
+
 
 const TaskTable = () => {
   const { permissions } = useSelector((state) => state);
   const { stateUpdate } = useSelector((state) => state);
   const { visionMenu } = useSelector((state) => state);
+  const {updateTaskVisible} = useSelector(state => state);
   const { taskVisible } = useSelector((state) => state);
   const { vinculatedUsers } = useSelector((state) => state);
   const [takePhotos, setTakePhotos] = useState([]);
+  const {tasks} = useSelector(state => state);
   // var takePhoto = [{}];
   // const [vinculatedUsers,setVinculatedUsers] = useState([{}]);
 
   // console.log(permissions)
   const dispatch = useDispatch();
 
-  const [tasks, setTasks] = useState([]);
+  // const [tasks, setTasks] = useState([]);
   // const [companies, setCompanies] = useState([]);
 
   useEffect(() => {
@@ -43,12 +48,19 @@ const TaskTable = () => {
       if (response.error === true) {
         alert("error");
       } else {
-        setTasks(response.data);
+        // setTasks(response.data);
         dispatch(getTask(response.data));
+        console.log(tasks);
+        //    tasks.map((task) =>
+        //   task.id === taskVisible.id
+        //     ? dispatch(taskInfoShow(task))
+        //     : // console.log(task.progress)
+        //       null
+        // );
       }
     });
     // console.log('passou no loadtask')
-  }, [stateUpdate]);
+  }, [stateUpdate,updateTaskVisible]);
 
   useEffect(() => {
     loadCompanies().then((response) => {
@@ -77,6 +89,7 @@ const TaskTable = () => {
       if (response.error === true) {
         alert("error");
       } else {
+    
         dispatch(getStates(response.data));
       }
     });
@@ -218,9 +231,10 @@ const TaskTable = () => {
 
   return (
     <ul className="taskList">
-      {tasks.map((task) => (
+      { tasks ?
+        tasks.map((task) => (
         <Task task={task} key={task.id} />
-      ))}
+      )) : null}
     </ul>
   );
 };

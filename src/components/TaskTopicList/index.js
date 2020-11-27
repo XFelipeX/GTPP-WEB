@@ -5,11 +5,13 @@ import { BiCommentAdd } from "react-icons/bi";
 import { AiOutlineClockCircle } from "react-icons/ai";
 import api from "../../services/api";
 import {changeItemChecked,addItem,deleteItem} from './functions';
-import { taskInfoShow, taskProgress, getTask,updateTask } from "../../redux";
+import { taskInfoShow, taskProgress, getTask,updateTask,updateTaskVisi } from "../../redux";
 import "./style.css";
+import updateTaskVisible from "../../redux/taskVisibleUpdate/taskVisibleUpdateReducer";
 
 const TaskTopicList = () => {
   const { taskVisible } = useSelector((state) => state);
+  const {updateTaskVisible} = useSelector(state => state);
   const { stateUpdate } = useSelector((state) => state);
   const { tasks } = useSelector((state) => state);
   const [newItem, setNewItem] = useState("");
@@ -46,31 +48,37 @@ const TaskTopicList = () => {
 
       return data;
     } catch (error) {
-      alert("error items");
+      console.log(error);
       return [{}];
     }
   }
+
+  
 
   function changeInputCheck(e, taskId, itemId) {
     // console.log(e)
     let check = !e;
 
-    changeItemChecked(taskId, itemId, check);
+    changeItemChecked(taskId, itemId, check).then(response => {
+      console.log(response)
+      taskVisible.progress = response.percent;
+      taskVisible.state_id = response.state_id;
+    });
     // e.target.setAttribute("checked",check);
 
-    dispatch(updateTask());
+    dispatch(updateTaskVisi());
     // console.log(e)
   }
 
   useEffect(() => {
     loadTaskItems();
     // dispatch(setInfoTask(taskItem));
-  }, [infoTask]);
+  }, [updateTaskVisible]);
 
   function addNewItem(taskId, description) {
     if (description !== "") {
       addItem(taskId, description);
-      dispatch(updateTask());
+      dispatch(updateTaskVisi());
       setNewItem("");
     }
   }
@@ -78,7 +86,7 @@ const TaskTopicList = () => {
   function deleteItemTopic(e, taskId, itemId) {
     e.preventDefault();
     deleteItem(taskId, itemId);
-    dispatch(updateTask());
+    dispatch(updateTaskVisi());
   }
 
   useEffect(() => {
@@ -86,18 +94,22 @@ const TaskTopicList = () => {
       let AUTH = sessionStorage.getItem('token');
       let {data} = await api.get('GTPP/Task.php?AUTH='+AUTH+'&app_id=3&mobile=1&task_id='+taskVisible.id);
       setInfoTask(data.data);
-      console.log(data);
+      // console.log(data);
     }
 
     loadTaskVisible();
-  },[stateUpdate])
+    // dispatch(updateTask());
+  },[updateTaskVisible])
 
   return (
     <div className="taskTopicList">
+    {infoTask ? (
       <div className="taskTopicTop">
-        <h1>Itens da tarefa em {infoTask.percent}%</h1>
+        <h1>Itens da tarefa em {taskVisible.progress}%</h1>
         <AiOutlineClockCircle size="23" color="#353535" />
       </div>
+    ):null}
+      
 
       <div className="topicList">
         {taskItem.map((item) =>

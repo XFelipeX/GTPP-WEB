@@ -7,7 +7,7 @@ export const changeItemChecked = async (taskId, itemId, check) => {
         "GTPP/TaskItem.php?AUTH=" + AUTH + "&app_id=3",
         { task_id: taskId, id: itemId, check: check }
       );
-      console.log(data);
+      // console.log(data);
       return data;
     } catch (error) {
       return [{}];

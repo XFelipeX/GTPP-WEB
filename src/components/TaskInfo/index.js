@@ -51,6 +51,8 @@ const TaskInfo = () => {
     loadVinculateUsers();
   }, []);
 
+  
+
   return (
     <div className="taskInfo">
       <div className="row">
@@ -148,7 +150,8 @@ const TaskInfo = () => {
         <div className="user">
           
 
-          {vinculatedUsers.map((user) => (
+          { vinculatedUsers ?
+            vinculatedUsers.map((user) => (
             <React.Fragment>
               {userPhotos.map((userPhoto) => (
                 <>
@@ -180,7 +183,7 @@ const TaskInfo = () => {
                 </>
               ))}
             </React.Fragment>
-          ))}
+          )) : null}
         </div>
         {/* <div className="addUser">
                 <div>
