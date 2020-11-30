@@ -22,4 +22,4 @@ export { setItemCheck } from "./taskItem/taskItemActions";
 // export { taskProgress } from './taskVisible/taskVisibleActions';
 export { getVinculatedUsers } from './vinculatedUsers/vinculatedUsersActions';
 export { updateTaskTopic} from './taskTopicUpdate/taskTopicUpdateActions';
-export {updateTaskVisi} from './taskVisibleUpdate/taskVisibleUpdateActions';
+export {getTaskCsds} from './taskCsds/taskCsdsActions';

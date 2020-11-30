@@ -3,11 +3,12 @@ import { AiOutlineUserAdd } from "react-icons/ai";
 import { AiOutlineUser } from "react-icons/ai";
 import { BiEdit } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
-import { updateTask } from "../../redux";
+import { setCompanyVisi, updateTask } from "../../redux";
 import { updateDescription, formatDate } from "./functions";
 import userImg from "../../assets/user@2x.png";
 import api from "../../services/api";
 import "./style.css";
+import { copyFile } from "fs";
 
 const TaskInfo = () => {
   const dispatch = useDispatch();
@@ -16,6 +17,20 @@ const TaskInfo = () => {
   const { stateUpdate } = useSelector((state) => state);
   const { userPhotos } = useSelector((state) => state);
   const { permissions } = useSelector((state) => state);
+  const { taskCompanies } = useSelector((state) => state);
+
+  const { taskCsds } = useSelector((state) => state);
+
+  // console.log(taskCompany);
+
+  // if(taskCsds.csds!=null){
+  //    taskCsds.csds.map((csds) => {
+  //   setTaskCompany(csds)
+  // })
+  // }
+
+  console.log(taskCsds);
+
   const [fullDescription, setFullDescription] = useState(
     taskVisible.full_description
   );
@@ -50,8 +65,6 @@ const TaskInfo = () => {
   useEffect(() => {
     loadVinculateUsers();
   }, []);
-
-  
 
   return (
     <div className="taskInfo">
@@ -108,11 +121,17 @@ const TaskInfo = () => {
         </div>
         <div className="row">
           <div className="col">
-            <select>
-              <option>Selecione a companhia</option>
-              <option>Peg Pese</option>
-              <option>Frugal</option>
-              <option>Hetros</option>
+            <select onChange={e => {}} >
+              {taskCsds.csds===null ? (<option selected>Selecione uma Companhia</option>):null}
+              {taskCompanies.map((company) => (
+                <>
+                 {taskCsds.csds!=null && company.id===taskCsds.csds.company_id ? (<option selected={true} key={company.id}>{company.description}</option>): (
+                  <option key={company.id}>{company.description}</option>
+                 )}
+                
+                  
+                </>
+              ))}
             </select>
             <select>
               <option>Selecione a loja</option>
@@ -148,42 +167,42 @@ const TaskInfo = () => {
       </div>
       <div className="usersVinculated">
         <div className="user">
-          
-
-          { vinculatedUsers ?
-            vinculatedUsers.map((user) => (
-            <React.Fragment>
-              {userPhotos.map((userPhoto) => (
-                <>
-                  {user.user_id == userPhoto.user_id && user.check === true ? (
-                    userPhoto.photo !== "" ? (
-                      <div className="userControl">
-                        <img
-                          src={userPhoto.photo}
-                          alt={user.name}
-                          title={user.name}
-                        />
-                      </div>
-                    ) : (
-                      <div className="userControl">
-                        {
-                          <AiOutlineUser
-                            size="35"
-                            style={{
-                              backgroundColor: "#353535",
-                              borderRadius: "50%",
-                            }}
-                            alt={user.name}
-                            title={user.name}
-                          />
-                        }
-                      </div>
-                    )
-                  ) : null}
-                </>
-              ))}
-            </React.Fragment>
-          )) : null}
+          {vinculatedUsers
+            ? vinculatedUsers.map((user) => (
+                <React.Fragment>
+                  {userPhotos.map((userPhoto) => (
+                    <>
+                      {user.user_id == userPhoto.user_id &&
+                      user.check === true ? (
+                        userPhoto.photo !== "" ? (
+                          <div className="userControl">
+                            <img
+                              src={userPhoto.photo}
+                              alt={user.name}
+                              title={user.name}
+                            />
+                          </div>
+                        ) : (
+                          <div className="userControl">
+                            {
+                              <AiOutlineUser
+                                size="35"
+                                style={{
+                                  backgroundColor: "#353535",
+                                  borderRadius: "50%",
+                                }}
+                                alt={user.name}
+                                title={user.name}
+                              />
+                            }
+                          </div>
+                        )
+                      ) : null}
+                    </>
+                  ))}
+                </React.Fragment>
+              ))
+            : null}
         </div>
         {/* <div className="addUser">
                 <div>

@@ -11,7 +11,7 @@ let TaskModal = ({ id = "modal" }) => {
 
   const dispatch = useDispatch();
   const { taskVisible } = useSelector((state) => state);
-
+  // console.log(taskVisible)
   const handleOutsideClick = (e) => {
     if (e.target.id === id) dispatch(taskVisibleUpdate());
   };

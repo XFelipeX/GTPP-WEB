@@ -5,9 +5,9 @@ import { BiCommentAdd } from "react-icons/bi";
 import { AiOutlineClockCircle } from "react-icons/ai";
 import api from "../../services/api";
 import {changeItemChecked,addItem,deleteItem} from './functions';
-import { taskInfoShow, taskProgress, getTask,updateTask,updateTaskVisi } from "../../redux";
+import { taskInfoShow, taskProgress, getTask,updateTask, getTaskCsds } from "../../redux";
 import "./style.css";
-import updateTaskVisible from "../../redux/taskVisibleUpdate/taskVisibleUpdateReducer";
+// import updateTaskVisible from "../../redux/taskVisibleUpdate/taskVisibleUpdateReducer";
 
 const TaskTopicList = () => {
   const { taskVisible } = useSelector((state) => state);
@@ -66,19 +66,19 @@ const TaskTopicList = () => {
     });
     // e.target.setAttribute("checked",check);
 
-    dispatch(updateTaskVisi());
+    dispatch(updateTask());
     // console.log(e)
   }
 
   useEffect(() => {
     loadTaskItems();
     // dispatch(setInfoTask(taskItem));
-  }, [updateTaskVisible]);
+  }, [stateUpdate]);
 
   function addNewItem(taskId, description) {
     if (description !== "") {
       addItem(taskId, description);
-      dispatch(updateTaskVisi());
+      dispatch(updateTask());
       setNewItem("");
     }
   }
@@ -86,7 +86,7 @@ const TaskTopicList = () => {
   function deleteItemTopic(e, taskId, itemId) {
     e.preventDefault();
     deleteItem(taskId, itemId);
-    dispatch(updateTaskVisi());
+    dispatch(updateTask());
   }
 
   useEffect(() => {
@@ -94,12 +94,13 @@ const TaskTopicList = () => {
       let AUTH = sessionStorage.getItem('token');
       let {data} = await api.get('GTPP/Task.php?AUTH='+AUTH+'&app_id=3&mobile=1&task_id='+taskVisible.id);
       setInfoTask(data.data);
+      dispatch(getTaskCsds(data.data));
       // console.log(data);
     }
 
     loadTaskVisible();
     // dispatch(updateTask());
-  },[updateTaskVisible])
+  },[taskVisible])
 
   return (
     <div className="taskTopicList">

@@ -31,7 +31,7 @@ const TaskTable = () => {
   const { permissions } = useSelector((state) => state);
   const { stateUpdate } = useSelector((state) => state);
   const { visionMenu } = useSelector((state) => state);
-  const {updateTaskVisible} = useSelector(state => state);
+  // const {updateTaskVisible} = useSelector(state => state);
   const { taskVisible } = useSelector((state) => state);
   const { vinculatedUsers } = useSelector((state) => state);
   const [takePhotos, setTakePhotos] = useState([]);
@@ -62,7 +62,7 @@ const TaskTable = () => {
       }
     });
     // console.log('passou no loadtask')
-  }, [stateUpdate,updateTaskVisible]);
+  }, [stateUpdate]);
 
   useEffect(() => {
     loadCompanies().then((response) => {
