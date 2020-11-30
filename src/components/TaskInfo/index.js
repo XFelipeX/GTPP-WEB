@@ -14,10 +14,11 @@ const TaskInfo = () => {
   const dispatch = useDispatch();
   const { taskStates } = useSelector((state) => state);
   const { taskVisible } = useSelector((state) => state);
-  const { stateUpdate } = useSelector((state) => state);
+  // const { stateUpdate } = useSelector((state) => state);
   const { userPhotos } = useSelector((state) => state);
-  const { permissions } = useSelector((state) => state);
+  // const { permissions } = useSelector((state) => state);
   const { taskCompanies } = useSelector((state) => state);
+  const {taskShop} = useSelector(state => state);
 
   const { taskCsds } = useSelector((state) => state);
 
@@ -29,7 +30,7 @@ const TaskInfo = () => {
   // })
   // }
 
-  console.log(taskCsds);
+  console.log(taskShop);
 
   const [fullDescription, setFullDescription] = useState(
     taskVisible.full_description
@@ -134,7 +135,16 @@ const TaskInfo = () => {
               ))}
             </select>
             <select>
-              <option>Selecione a loja</option>
+            {taskCsds.csds===null ? (<option selected>Selecione uma Loja</option>):null}
+              {taskShop.map((shop) => (
+                <>
+                 {taskCsds.csds!=null && shop.id===taskCsds.csds.shop_id ? (<option selected={true} key={shop.id}>{shop.description}</option>): (
+                  <option key={shop.id}>{shop.description}</option>
+                 )}
+                
+                  
+                </>
+              ))}
             </select>
           </div>
         </div>

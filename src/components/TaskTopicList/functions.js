@@ -29,8 +29,10 @@ export const changeItemChecked = async (taskId, itemId, check) => {
   
     try{
       const {data} = await api.post("GTPP/TaskItem.php?AUTH="+AUTH+"&app_id=3",{task_id:taskId,description:description});
-      console.log(data);
+      // console.log(data);
+      return data;
     }catch(error){
       alert("erro ao inserir item");
+      return [{}];
     }
   }

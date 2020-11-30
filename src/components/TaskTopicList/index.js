@@ -60,7 +60,7 @@ const TaskTopicList = () => {
     let check = !e;
 
     changeItemChecked(taskId, itemId, check).then(response => {
-      console.log(response)
+      // console.log(response)
       taskVisible.progress = response.percent;
       taskVisible.state_id = response.state_id;
     });
@@ -77,7 +77,11 @@ const TaskTopicList = () => {
 
   function addNewItem(taskId, description) {
     if (description !== "") {
-      addItem(taskId, description);
+      addItem(taskId, description).then(response => {
+        // console.log(response)
+        taskVisible.progress = response.percent;
+        taskVisible.state_id = response.state_id;
+      });;
       dispatch(updateTask());
       setNewItem("");
     }
