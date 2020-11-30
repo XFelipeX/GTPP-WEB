@@ -31,7 +31,9 @@ const TaskInfo = () => {
   // })
   // }
 
-  // console.log(taskDepts);
+  const csds = taskCsds.csds;
+
+  // console.log(csds);
 
   const [fullDescription, setFullDescription] = useState(
     taskVisible.full_description
@@ -124,22 +126,23 @@ const TaskInfo = () => {
         <div className="row">
           <div className="col">
             <select onChange={e => {}} >
-              {taskCsds.csds===null ? (<option selected>Selecione uma Companhia</option>):null}
+              {csds==null ? (<option selected>Selecione uma Companhia</option>):null}
               {taskCompanies.map((company) => (
                 <>
-                 {taskCsds.csds!=null && company.id===taskCsds.csds.company_id ? (<option selected={true} key={company.id}>{company.description}</option>): (
+               
+                  {csds!=null && csds[0].company_id==company.id ? (<option selected={true} key={company.id}>{company.description}</option>) : (
                   <option key={company.id}>{company.description}</option>
                  )}
-                
+                 
                   
                 </>
               ))}
             </select>
             <select>
-            {taskCsds.csds===null ? (<option selected>Selecione uma Loja</option>):null}
+            {csds===null ? (<option selected>Selecione uma Loja</option>):null}
               {taskShop.map((shop) => (
                 <>
-                 {taskCsds.csds!=null && shop.id===taskCsds.csds.shop_id ? (<option selected={true} key={shop.id}>{shop.description}</option>): (
+                 {csds!=null && shop.id===csds[0].shop_id ? (<option selected={true} key={shop.id}>{shop.description}</option>): (
                   <option key={shop.id}>{shop.description}</option>
                  )}
                 
@@ -157,10 +160,17 @@ const TaskInfo = () => {
           {showDept ? (
             <ul className="menuDept">
               {taskDepts.map(dept => (
+              
                 <li key={dept.id}>
-                <label htmlFor="">{dept.description}</label>
-                <input type="checkbox" />
+                {csds!=null ? (
+                  csds.map(info => {console.log(info)})
+
+                ):(
+                 null
+                )}
+                
               </li>
+              
               ))}
               {/* <li>
                 <label htmlFor="">1 TI</label>
@@ -263,3 +273,9 @@ export default TaskInfo;
           ))}
         </ul> */
 }
+
+
+                  {/* <>
+                  <label htmlFor="">{dept.description}</label>
+                  <input type="checkbox" />
+                  </> */}
