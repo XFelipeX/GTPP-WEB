@@ -3,6 +3,6 @@ import {GET_DEPTS} from './taskDeptsTypes';
 export const getDepts = (info) => {
   return{
     type: GET_DEPTS,
-    payload: info
+    info: info
   }
 }

@@ -6,10 +6,10 @@ const initialState = [{
 }]
 
 const taskDeptsReducer = (state = initialState, action) => {
-    // console.log(action.payload)
+    // console.log(action.info)
   switch (action.type) {
     case GET_DEPTS:
-      return action.payload
+      return action.info
     default:
       return state
   }

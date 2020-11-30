@@ -19,6 +19,7 @@ const TaskInfo = () => {
   // const { permissions } = useSelector((state) => state);
   const { taskCompanies } = useSelector((state) => state);
   const {taskShop} = useSelector(state => state);
+  const {taskDepts} = useSelector(state => state);
 
   const { taskCsds } = useSelector((state) => state);
 
@@ -30,7 +31,7 @@ const TaskInfo = () => {
   // })
   // }
 
-  console.log(taskShop);
+  // console.log(taskDepts);
 
   const [fullDescription, setFullDescription] = useState(
     taskVisible.full_description
@@ -155,7 +156,13 @@ const TaskInfo = () => {
 
           {showDept ? (
             <ul className="menuDept">
-              <li>
+              {taskDepts.map(dept => (
+                <li key={dept.id}>
+                <label htmlFor="">{dept.description}</label>
+                <input type="checkbox" />
+              </li>
+              ))}
+              {/* <li>
                 <label htmlFor="">1 TI</label>
                 <input type="checkbox" />
               </li>
@@ -170,7 +177,7 @@ const TaskInfo = () => {
               <li>
                 <label htmlFor="">1 TI</label>
                 <input type="checkbox" />
-              </li>
+              </li> */}
             </ul>
           ) : null}
         </div>

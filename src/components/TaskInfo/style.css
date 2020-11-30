@@ -1,7 +1,6 @@
 .menuDept input{
-    
-    position: relative;
-    left: 8em;
+    position: absolute;
+    left: 11em;
 }
 
 .rowDept{
@@ -27,18 +26,21 @@
 .menuDept{
     display: flex;
     flex-direction: column;
-    width: 157px;
+    width: 180px;
+    height: 200px;
+    overflow: auto;
     position: absolute;
-    left: -8px;
+    left: -2em;
     color: white;
-    bottom: -76px;
+    bottom: -192px;
     border-radius: 3px;
     padding: 3px;
     background-color: #2b2b2b;
 }
 
 .menuDept li{
-    width: 144px;
+    padding: .2em;
+    width: 170px;
     display: inline-block;
     border-bottom: 2px solid #3b6895;
 }
