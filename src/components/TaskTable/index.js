@@ -10,12 +10,14 @@ import {
   loadUserImages,
   loadCompanies,
   loadShop,
+  loadDept,
 } from "./functions";
 import {
   getStates,
   setPhotos,
   getCompany,
   getTask,
+  getDepts,
   getShop,
   getVinculatedUsers,
   taskVisibleUpdate,
@@ -50,7 +52,7 @@ const TaskTable = () => {
       } else {
         // setTasks(response.data);
         dispatch(getTask(response.data));
-        console.log(tasks);
+        // console.log(tasks);
         //    tasks.map((task) =>
         //   task.id === taskVisible.id
         //     ? dispatch(taskInfoShow(task))
@@ -95,35 +97,19 @@ const TaskTable = () => {
     });
   }, []);
 
-  //   console.log(vinculatedUsers)
+  useEffect(() => {
+    loadDept().then((response) => {
+      if (response.error === true) {
+        alert("error");
+      } else {
+    
+        dispatch(getDepts(response.data));
+      }
+    });
+  }, []);
 
-  // useEffect(() => {
 
-  //     vinculatedUsers.map(user => {
-  //         // loadUserImages(permissions,user.user_id).then(response => {
-  //         //     if (response.error === true) {
-  //         //       alert('teste')
-  //         //     } else {
-  //         //         // console.log(response.data)
-  //         //         takePhoto.push(response.data);
-  //         //         setPhotos(photos,response.data);
-  //         //         // console.log(takePhoto)
-  //         //         // setPhotos(...photos,response);
-  //         //     //   dispatch(setPhotos(response))
-  //         //     }
-  //         //   });
 
-  //         const data = loadUserImages(permissions,user.user_id);
-  //           console.log(data);
-
-  //     })
-
-  //     // setPhotos(takePhoto);
-
-  //   }, []);
-
-  //   console.log(photos);
-  //   console.log(takePhoto);
 
   async function loadImages(idUser) {
     try {

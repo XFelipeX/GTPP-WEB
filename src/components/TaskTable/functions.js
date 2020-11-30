@@ -71,3 +71,17 @@ export const loadShop = async () => {
   }
 }
 
+export const loadDept = async () => {
+  const AUTH = sessionStorage.getItem('token');
+
+  try{
+      const {data} = await api.get('Departament.php',{params:{AUTH:AUTH, app_id:3}});
+      // console.log(data);
+      return data;
+  }catch(error){
+      return [{}];
+  }
+}
+
+
+
