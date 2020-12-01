@@ -18,8 +18,8 @@ const TaskInfo = () => {
   const { userPhotos } = useSelector((state) => state);
   // const { permissions } = useSelector((state) => state);
   const { taskCompanies } = useSelector((state) => state);
-  const {taskShop} = useSelector(state => state);
-  const {taskDepts} = useSelector(state => state);
+  const { taskShop } = useSelector((state) => state);
+  const { taskDepts } = useSelector((state) => state);
 
   const { taskCsds } = useSelector((state) => state);
 
@@ -69,6 +69,26 @@ const TaskInfo = () => {
   useEffect(() => {
     loadVinculateUsers();
   }, []);
+
+  function verifyCheck(idDept) {
+    if (csds != null) {
+      let check;
+
+      for (let i = 0; i < csds.length; i++) {
+        if (csds[i].depart_id == idDept) {
+          // console.log(idDept)
+          check = true;
+          break;
+        } else {
+          check = false;
+        }
+      }
+
+      return check;
+    }
+
+    return false;
+  }
 
   return (
     <div className="taskInfo">
@@ -125,28 +145,35 @@ const TaskInfo = () => {
         </div>
         <div className="row">
           <div className="col">
-            <select onChange={e => {}} >
-              {csds==null ? (<option selected>Selecione uma Companhia</option>):null}
+            <select onChange={(e) => {}}>
+              {csds == null ? (
+                <option selected>Selecione uma Companhia</option>
+              ) : null}
               {taskCompanies.map((company) => (
                 <>
-               
-                  {csds!=null && csds[0].company_id==company.id ? (<option selected={true} key={company.id}>{company.description}</option>) : (
-                  <option key={company.id}>{company.description}</option>
-                 )}
-                 
-                  
+                  {csds != null && csds[0].company_id == company.id ? (
+                    <option selected={true} key={company.id}>
+                      {company.description}
+                    </option>
+                  ) : (
+                    <option key={company.id}>{company.description}</option>
+                  )}
                 </>
               ))}
             </select>
             <select>
-            {csds===null ? (<option selected>Selecione uma Loja</option>):null}
+              {csds === null ? (
+                <option selected>Selecione uma Loja</option>
+              ) : null}
               {taskShop.map((shop) => (
                 <>
-                 {csds!=null && shop.id===csds[0].shop_id ? (<option selected={true} key={shop.id}>{shop.description}</option>): (
-                  <option key={shop.id}>{shop.description}</option>
-                 )}
-                
-                  
+                  {csds != null && shop.id === csds[0].shop_id ? (
+                    <option selected={true} key={shop.id}>
+                      {shop.description}
+                    </option>
+                  ) : (
+                    <option key={shop.id}>{shop.description}</option>
+                  )}
                 </>
               ))}
             </select>
@@ -159,18 +186,13 @@ const TaskInfo = () => {
 
           {showDept ? (
             <ul className="menuDept">
-              {taskDepts.map(dept => (
-              
+              {taskDepts.map((dept) => (
                 <li key={dept.id}>
-                {csds!=null ? (
-                  csds.map(info => {console.log(info)})
-
-                ):(
-                 null
-                )}
-                
-              </li>
-              
+                  <>
+                    <label htmlFor="">{dept.description}</label>
+                    <input type="checkbox" checked={verifyCheck(dept.id)} />
+                  </>
+                </li>
               ))}
               {/* <li>
                 <label htmlFor="">1 TI</label>
@@ -274,8 +296,9 @@ export default TaskInfo;
         </ul> */
 }
 
-
-                  {/* <>
+{
+  /* <>
                   <label htmlFor="">{dept.description}</label>
                   <input type="checkbox" />
-                  </> */}
+                  </> */
+}
