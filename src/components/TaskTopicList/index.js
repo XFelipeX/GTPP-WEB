@@ -14,6 +14,7 @@ const TaskTopicList = () => {
   const {updateTaskVisible} = useSelector(state => state);
   const { stateUpdate } = useSelector((state) => state);
   const { tasks } = useSelector((state) => state);
+  const {modalUpdate} = useSelector(state => state);
   const [newItem, setNewItem] = useState("");
   const [taskItem, setTaskItem] = useState([{}]);
   const [infoTask,setInfoTask] = useState({});
@@ -104,7 +105,7 @@ const TaskTopicList = () => {
 
     loadTaskVisible();
     // dispatch(updateTask());
-  },[taskVisible])
+  },[taskVisible,modalUpdate])
 
   return (
     <div className="taskTopicList">

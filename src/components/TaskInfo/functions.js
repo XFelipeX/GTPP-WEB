@@ -19,6 +19,25 @@ export const updateDescription = async (taskId, description) => {
   }
 };
 
+export const updateCheckDept = async (taskId,deptId,shopId,companyId) => {
+  const AUTH = sessionStorage.getItem("token");
+
+  try{
+    const data = await api.post('GTPP/TaskCompany.php?AUTH='+AUTH+'&app_id=3',{
+      task_id:taskId,
+      company_id:companyId,
+      shop_id:shopId,
+      depart_id:deptId
+    });
+
+    // console.log(data);
+    return data
+  }catch(error){
+    console.log(error.message)
+    return [{}];
+  }
+}
+
 export function formatDate(props) {
     const date = new Date(props)
     var day = date.getDate();
