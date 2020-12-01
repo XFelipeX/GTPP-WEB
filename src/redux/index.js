@@ -23,3 +23,4 @@ export { setItemCheck } from "./taskItem/taskItemActions";
 export { getVinculatedUsers } from './vinculatedUsers/vinculatedUsersActions';
 export { updateTaskTopic} from './taskTopicUpdate/taskTopicUpdateActions';
 export {getTaskCsds} from './taskCsds/taskCsdsActions';
+export {updateModal} from './modalUpdate/modalUpdateActions';
