@@ -21,7 +21,7 @@ export const updateDescription = async (taskId, description) => {
 
 export const updateCheckDept = async (taskId,deptId,shopId,companyId) => {
   const AUTH = sessionStorage.getItem("token");
-
+  // console.log(taskId,deptId,shopId,companyId);
   try{
     const data = await api.post('GTPP/TaskCompany.php?AUTH='+AUTH+'&app_id=3',{
       task_id:taskId,
@@ -33,6 +33,35 @@ export const updateCheckDept = async (taskId,deptId,shopId,companyId) => {
     // console.log(data);
     return data
   }catch(error){
+    console.log(error.message)
+    return [{}];
+  }
+}
+
+export const loadShopsCompany = async (idCompany) => {
+  const AUTH = sessionStorage.getItem("token");
+
+  try {
+    const {data} = await api.get('Shop.php?AUTH='+AUTH+'&app_id=3&company_id='+idCompany);
+
+    // console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error.message)
+    return [{}];
+  }
+}
+
+
+export const loadDeptsCompany = async (idCompany,idShop,idTask) => {
+  const AUTH = sessionStorage.getItem("token");
+
+  try {
+    const {data} = await api.get('Departament.php?AUTH='+AUTH+'&app_id=3&company_id='+idCompany+"&shop_id="+idShop+"&task_id="+idTask);
+
+    // console.log(data.data);
+    return data.data;
+  } catch (error) {
     console.log(error.message)
     return [{}];
   }

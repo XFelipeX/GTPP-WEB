@@ -19,8 +19,10 @@ export const changeItemChecked = async (taskId, itemId, check) => {
     try {
       const {data} = await api.delete("GTPP/TaskItem.php",{params:{AUTH:AUTH, app_id:3 , id:itemId,task_id:taskId}})
       console.log(data);
+      return data;
     } catch (error) {
       alert("error ao excluir item");
+      return [{}];
     }
   }
   
