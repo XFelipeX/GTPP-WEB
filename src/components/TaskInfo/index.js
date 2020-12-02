@@ -3,38 +3,43 @@ import { AiOutlineUserAdd } from "react-icons/ai";
 import { AiOutlineUser } from "react-icons/ai";
 import { BiEdit } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
-import { setCompanyVisi, updateTask,updateModal } from "../../redux";
-import { updateDescription, formatDate,updateCheckDept } from "./functions";
+import {
+  setCompanyVisi,
+  updateTask,
+  updateModal,
+  getDepts,
+  getShop,
+  getTaskCsds,
+} from "../../redux";
+import {
+  updateDescription,
+  formatDate,
+  updateCheckDept,
+  loadShopsCompany,
+  loadDeptsCompany,
+} from "./functions";
 import userImg from "../../assets/user@2x.png";
 import api from "../../services/api";
 import "./style.css";
-import { copyFile } from "fs";
-import { loadDept } from "../TaskTable/functions";
+
 
 const TaskInfo = () => {
   const dispatch = useDispatch();
   const { taskStates } = useSelector((state) => state);
   const { taskVisible } = useSelector((state) => state);
-  // const { stateUpdate } = useSelector((state) => state);
   const { userPhotos } = useSelector((state) => state);
-  // const { permissions } = useSelector((state) => state);
   const { taskCompanies } = useSelector((state) => state);
   const { taskShop } = useSelector((state) => state);
   const { taskDepts } = useSelector((state) => state);
-  const {modalUpdate} = useSelector(state => state);
+  const { modalUpdate } = useSelector((state) => state);
 
-  const { taskCsds } = useSelector((state) => state);
+  const [shops, setShops] = useState(false);
+  const [depts, setDepts] = useState(false);
+  const [company, setCompany] = useState(false);
+  const [shop, setShop] = useState({});
 
 
-  // if(taskCsds.csds!=null){
-  //    taskCsds.csds.map((csds) => {
-  //   setTaskCompany(csds)
-  // })
-  // }
-
-  const csds = taskCsds.csds;
-
-  // console.log(csds);
+  const [taskcsds, setTaskCsds] = useState([]);
 
   const [fullDescription, setFullDescription] = useState(
     taskVisible.full_description
@@ -42,7 +47,41 @@ const TaskInfo = () => {
   const [vinculatedUsers, setVinculatedUsers] = useState([]);
   const [showDesc, setShowDesc] = useState(false);
   const [showDept, setShowDept] = useState(false);
-  const {stateUpdate} = useSelector(state => state);
+  const { stateUpdate } = useSelector((state) => state);
+
+  useEffect(() => {
+    async function loadTaskVisible() {
+      let AUTH = sessionStorage.getItem("token");
+      let { data } = await api.get(
+        "GTPP/Task.php?AUTH=" +
+          AUTH +
+          "&app_id=3&mobile=1&task_id=" +
+          taskVisible.id
+      );
+      setTaskCsds(data.data.csds);
+    
+      if (data.data.csds !== null) {
+        loadShopsCompany(data.data.csds[0].company_id).then((response) => {
+          setShops(response.data);
+        });
+        loadDeptsCompany(
+          data.data.csds[0].company_id,
+          data.data.csds[0].shop_id,
+          taskVisible.id
+        ).then((response) => {
+          setDepts(response);
+        });
+        setCompany(data.data.csds[0].company_id);
+        setShop(data.data.csds[0].shop_id);
+      }else{
+        setDepts(false);
+        setShops(false);
+        setShowDept(false);
+      }
+    }
+
+    loadTaskVisible();
+  }, [modalUpdate]);
 
   //formatando datas
   const dateInitial = formatDate(taskVisible.initial_date);
@@ -72,85 +111,52 @@ const TaskInfo = () => {
     loadVinculateUsers();
   }, []);
 
-  // function verifyCheck(idDept) {
-  //   if (csds != null) {
-  //     let check;
-
-  //     for (let i = 0; i < csds.length; i++) {
-  //       if (csds[i].depart_id == idDept) {
-  //         // console.log(idDept)
-  //         check = true;
-  //         break;
-  //       } else {
-  //         check = false;
-  //       }
-  //     }
-
-  //     return check;
-  //   }
-
-  //   return false;
-  // }
-
-  function verifyCheck(idDept) {
-    if (csds != null) {
-      let check;
-
-      for (let i = 0; i < csds.length; i++) {
-        if (csds[i].depart_id == idDept) {
-          // console.log(idDept)
-          check = true;
-          break;
-        } else {
-          check = false;
-        }
-      }
-
-      return check;
-    }
-
-    return false;
-  }
-
-
-  let loadDepts = () => {
-    let depts = [];
-    for(let i =0 ;i<taskDepts.length;i++){
-      // let check = "check":false;
-      taskDepts[i].check = verifyCheck(taskDepts[i].id);
-      depts.push(taskDepts[i]);
-    }
-
-    return depts;
-    // console.log(depts);
-  }
+  
 
   useEffect(() => {
-    loadDepts();
-  },[modalUpdate])
-
-
-  function changeCheckDept(taskId,deptId,shopName,companyName){
-    if(shopName==''||companyName==''){
-      alert('Selecione companhia e loja!')
-    }else{
-
-    
-    try {
-      let company = taskCompanies.filter((company) => company.description == companyName);
-      let shop = taskShop.filter((shop) => shop.description == shopName);
-  
-      updateCheckDept(taskId,deptId,shop[0].id,company[0].id).then(response => {})
-  
-      // console.log(company,shop)
-  
-      dispatch(updateModal());
-    } catch (error) {
-      console.log('Erro ao selecionar departamento!');
+    // console.log(company)
+    function loadShops() {
+      if (company != "-1") {
+        // dispatch(getDepts([]));
+        setDepts(false);
+        setShowDept(false);
+        setCompany(company);
+        loadShopsCompany(company).then((response) => {
+          setShops(response.data);
+        });
+      }
     }
-  }
-   
-    // console.log(e.target.checked);
+
+    loadShops();
+  },[company])
+
+  useEffect(() => {
+    loadShopsCompany(company).then((response) => {
+      setShops(response.data);
+    });
+  }, [company]);
+
+  useEffect(() => {
+      loadDeptsCompany(company, shop, taskVisible.id).then((response) => {
+        setDepts(response);
+      });
+  },[shop])
+
+
+  function changeCheckDept(taskId, deptId, shopId, companyId) {
+    if (shopId == "-1" || companyId == "-1") {
+      alert("Selecione companhia e loja!");
+    } else {
+      try {
+          updateCheckDept(taskId, deptId, shopId, companyId).then((response) => {
+          console.log(response)
+          dispatch(updateModal());
+
+        });
+      } catch (error) {
+        console.log("Erro ao selecionar departamento!");
+      }
+    }
   }
 
   return (
@@ -208,56 +214,80 @@ const TaskInfo = () => {
         </div>
         <div className="row">
           <div className="col">
-            <select onChange={(e) => {}} id="company">
-              {csds == null ? (
-                <option selected value=''>Selecione uma Companhia</option>
-              ) : null}
-              {taskCompanies.map((company) => (
+            <select onChange={(e) => setCompany(e.target.value)} id="company">
+             
+                <option selected value="-1">Selecione uma Companhia</option>
+            
+              {taskCompanies.map((comp) => (
                 <>
-                  {csds != null && csds[0].company_id == company.id ? (
-                    <option selected={true} key={company.id}>
-                      {company.description}
+                  {taskcsds != null && company == comp.id ? (
+                    <option selected key={comp.id} value={comp.id}>
+                      {comp.description}
                     </option>
                   ) : (
-                    <option key={company.id}>{company.description}</option>
+                    <option key={comp.id} value={comp.id}>
+                      {comp.description}
+                    </option>
                   )}
                 </>
               ))}
             </select>
-            <select id="shop">
-              {csds === null ? (
-                <option selected value=''>Selecione uma Loja</option>
-              ) : null}
-              {taskShop.map((shop) => (
-                <>
-                  {csds != null && shop.id == csds[0].shop_id ? (
-                    <option selected={true} key={shop.id}>
-                      {shop.description}
-                    </option>
-                  ) : (
-                    <option key={shop.id}>{shop.description}</option>
-                  )}
-                </>
-              ))}
+            <select
+              id="shop"
+              onChange={(e) =>
+                setShop(e.target.value)
+              }
+            >
+             
+                <option selected value="-1">Selecione uma Loja</option>
+           
+              {shops
+                ? shops.map((shop) => (
+                    <>
+                      {taskcsds != null && shop.id == taskcsds[0].shop_id ? (
+                        <option selected={true} key={shop.id} value={shop.id}>
+                          {shop.description}
+                        </option>
+                      ) : (
+                        <option key={shop.id} value={shop.id}>
+                          {shop.description}
+                        </option>
+                      )}
+                    </>
+                  ))
+                : null}
             </select>
           </div>
         </div>
         <div className="rowDept">
-          <p onClick={() => setShowDept(!showDept)}>
+          <p onClick={() => (depts ? setShowDept(!showDept) : null)}>
             Selecione os departamentos
           </p>
 
           {showDept ? (
             <ul className="menuDept">
-              {loadDepts().map((dept) => (
-                <li key={dept.id}>
-                  <>
-                    <label htmlFor="">{dept.description}</label>
-                    <input type="checkbox" checked={dept.check} onChange={ 
-                      e => changeCheckDept(taskVisible.id,dept.id,document.getElementById('shop').value,document.getElementById('company').value)} onClick={(e) => {} }/>
-                  </>
-                </li>
-              ))}
+              {depts
+                ? depts.map((dept) => (
+                    <li key={dept.id}>
+                      <>
+                        <label htmlFor="">{dept.description}</label>
+                        <input
+                          type="checkbox"
+                          checked={dept.check}
+                          onChange={(e) => {
+                            changeCheckDept(
+                              taskVisible.id,
+                              dept.id,
+                              shop,
+                              company
+                            );
+                          }}
+                        />
+                      </>
+                    </li>
+                  ))
+                : null}
+
               {/* <li>
                 <label htmlFor="">1 TI</label>
                 <input type="checkbox" />
@@ -317,40 +347,3 @@ const TaskInfo = () => {
 };
 
 export default TaskInfo;
-
-{
-  /* <ul className="vinculatedList" >
-          {vinculatedUsers.map((user) => (
-            <React.Fragment>
-              {userPhotos.map((userPhoto) => (
-                <>
-                  {user.user_id == userPhoto.user_id &&
-                  user.check === true
-                 ? (
-                    <li>
-                      <img
-                        src={userPhoto.photo}
-                        width="35"
-                        height="35"
-                        alt=""
-                      />
-                      <p>{user.name}</p>
-                      {user.user_id != permissions.id ? (<button onClick={() => {}}>
-                        Remover
-                      </button>) : null}
-                      
-                    </li>
-                  ) : null}
-                </>
-              ))}
-            </React.Fragment>
-          ))}
-        </ul> */
-}
-
-{
-  /* <>
-                  <label htmlFor="">{dept.description}</label>
-                  <input type="checkbox" />
-                  </> */
-}
