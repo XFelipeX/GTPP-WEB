@@ -38,3 +38,17 @@ export const changeItemChecked = async (taskId, itemId, check) => {
       return [{}];
     }
   }
+
+  export const updateTopicDescription = async (itemId, description, taskId) => {
+    const AUTH = sessionStorage.getItem("token");
+    try {
+      const { data } = await api.put(
+        "GTPP/TaskItem.php?AUTH=" + AUTH + "&app_id=3",
+        { task_id: taskId, id: itemId, description: description }
+      );
+      // console.log(data);
+      return data;
+    } catch (error) {
+      return [{}];
+    }
+  };
