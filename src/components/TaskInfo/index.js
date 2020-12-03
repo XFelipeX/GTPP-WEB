@@ -131,6 +131,7 @@ const TaskInfo = () => {
   },[company])
 
   useEffect(() => {
+   
     loadShopsCompany(company).then((response) => {
       setShops(response.data);
     });
@@ -148,8 +149,14 @@ const TaskInfo = () => {
       alert("Selecione companhia e loja!");
     } else {
       try {
+           if(taskcsds != null && companyId!=taskcsds[0].company_id){
+      for(let i = 0; i<taskcsds.length;i++){
+        changeCheckDept(taskVisible.id,taskcsds[i].depart_id,taskcsds[i].shop_id,taskcsds[i].company_id)
+      }
+    }
+
           updateCheckDept(taskId, deptId, shopId, companyId).then((response) => {
-          console.log(response)
+          // console.log(response)
           dispatch(updateModal());
 
         });
@@ -234,7 +241,7 @@ const TaskInfo = () => {
             </select>
             <select
               id="shop"
-              onChange={(e) =>
+              onClick={(e) =>
                 setShop(e.target.value)
               }
             >

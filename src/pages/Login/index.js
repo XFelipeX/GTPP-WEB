@@ -34,7 +34,7 @@ const Login = () => {
                 console.log(err)
             });
 
-           // console.log(data);
+    try {
       if (data.error === true) {
         alert("usuário e/ou senha incorretos")
         console.log("entrei no error");
@@ -44,6 +44,11 @@ const Login = () => {
       sessionStorage.setItem("token", data.data.session);
       dispatch(logIn(data.data));
       history.push("/main");
+    } catch (error) {
+      console.log(error)
+    }
+           // console.log(data);
+    
       
       })();
       

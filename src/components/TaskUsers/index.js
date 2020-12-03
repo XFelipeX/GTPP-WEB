@@ -68,7 +68,7 @@ let TaskUsers = ({ task }) => {
   return (
     <div className="containerUsers">
       <div className="vinculatedUsers">
-        <div onClick={() => setOpen(!open)}>
+        <div onClick={() => setOpen(!open) }>
           {/* <p>{vinculatedUsers.length}</p> */}
           {loadUsersAmount()}
         </div>
