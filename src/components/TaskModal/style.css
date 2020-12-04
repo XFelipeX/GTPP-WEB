@@ -104,7 +104,7 @@
     justify-content: space-evenly;
 }
 
-.modalContent .taskInfo .comshopsubArea .row{
+/* .modalContent .taskInfo .comshopsubArea .row{
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -128,7 +128,7 @@
 
 .modalContent .taskInfo .comshopsubArea .row .col:nth-child(2){
     width: 40%;
-}
+} */
 
 .modalContent .taskInfo > h2{
     height: .5em;

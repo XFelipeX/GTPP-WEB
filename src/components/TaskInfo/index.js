@@ -21,8 +21,7 @@ import {
 import userImg from "../../assets/user@2x.png";
 import api from "../../services/api";
 import "./style.css";
-import useClickOutside from '../ClickOutside';
-
+import useClickOutside from "../ClickOutside";
 
 const TaskInfo = () => {
   const dispatch = useDispatch();
@@ -38,7 +37,6 @@ const TaskInfo = () => {
   const [depts, setDepts] = useState(false);
   const [company, setCompany] = useState(false);
   const [shop, setShop] = useState({});
-
 
   const [taskcsds, setTaskCsds] = useState([]);
 
@@ -60,7 +58,7 @@ const TaskInfo = () => {
           taskVisible.id
       );
       setTaskCsds(data.data.csds);
-    
+
       if (data.data.csds !== null) {
         loadShopsCompany(data.data.csds[0].company_id).then((response) => {
           setShops(response.data);
@@ -74,7 +72,7 @@ const TaskInfo = () => {
         });
         setCompany(data.data.csds[0].company_id);
         setShop(data.data.csds[0].shop_id);
-      }else{
+      } else {
         setDepts(false);
         setShops(false);
         setShowDept(false);
@@ -112,8 +110,6 @@ const TaskInfo = () => {
     loadVinculateUsers();
   }, []);
 
-  
-
   useEffect(() => {
     // console.log(company)
     function loadShops() {
@@ -129,37 +125,39 @@ const TaskInfo = () => {
     }
 
     loadShops();
-  },[company])
+  }, [company]);
 
   useEffect(() => {
-   
     loadShopsCompany(company).then((response) => {
       setShops(response.data);
     });
   }, [company]);
 
   useEffect(() => {
-      loadDeptsCompany(company, shop, taskVisible.id).then((response) => {
-        setDepts(response);
-      });
-  },[shop])
-
+    loadDeptsCompany(company, shop, taskVisible.id).then((response) => {
+      setDepts(response);
+    });
+  }, [shop]);
 
   function changeCheckDept(taskId, deptId, shopId, companyId) {
     if (shopId == "-1" || companyId == "-1") {
       alert("Selecione companhia e loja!");
     } else {
       try {
-           if(taskcsds != null && companyId!=taskcsds[0].company_id){
-      for(let i = 0; i<taskcsds.length;i++){
-        changeCheckDept(taskVisible.id,taskcsds[i].depart_id,taskcsds[i].shop_id,taskcsds[i].company_id)
-      }
-    }
+        if (taskcsds != null && companyId != taskcsds[0].company_id) {
+          for (let i = 0; i < taskcsds.length; i++) {
+            changeCheckDept(
+              taskVisible.id,
+              taskcsds[i].depart_id,
+              taskcsds[i].shop_id,
+              taskcsds[i].company_id
+            );
+          }
+        }
 
-          updateCheckDept(taskId, deptId, shopId, companyId).then((response) => {
+        updateCheckDept(taskId, deptId, shopId, companyId).then((response) => {
           // console.log(response)
           dispatch(updateModal());
-
         });
       } catch (error) {
         console.log("Erro ao selecionar departamento!");
@@ -167,13 +165,13 @@ const TaskInfo = () => {
     }
   }
 
-  let domNode = useClickOutside(() =>{
-    setShowDesc(false)
-  })
+  // let domNode = useClickOutside(() => {
+  //   setShowDesc(false);
+  // });
 
-  let domNodeDept = useClickOutside(() =>{
-    setShowDept(false)
-  })
+  let domNodeDept = useClickOutside(() => {
+    setShowDept(false);
+  });
 
   return (
     <div className="taskInfo">
@@ -198,7 +196,7 @@ const TaskInfo = () => {
 
       <div className="comshopsubArea">
         <div className="row">
-          <div ref={domNode} className="col taskDescription">
+          <div className="col taskDescription">
             <h1>Descrição</h1>
             <BiEdit
               size="22"
@@ -206,10 +204,15 @@ const TaskInfo = () => {
               className="btnEdit"
             />
             {showDesc ? (
-              <ul className="menuDescription">
+              <div  className="modalDescription">
+              <div >
+             
+              <ul  className="menuDescription">
                 <li>
+                  <h2>Descrição da tarefa</h2>
                   <textarea
-                  spellcheck="false"
+                    placeholder="Esta tarefa tem como objetivo..."
+                    spellcheck="false"
                     rows="5"
                     value={fullDescription}
                     onChange={(e) => setFullDescription(e.target.value)}
@@ -226,15 +229,18 @@ const TaskInfo = () => {
                   </button>
                 </li>
               </ul>
+              </div>
+              </div>
             ) : null}
           </div>
         </div>
-        <div className="row">
-          <div className="col">
+        <div className="rowCompShop">
+          <div>
             <select onChange={(e) => setCompany(e.target.value)} id="company">
-             
-                <option selected value="-1">Selecione uma Companhia</option>
-            
+              <option selected value="-1">
+                Selecione uma Companhia
+              </option>
+
               {taskCompanies.map((comp) => (
                 <>
                   {taskcsds != null && company == comp.id ? (
@@ -249,15 +255,14 @@ const TaskInfo = () => {
                 </>
               ))}
             </select>
-            <select
-              id="shop"
-              onClick={(e) =>
-                setShop(e.target.value)
-              }
-            >
-             
-                <option selected value="-1">Selecione uma Loja</option>
-           
+          </div>
+
+          <div>
+            <select id="shop" onClick={(e) => setShop(e.target.value)}>
+              <option selected value="-1">
+                Selecione uma Loja
+              </option>
+
               {shops
                 ? shops.map((shop) => (
                     <>
@@ -275,44 +280,48 @@ const TaskInfo = () => {
                 : null}
             </select>
           </div>
-        </div>
-        <div ref={domNodeDept} className="rowDept">
-          <p onClick={() => (depts ? setShowDept(!showDept) : null)}>
-            Selecione os departamentos
-          </p>
 
-          {showDept ? (
-            <ul className="menuDept">
-              {depts
-                ? depts.map((dept) => (
-                    <li key={dept.id}>
-                      <>
-                        <label htmlFor="">{dept.description}</label>
-                        <input
-                          type="checkbox"
-                          checked={dept.check}
-                          onChange={(e) => {
-                            changeCheckDept(
-                              taskVisible.id,
-                              dept.id,
-                              shop,
-                              company
-                            );
-                          }}
-                        />
-                      </>
-                    </li>
-                  ))
-                : null}
+          <div>
+            <div ref={domNodeDept} className="depts">
+              <p onClick={() => (depts ? setShowDept(!showDept) : null)}>
+                Selecione os departamentos
+              </p>
 
-              {/* <li>
+              {showDept ? (
+                <ul className="menuDept">
+                  {depts
+                    ? depts.map((dept) => (
+                        <li key={dept.id}>
+                          <>
+                            <label htmlFor="">{dept.description}</label>
+                            <input
+                              type="checkbox"
+                              checked={dept.check}
+                              onChange={(e) => {
+                                changeCheckDept(
+                                  taskVisible.id,
+                                  dept.id,
+                                  shop,
+                                  company
+                                );
+                              }}
+                            />
+                          </>
+                        </li>
+                      ))
+                    : null}
+
+                  {/* <li>
                 <label htmlFor="">1 TI</label>
                 <input type="checkbox" />
               </li> */}
-            </ul>
-          ) : null}
+                </ul>
+              ) : null}
+            </div>
+          </div>
         </div>
       </div>
+
       <div className="usersVinculated">
         <div className="user">
           {vinculatedUsers

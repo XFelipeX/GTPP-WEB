@@ -26,4 +26,8 @@
     justify-content: flex-end;
 }
 
-
+@media only screen and (max-width:1317px){
+    .container-custom{
+        width:800px;
+    }
+}

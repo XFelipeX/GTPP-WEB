@@ -13,7 +13,7 @@ export const updateDescription = async (taskId, description) => {
         return response;
       });
 
-    console.log(data);
+    // console.log(data);
   } catch (error) {
     console.log(error.message);
   }

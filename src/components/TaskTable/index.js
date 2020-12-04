@@ -133,15 +133,15 @@ const TaskTable = () => {
             console.log(err);
           });
 
-        // console.log(data);
-        // if(data.photo!==null){
-        //   data.photo = convertImage(data.photo);
-        //   setTakePhotos(oldarray => [...oldarray,data]);
-        // }
-
-   
+        console.log(data);
+        if(data){
           data.photo = convertImage(data.photo);
           setTakePhotos(oldarray => [...oldarray,data]);
+        }
+
+          
+          // data.photo = convertImage(data.photo);
+          // setTakePhotos(oldarray => [...oldarray,data]);
         
         
         // take.push(data);
@@ -164,11 +164,11 @@ const TaskTable = () => {
         // takeData(data);
 
         // dispatch(setPhotos(data));
-        if (data.error === true) {
-          alert("error asasd");
+        // if (data.error === true) {
+        //   alert("error asasd");
      
-          return;
-        }
+        //   return;
+        // }
         // console.log(data);
     
        // dispatch(logIn(data.data));
