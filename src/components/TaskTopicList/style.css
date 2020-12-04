@@ -18,6 +18,10 @@
     background-color: #353535;
 }
 
+.taskTopicTop button{
+    background-color: transparent;
+}
+
 .topic .topicLeft input{
     margin-right: 1em;
 }
@@ -25,6 +29,71 @@
 .topic .topicLeft{
     display: flex;
     align-items: center;
+}
+
+/* Modal histórico da tarefa */
+.modalHistoric{
+    height: 99vh;
+    width: 100%;
+    position:absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color:white;
+    
+}
+
+.modalHistoric > div{
+    width: 350px;
+    height: 200px;
+    border: 1px solid black;
+    margin-bottom: 13em;
+    background-color: #2b2b2b;
+    border-radius: 10px;
+    overflow:auto;
+}
+
+.modalHistoricContent{
+    
+}
+
+.modalHistoric button{
+
+    margin: .4em;
+    padding:4px 20px;
+}
+
+.historicItems{
+    padding: 5px;
+    margin-bottom: 1em;
+}
+
+.historicItems ul{
+    padding: 8px;
+    margin: 0 auto;
+    width: 90%;
+    max-height: 300px;
+    color: white;
+    border-bottom: 2px solid #3b6895;
+    display: flex;
+    justify-content: space-between;
+    background-color: #353535;
+}
+
+.historicItems ul li{
+    display: block;
+    width: 100%;
+    flex: wrap;
+    margin: 0 1em;
+    overflow: auto;
+    
+}
+
+.modalHistoric .btnCloseHistoric{
+    float: right;
+    
 }
 
 /* Modal editar descrição do tópico */
@@ -37,6 +106,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 15;
 }
 
 .modalEdit > div{
