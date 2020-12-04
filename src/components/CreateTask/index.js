@@ -6,6 +6,7 @@ import medPriority from '../../assets/Path2.png';
 import highPriority from '../../assets/Arrows.png';
 import api from "../../services/api";
 import { updateTask } from "../../redux";
+import useClickOutside from '../ClickOutside';
 
 let CreateTask = () => {
   const dispatch = useDispatch();
@@ -22,6 +23,10 @@ let CreateTask = () => {
   function showMenu() {
     setOpen(!open);
   }
+
+  let domNode = useClickOutside(() =>{
+    setOpen(false)
+  })
 
   async function createTask() {
     let description = document.getElementById("taskDescription").value;
@@ -87,7 +92,7 @@ let CreateTask = () => {
   }
 
   return (
-    <div className="createTaskArea">
+    <div ref={domNode} className="createTaskArea">
       <ul onClick={() => showMenu()}>criar tarefa</ul>
 
       {open ? (

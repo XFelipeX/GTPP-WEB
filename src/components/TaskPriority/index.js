@@ -6,6 +6,7 @@ import lowPriority from '../../assets/Path1.png';
 import medPriority from '../../assets/Path2.png';
 import highPriority from '../../assets/Arrows.png';
 import api from '../../services/api';
+import useClickOutside from '../ClickOutside';
 
 // import useClickOutside from '../Button/index';
 
@@ -87,8 +88,12 @@ const TaskPriority = ({ task }) => {
 //     setShow(false)
 //   })
 
+let domNode = useClickOutside(() =>{
+  setOpen(false)
+})
+
   return (
-    <div className="containerPriority" value={task.priority}>
+    <div ref={domNode} className="containerPriority" value={task.priority}>
       <div onClick={() => setOpen(!open)}>
         <img src={task.priority === 0 ? lowPriority : task.priority === 1 ? medPriority : highPriority} alt="prioridade" />
       </div>

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import {useDispatch, useSelector} from 'react-redux';
 import {setCol, setOrder, updateTask, setStateVisi, setDateVisi, setVincVisi, setPriorityVisi, setCompanyVisi,setShopVisi} from '../../redux';
-import './style.css'
+import './style.css';
+import useClickOutside from '../ClickOutside';
 
 let VisionMenu = () =>{
   const [open, setOpen] = useState(false);
@@ -52,8 +53,13 @@ let VisionMenu = () =>{
     dispatch(setPriorityVisi(value))
   }
 
+
+  let domNode = useClickOutside(() =>{
+    setOpen(false)
+  })
+
   return (
-    <div className="visionMenu">
+    <div ref={domNode} className="visionMenu">
       <p onClick={() => showMenu()}>Visualização</p>
 
       {open ? (

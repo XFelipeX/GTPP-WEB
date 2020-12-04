@@ -6,7 +6,7 @@ import api from "../../services/api";
 import userImg from "../../assets/user@2x.png";
 import { getVinculatedUsers, updateTask } from "../../redux";
 
-// import useClickOutside from '../Button/index'
+import useClickOutside from '../ClickOutside';
 
 let TaskUsers = ({ task }) => {
   const { permissions } = useSelector((state) => state);
@@ -65,9 +65,17 @@ let TaskUsers = ({ task }) => {
 
   // console.log(userPhotos);
 
+  let domNode = useClickOutside(() =>{
+    setOpen(false)
+  })
+
+  let domNode2 = useClickOutside(() =>{
+    setShowUsers(false)
+  })
+
   return (
     <div className="containerUsers">
-      <div className="vinculatedUsers">
+      <div  ref={domNode} className="vinculatedUsers">
         <div onClick={() => setOpen(!open) }>
           {/* <p>{vinculatedUsers.length}</p> */}
           {loadUsersAmount()}
@@ -109,7 +117,7 @@ let TaskUsers = ({ task }) => {
         ) : null}
      
       </div>
-      <div className="userList">
+      <div ref={domNode2} className="userList">
         <div onClick={() => setShowUsers(!showUsers)}>
           <img src={userImg} alt="" width="" />
         </div>
