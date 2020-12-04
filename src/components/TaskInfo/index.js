@@ -21,6 +21,7 @@ import {
 import userImg from "../../assets/user@2x.png";
 import api from "../../services/api";
 import "./style.css";
+import useClickOutside from '../ClickOutside';
 
 
 const TaskInfo = () => {
@@ -166,6 +167,14 @@ const TaskInfo = () => {
     }
   }
 
+  let domNode = useClickOutside(() =>{
+    setShowDesc(false)
+  })
+
+  let domNodeDept = useClickOutside(() =>{
+    setShowDept(false)
+  })
+
   return (
     <div className="taskInfo">
       <div className="row">
@@ -189,7 +198,7 @@ const TaskInfo = () => {
 
       <div className="comshopsubArea">
         <div className="row">
-          <div className="col taskDescription">
+          <div ref={domNode} className="col taskDescription">
             <h1>Descrição</h1>
             <BiEdit
               size="22"
@@ -200,6 +209,7 @@ const TaskInfo = () => {
               <ul className="menuDescription">
                 <li>
                   <textarea
+                  spellcheck="false"
                     rows="5"
                     value={fullDescription}
                     onChange={(e) => setFullDescription(e.target.value)}
@@ -266,7 +276,7 @@ const TaskInfo = () => {
             </select>
           </div>
         </div>
-        <div className="rowDept">
+        <div ref={domNodeDept} className="rowDept">
           <p onClick={() => (depts ? setShowDept(!showDept) : null)}>
             Selecione os departamentos
           </p>
