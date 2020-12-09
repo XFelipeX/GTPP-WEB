@@ -15,7 +15,7 @@
 .menuCreateTask{
     display: flex;
     flex-direction: column;
-    background-color:#ccc;
+    background-color:#343434;
     width: auto;
     color:black;
     padding:5px;
@@ -26,8 +26,8 @@
 .menuCreateTask label{
     padding:.5em 0;
     font-size:16px;
-    color:black;
-    text-shadow: 1px 1px white;
+    color:white;
+   
 }
 
 .menuCreateTask button{
@@ -36,7 +36,7 @@
     margin-top: 1em;
     padding: .5em;
     font-size:16px;
-    background-color:rgb(105, 163, 18);
+    background-color:#00a2ff;
     color:white;
 }
 
@@ -62,10 +62,10 @@
 
 .menuPriority li:first-child{
     text-align:center;
-    color:white;
+    color:black;
     padding: 5px;
     border-radius:3px;
-    background-color: #353535;
+    background-color: #ffffff;
 }
 
 .menuPriority li img{

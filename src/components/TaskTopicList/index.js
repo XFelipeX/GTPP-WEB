@@ -11,10 +11,12 @@ import {
   updateTopicDescription,
   takeHistoricTask
 } from "./functions";
-import { updateModal } from "../../redux";
+import { updateModal, updateTopic } from "../../redux";
 import "./style.css";
 
+
 const TaskTopicList = ({ id = "modalEdit" }) => {
+  const {topicUpdate} = useSelector(state => state);
   const { taskVisible } = useSelector((state) => state);
   const { modalUpdate } = useSelector((state) => state);
   const [newItem, setNewItem] = useState("");
@@ -26,6 +28,9 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   const [idItem, setIdItem] = useState();
   const [taskHistoric,setTaskHistoric] = useState([]);
   const dispatch = useDispatch();
+
+
+  const[loadItems,setLoadItems] = useState(false);
 
   async function loadTaskItems() {
     const AUTH = sessionStorage.getItem("token");
@@ -49,9 +54,12 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
 
   function changeInputCheck(e, taskId, itemId) {
     // tarefa bloqueada
-    if (taskVisible.state_id == 5) {
+    if (taskVisible.state_id == 5 || taskVisible.state_id == 4) {
       alert("A tarefa foi bloqueada!");
-    } else {
+    } else if(taskVisible.state_id == 6){
+      alert("Tarefa finalizada! clique no estado atual da tarefa para ativar novamente.")
+    }
+    else {
       // console.log(e)
       let check = !e;
 
@@ -59,24 +67,32 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
         // console.log(response)
         taskVisible.progress = response.percent;
         taskVisible.state_id = response.state_id;
+        dispatch(updateTopic());
       });
       // e.target.setAttribute("checked",check);
 
-      dispatch(updateModal());
+ 
       // console.log(e)
     }
+
+
+
   }
 
   useEffect(() => {
     loadTaskItems();
     // dispatch(setInfoTask(taskItem));
-  }, [modalUpdate]);
+  }, [topicUpdate]);
 
   function addNewItem(taskId, description) {
-    if (taskVisible.state_id == 5) {
+    if (taskVisible.state_id == 5 || taskVisible.state_id == 4) {
       alert("A tarefa foi bloqueada!");
       setNewItem("");
-    } else {
+    }else if(taskVisible.state_id == 6){
+      alert("Tarefa finalizada! clique no estado atual da tarefa para ativar novamente.")
+    }
+    
+    else {
       if (description !== "") {
         addItem(taskId, description).then((response) => {
           // console.log(response)
@@ -84,6 +100,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
           taskVisible.state_id = response.state_id;
         });
         dispatch(updateModal());
+        dispatch(updateTopic());
         setNewItem("");
       }
     }
@@ -91,22 +108,35 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
 
   function deleteItemTopic(e, taskId, itemId) {
     e.preventDefault();
-    if (taskVisible.state_id == 5) {
+    if (taskVisible.state_id == 5 || taskVisible.state_id == 4) {
       alert("A tarefa foi bloqueada!");
-    } else {
+    }else if(taskVisible.state_id == 6){
+      alert("Tarefa finalizada! clique no estado atual da tarefa para ativar novamente.")
+    }
+     else {
       deleteItem(taskId, itemId).then((response) => {
         // console.log(response)
         taskVisible.progress = response.percent;
         taskVisible.state_id = response.state_id;
       });
       dispatch(updateModal());
+      dispatch(updateTopic());
     }
   }
 
-  function updateTopic(itemId, description, taskId) {
-    updateTopicDescription(itemId, description, taskId);
-    setShowEdit(false);
-    dispatch(updateModal());
+  function updateTopicItem(itemId, description, taskId) {
+    if (taskVisible.state_id == 5 || taskVisible.state_id == 4) {
+      alert("A tarefa foi bloqueada!");
+    }else if(taskVisible.state_id == 6){
+      alert("Tarefa finalizada! clique no estado atual da tarefa para ativar novamente.")
+    }
+     else{
+      updateTopicDescription(itemId, description, taskId);
+      setShowEdit(false);
+      dispatch(updateModal());
+      dispatch(updateTopic());
+    }
+    
   }
 
   // let domNode = useClickOutside(() =>{
@@ -114,17 +144,15 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   //   setShowHistoric(false);
   // })
 
-  useEffect(() => {
-    takeHistoricTask(taskVisible.id).then(response => setTaskHistoric(response.data));
-    
-  },[])
+  // const [loadHistoric, setLoadHistoric] = useState(false);
+
 
   return (
     <div className="taskTopicList">
       <div onClick={() => {}} className="taskTopicTop">
         <h1>Itens da tarefa em {taskVisible.progress}%</h1>
-        <button type="button" onClick={() => setShowHistoric(!showHistoric)}>
-          <AiOutlineClockCircle size="23" color="#353535" />
+        <button type="button" onClick={() => (setShowHistoric(!showHistoric), takeHistoricTask(taskVisible.id).then(response => setTaskHistoric(response.data)))}>
+          <AiOutlineClockCircle size="23" color="white" />
         </button>
 
         {showHistoric ? (
@@ -145,7 +173,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                 {taskHistoric ? (
 
                 taskHistoric.map((historic) => (
-                    <ul key={taskHistoric.length++}>
+                    <ul key={historic.date_time}>
                       <li>{historic.description}  </li>
                       <li>{historic.date_time}</li>
                   </ul>
@@ -178,7 +206,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                 type="button"
                 style={{ backgroundColor: "#69a312", color: "white" }}
                 onClick={() =>
-                  updateTopic(idItem, editDescription, taskVisible.id)
+                  updateTopicItem(idItem, editDescription, taskVisible.id)
                 }
               >
                 Salvar
@@ -199,10 +227,10 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
       <div className="topicList">
         {taskItem.map((item) =>
           item.id != null ? (
-            <>
+            <React.Fragment key={item.id}>
               {/* {console.log(item)} */}
 
-              <div className="topic" key={item.id}>
+              <div className="topic" >
                 {/* {console.log(item.check)} */}
 
                 <div className="topicLeft">
@@ -222,7 +250,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                       setIdItem(item.id);
                     }}
                   >
-                    <AiOutlineEdit class="topicEdit" size={20} color="#dddd" />
+                    <AiOutlineEdit className="topicEdit" size={20} color="#dddd" />
                   </a>
                 </div>
 
@@ -236,11 +264,11 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                     href=""
                     onClick={(e) => deleteItemTopic(e, taskVisible.id, item.id)}
                   >
-                    <FaTrash color="#ff5251" />
+                    <FaTrash color="white" />
                   </a>
                 </div>
               </div>
-            </>
+            </React.Fragment>
           ) : null
         )}
       </div>
@@ -256,7 +284,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
         />
 
         <button onClick={() => addNewItem(taskVisible.id, newItem)}>
-          <BiCommentAdd size="27" color="#353535" />
+          <BiCommentAdd size="27" color="white" />
         </button>
       </div>
     </div>

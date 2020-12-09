@@ -17,6 +17,7 @@ import vinculatedUsersReducer from './vinculatedUsers/vinculatedUsersReducer';
 import taskTopicUpdateReducer from './taskTopicUpdate/taskTopicUpdateReducer';
 import taskCsdsReducer from './taskCsds/taskCsdsReducer';
 import modalUpdateReducer from './modalUpdate/modalUpdateReducer';
+import topicUpdateReducer from './topicUpdate/topicUpdateReducer';
 
 const rootReducer = combineReducers({
   permissions: userAuthReducer,
@@ -34,6 +35,7 @@ const rootReducer = combineReducers({
   updateTopic: taskTopicUpdateReducer,
   taskCsds:taskCsdsReducer,
   modalUpdate: modalUpdateReducer,
+  topicUpdate:topicUpdateReducer
 })
 
 const persistConfig = {

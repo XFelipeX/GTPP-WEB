@@ -7,7 +7,6 @@ import Task from "../Task";
 import {
   loadTask,
   loadTaskStates,
-  loadUserImages,
   loadCompanies,
   loadShop,
   loadDept,
@@ -19,13 +18,7 @@ import {
   getTask,
   getDepts,
   getShop,
-  getVinculatedUsers,
-  taskVisibleUpdate,
-  taskInfoShow
 } from "../../redux";
-import TaskCompany from "../TaskCompany";
-import { BiPhotoAlbum } from "react-icons/bi";
-
 
 const TaskTable = () => {
   const { permissions } = useSelector((state) => state);
@@ -35,15 +28,10 @@ const TaskTable = () => {
   const { taskVisible } = useSelector((state) => state);
   const { vinculatedUsers } = useSelector((state) => state);
   const [takePhotos, setTakePhotos] = useState([]);
-  const {tasks} = useSelector(state => state);
-  // var takePhoto = [{}];
-  // const [vinculatedUsers,setVinculatedUsers] = useState([{}]);
+  const { tasks } = useSelector((state) => state);
 
-  // console.log(permissions)
   const dispatch = useDispatch();
 
-  // const [tasks, setTasks] = useState([]);
-  // const [companies, setCompanies] = useState([]);
 
   useEffect(() => {
     loadTask(permissions, visionMenu).then((response) => {
@@ -51,17 +39,11 @@ const TaskTable = () => {
         alert("error");
       } else {
         // setTasks(response.data);
-        dispatch(getTask(response.data));
-        // console.log(tasks);
-        //    tasks.map((task) =>
-        //   task.id === taskVisible.id
-        //     ? dispatch(taskInfoShow(task))
-        //     : // console.log(task.progress)
-        //       null
-        // );
+        try {
+          dispatch(getTask(response.data));
+        } catch (error) {}
       }
     });
-    // console.log('passou no loadtask')
   }, [stateUpdate]);
 
   useEffect(() => {
@@ -70,7 +52,9 @@ const TaskTable = () => {
         alert("error");
       } else {
         //console.log(response.data);
-        dispatch(getCompany(response.data));
+        try {
+          dispatch(getCompany(response.data != "" ? response.data : []));
+        } catch (error) {}
       }
     });
   }, []);
@@ -81,7 +65,9 @@ const TaskTable = () => {
         alert("error");
       } else {
         //console.log(response.data);
-        dispatch(getShop(response.data));
+        try {
+          dispatch(getShop(response.data != "" ? response.data : []));
+        } catch (error) {}
       }
     });
   }, []);
@@ -91,8 +77,9 @@ const TaskTable = () => {
       if (response.error === true) {
         alert("error");
       } else {
-    
-        dispatch(getStates(response.data));
+        try {
+          dispatch(getStates(response.data));
+        } catch (error) {}
       }
     });
   }, []);
@@ -102,125 +89,56 @@ const TaskTable = () => {
       if (response.error === true) {
         alert("error");
       } else {
-    
-        dispatch(getDepts(response.data));
+        try {
+          dispatch(getDepts(response.data));
+        } catch (error) {}
       }
     });
   }, []);
 
-
-
-
-  async function loadImages(idUser) {
+  const loadUserImages = async (idUser) => {
+    const AUTH = sessionStorage.getItem("token");
     try {
-      const AUTH = sessionStorage.getItem("token");
-      let data = {};
-      (async () => {
-        let data = await fetch(
-          "http://192.168.0.99:71/GLOBAL/Controller/EmployeePhoto.php?AUTH=" +
-            AUTH +
-            "&app_id=3&id=" +
-            idUser,
-          { method: "get"}
-        )
-          .then((response) => {
-            return response.json();
-          })
-          .then((r) => {
-            return r;
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+      const { data } = await api.get(
+        "http://192.168.0.99:71/GLOBAL/Controller/EmployeePhoto.php?AUTH=" +
+          AUTH +
+          "&app_id=3&id=" +
+          idUser
+      );
 
-        console.log(data);
-        if(data){
-          data.photo = convertImage(data.photo);
-          setTakePhotos(oldarray => [...oldarray,data]);
-        }
-
-          
-          // data.photo = convertImage(data.photo);
-          // setTakePhotos(oldarray => [...oldarray,data]);
-        
-        
-        // take.push(data);
-        // let obj;
-        // if(photo!=null && user_id!=null){
-        //     obj = {"user_id":user_id,"photo":photo}
-        //     setTakePhotos(takePhotos,obj);
-        // }
-        // // console.log(user_id,photo)
-
-        // // console.log(obj)
-        // takePhoto.push(obj);
-        // setTakePhotos(takePhotos+1);  
-        // console.log(takePhotos);
-
-        // takePhoto.push(data);
-
-        // callback(data);
-        
-        // takeData(data);
-
-        // dispatch(setPhotos(data));
-        // if (data.error === true) {
-        //   alert("error asasd");
-     
-        //   return;
-        // }
-        // console.log(data);
-    
-       // dispatch(logIn(data.data));
-  
-      })();
+      if (data) {
+        data.photo = convertImage(data.photo);
+        setTakePhotos((oldarray) => [...oldarray, data]);
+      }
+      return data;
     } catch (error) {
       console.log(error);
-      alert("teste");
     }
-  }
-
-//   console.log(takePhotos);
+  };
 
   useEffect(() => {
-    vinculatedUsers.forEach(user => {
-     loadImages(user.user_id);
- 
-    })
-
-    // takePhoto.push(response);
-    // console.log(takePhotos)
-    // dispatch(setPhotos(takePhotos));
-  },[])
+    vinculatedUsers.forEach((user) => {
+      loadUserImages(user.user_id);
+    });
+  }, []);
 
   useEffect(() => {
     dispatch(setPhotos(takePhotos));
-  },[takePhotos])
+  }, [takePhotos]);
 
-
-  function convertImage(src){
-    if(src!=null){
+  function convertImage(src) {
+    if (src != null) {
       var image = new Image();
-    image.src = 'data:image/jpeg;base64, '+src;
-    return image.src;
-    }else{
+      image.src = "data:image/jpeg;base64, " + src;
+      return image.src;
+    } else {
       return null;
     }
-    
-
   }
-
-  function showImages(){
-
-  }
-
 
   return (
     <ul className="taskList">
-      { tasks ?
-        tasks.map((task) => (
-        <Task task={task} key={task.id} />
-      )) : null}
+      {tasks ? tasks.map((task) => <Task task={task} key={task.id} />) : null}
     </ul>
   );
 };

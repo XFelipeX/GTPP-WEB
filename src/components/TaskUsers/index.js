@@ -29,14 +29,17 @@ let TaskUsers = ({ task }) => {
       },
     });
     // console.log(data);
-    // dispatch(getVinculatedUsers(data.data));
+    dispatch(getVinculatedUsers(data.data));
     setVinculatedUsers(data.data);
     // console.log(vinculatedUsers)
   }
 
   let loadUsersAmount = () => {
       let count = 0;
-      vinculatedUsers.forEach(e => e.check === true ? count++ : 0);
+      if(vinculatedUsers){
+        vinculatedUsers.forEach(e => e.check === true ? count++ : 0);
+      }
+     
 
       return count;
   }
@@ -80,7 +83,7 @@ let TaskUsers = ({ task }) => {
           {/* <p>{vinculatedUsers.length}</p> */}
           {loadUsersAmount()}
         </div>
-        { open ? (
+        { open  && loadUsersAmount() > 0 ? (
           <ul className="vinculatedList" >
           {vinculatedUsers.map((user) => (
             

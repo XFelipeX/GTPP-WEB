@@ -1,8 +1,10 @@
 .header-area{
-    background-color:#000;
+    background-color:#343434;
     color:white;
     font-size:22px;
     height: 4em;
+    width: 95%;
+    margin: 0 auto;
 }
 
 .create-task{
@@ -13,10 +15,9 @@
 
 .container-custom{
     height: 4em;
-    background-color:#000;
+    background-color:#343434;
     display: flex;
-    margin: 0 auto;
-    width: 1300px;
+    width: 100%;
     
 }
 
@@ -27,7 +28,7 @@
 }
 
 @media only screen and (max-width:1317px){
-    .container-custom{
+    /* .container-custom{
         width:800px;
-    }
+    } */
 }

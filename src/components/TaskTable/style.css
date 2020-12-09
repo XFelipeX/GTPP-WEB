@@ -1,8 +1,7 @@
 .taskList{
   width:95%;
-  min-height: 800px;
   margin: 10px auto;
-  max-height:920px;
+  height:820px;
   overflow-y:auto;
   border-radius:5px;  
 }

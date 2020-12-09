@@ -58,7 +58,7 @@
 .menuDept{
     display: flex;
     flex-direction: column;
-    width: 180px;
+    width: 185px;
     height: 130px;
     overflow: auto;
     justify-content: space-between;
@@ -184,7 +184,7 @@
 /* Área de usuários vinculados */
 .usersVinculated{
     position: relative;
-    top: 6.3em;
+    top: 4.3em;
     width: 100%;
 }
 
@@ -223,6 +223,147 @@
     background-color: #3b6895;
 }
 
-@media only screen and (max-width:1545px){
-    
+.stateControl{
+    cursor:pointer;
+}
+
+.stateControl h2:hover{
+    background-color: transparent;
+}
+
+/* Modal state */
+
+.menuState li textarea{
+    width: 100%;
+    height: 150px;
+    font-size: 18px;
+    border-radius: 5px;
+    background-color: #c5c5c5;
+    color: black;
+    padding: .6em;
+} 
+
+.menuState li:first-child{
+    padding: 1em;
+}
+
+.menuState li:first-child h3{
+    width: 250px;
+    margin: 0 auto;
+    text-align: center;
+    padding-bottom: .5em;
+    font-size: 20px;
+    border-top: 2px solid #00a2ff;
+    padding-top: .2em;
+}
+
+.menuState li:last-child {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    position: relative;
+    bottom: .7em;
+}
+
+.modalState{
+    height: 99vh;
+    width: 100%;
+    position:absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 15;
+}
+
+.modalState h2{
+    padding-bottom: .5em;
+}
+
+.modalState > div{
+    width: 350px;
+    height: 310px;
+    border: 1px solid black;
+    margin-bottom: 13em;
+    background-color: #2b2b2b;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+
+.btnConfirm{
+    margin-left: 1.2em;
+    padding: 7px 18px;
+    background-color: #69a312;
+    color:white;
+}
+
+.btnCancel{
+    margin-right: 1.2em;
+    padding: 7px 18px;
+    background-color: #c7a002;
+    color:white;
+}
+
+/* Modal days */
+
+.modalDays > div{
+    width: 350px;
+    height: 210px;
+    border: 1px solid black;
+    margin-bottom: 13em;
+    background-color: #2b2b2b;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.modalDays li input{
+    margin-top: 1em;
+    margin-bottom: 2em;
+    width: 100%;
+    height: 20px;
+    font-size: 18px;
+    border-radius: 5px;
+    background-color: #c5c5c5;
+    color: black;
+    padding: .6em;
+} 
+
+.modalDays li:first-child{
+    padding: 1em;
+}
+
+.modalDays li:first-child h3{
+    width: 300px;
+    margin: 0 auto;
+    text-align: center;
+    padding-bottom: .5em;
+    font-size: 20px;
+    border-top: 2px solid #00a2ff;
+    padding-top: .2em;
+}
+
+.modalDays li:last-child {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    position: relative;
+    bottom: .7em;
+}
+
+.modalDays{
+    height: 99vh;
+    width: 100%;
+    position:absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 15;
+}
+
+.modalDays h2{
+    padding-bottom: .5em;
 }

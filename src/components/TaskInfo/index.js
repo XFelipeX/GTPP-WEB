@@ -4,12 +4,8 @@ import { AiOutlineUser } from "react-icons/ai";
 import { BiEdit } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  setCompanyVisi,
   updateTask,
   updateModal,
-  getDepts,
-  getShop,
-  getTaskCsds,
 } from "../../redux";
 import {
   updateDescription,
@@ -17,6 +13,7 @@ import {
   updateCheckDept,
   loadShopsCompany,
   loadDeptsCompany,
+  updateStateTask
 } from "./functions";
 import userImg from "../../assets/user@2x.png";
 import api from "../../services/api";
@@ -29,9 +26,8 @@ const TaskInfo = () => {
   const { taskVisible } = useSelector((state) => state);
   const { userPhotos } = useSelector((state) => state);
   const { taskCompanies } = useSelector((state) => state);
-  const { taskShop } = useSelector((state) => state);
-  const { taskDepts } = useSelector((state) => state);
   const { modalUpdate } = useSelector((state) => state);
+  // const {vinculatedUsers} = useSelector(state => state);
 
   const [shops, setShops] = useState(false);
   const [depts, setDepts] = useState(false);
@@ -39,14 +35,21 @@ const TaskInfo = () => {
   const [shop, setShop] = useState({});
 
   const [taskcsds, setTaskCsds] = useState([]);
+  const [showReasonModal,setShowReasonModal] = useState(false);
+  const [showDayModal,setShowDayModal] = useState(false);
+  
+  const [days,setDays] = useState(1);
 
   const [fullDescription, setFullDescription] = useState(
     taskVisible.full_description
   );
+  const [reason,setReason] = useState("");
   const [vinculatedUsers, setVinculatedUsers] = useState([]);
   const [showDesc, setShowDesc] = useState(false);
   const [showDept, setShowDept] = useState(false);
   const { stateUpdate } = useSelector((state) => state);
+
+  // console.log(vinculatedUsers)
 
   useEffect(() => {
     async function loadTaskVisible() {
@@ -74,7 +77,8 @@ const TaskInfo = () => {
         setShop(data.data.csds[0].shop_id);
       } else {
         setDepts(false);
-        setShops(false);
+        setShops([]);
+        setCompany(false);
         setShowDept(false);
       }
     }
@@ -127,17 +131,17 @@ const TaskInfo = () => {
     loadShops();
   }, [company]);
 
-  useEffect(() => {
-    loadShopsCompany(company).then((response) => {
-      setShops(response.data);
-    });
-  }, [company]);
+  // useEffect(() => {
+  //   loadShopsCompany(company).then((response) => {
+  //     setShops(response.data);
+  //   });
+  // }, []);
 
   useEffect(() => {
     loadDeptsCompany(company, shop, taskVisible.id).then((response) => {
       setDepts(response);
     });
-  }, [shop]);
+  }, [shop,modalUpdate]);
 
   function changeCheckDept(taskId, deptId, shopId, companyId) {
     if (shopId == "-1" || companyId == "-1") {
@@ -158,6 +162,7 @@ const TaskInfo = () => {
         updateCheckDept(taskId, deptId, shopId, companyId).then((response) => {
           // console.log(response)
           dispatch(updateModal());
+          // setShop(shop);
         });
       } catch (error) {
         console.log("Erro ao selecionar departamento!");
@@ -165,24 +170,132 @@ const TaskInfo = () => {
     }
   }
 
-  // let domNode = useClickOutside(() => {
-  //   setShowDesc(false);
-  // });
-
   let domNodeDept = useClickOutside(() => {
     setShowDept(false);
   });
 
+  function updateState(stateId,reason,days){
+    if(stateId==1 || stateId==2){
+      if(reason==null){
+        setShowReasonModal(true);
+      } else if( reason === ""){
+        alert("o motivo é obrigatório!")
+      }else{
+        updateStateTask(taskVisible.id,reason).then(response => taskVisible.state_id = response.state_id);
+        dispatch(updateTask());
+        dispatch(updateModal());
+        setShowReasonModal(false);
+        setReason("");
+      }
+    }else if(stateId==5){
+      if(days==null){
+        setShowDayModal(true);
+      }else{
+        updateStateTask(taskVisible.id,reason,days).then(response =>  (
+          taskVisible.state_id = response.state_id,
+          taskVisible.final_date = response.final_date
+        ) );
+      dispatch(updateTask());
+      dispatch(updateModal());
+      setShowDayModal(false);
+      setDays("");
+      }
+
+    }
+    else{
+      updateStateTask(taskVisible.id).then(response => taskVisible.state_id = response.state_id);
+      dispatch(updateTask());
+      dispatch(updateModal());
+    }
+  }
+
   return (
     <div className="taskInfo">
+      {showReasonModal ? (
+        <div  className="modalState">
+              <div >
+             
+              <ul  className="menuState">
+              <li>
+                  <h3>Alterar tarefa para o estado <strong>parado</strong>?</h3>
+                  <h2>*Informe o motivo:</h2>
+                  <textarea
+                    spellcheck="false"
+                    rows="5"
+                    onChange={(e) => setReason(e.target.value)}
+                  ></textarea>
+                </li>
+                <li>
+                  <button
+                    className="btnConfirm"
+                    onClick={(e) =>
+                      updateState(taskVisible.state_id,reason)
+                    }
+                  >
+                    Confirmar
+                  </button>
+                  <button
+                    className="btnCancel"
+                    onClick={() =>
+                      setShowReasonModal(false)
+                    }
+                  >
+                    Cancelar
+                  </button>
+                </li>
+              </ul>
+              </div>
+              </div>
+      ) : null}
+
+      {showDayModal ? (
+        <div  className="modalDays">
+              <div >
+             
+              <ul  className="menuDays">
+              <li>
+                  <h3>Informe a quantidade de dias que deseja prolongar esta tarefa:</h3>
+                  <input type="number"
+                    min="1"
+                    value={days}
+                    spellcheck="false"
+                    rows="5"
+                    onChange={(e) => setDays(e.target.value)}
+                  ></input>
+                </li>
+                <li>
+                  <button
+                    className="btnConfirm"
+                    onClick={(e) =>
+                      updateState(taskVisible.state_id,reason,days)
+                    }
+                  >
+                    Confirmar
+                  </button>
+                  <button
+                    className="btnCancel"
+                    onClick={() =>
+                      setShowDayModal(false)
+                    }
+                  >
+                    Cancelar
+                  </button>
+                </li>
+              </ul>
+              </div>
+              </div>
+      ) : null}
+
       <div className="row">
         <h1>Início : {dateInitial}</h1>
         <h1>Fim : {dateFinal}</h1>
 
         {taskStates.map((state) => (
           <React.Fragment key={state.id}>
-            {state.id === taskVisible.state_id ? (
+            {state.id == taskVisible.state_id ? (
               <button
+                onKeyPress={() => {}}
+                onClick={() => updateState(state.id)}
                 className="buttonState stateControl"
                 style={{ backgroundColor: "#" + state.color }}
               >
@@ -236,45 +349,35 @@ const TaskInfo = () => {
         </div>
         <div className="rowCompShop">
           <div>
-            <select onChange={(e) => setCompany(e.target.value)} id="company">
-              <option selected value="-1">
+            <select value={company} onChange={(e) => setCompany(e.target.value)} id="company">
+              <option value="-1">
                 Selecione uma Companhia
               </option>
 
               {taskCompanies.map((comp) => (
-                <>
-                  {taskcsds != null && company == comp.id ? (
-                    <option selected key={comp.id} value={comp.id}>
-                      {comp.description}
-                    </option>
-                  ) : (
+                <>              
                     <option key={comp.id} value={comp.id}>
                       {comp.description}
-                    </option>
-                  )}
+                    </option>               
                 </>
               ))}
             </select>
           </div>
 
           <div>
-            <select id="shop" onClick={(e) => setShop(e.target.value)}>
-              <option selected value="-1">
+            <select id="shop" value={shop} onChange={(e) => setShop(e.target.value)}>
+              <option value="-1">
                 Selecione uma Loja
               </option>
 
               {shops
                 ? shops.map((shop) => (
                     <>
-                      {taskcsds != null && shop.id == taskcsds[0].shop_id ? (
-                        <option selected={true} key={shop.id} value={shop.id}>
-                          {shop.description}
-                        </option>
-                      ) : (
+                   
                         <option key={shop.id} value={shop.id}>
                           {shop.description}
                         </option>
-                      )}
+                      
                     </>
                   ))
                 : null}
@@ -326,10 +429,10 @@ const TaskInfo = () => {
         <div className="user">
           {vinculatedUsers
             ? vinculatedUsers.map((user) => (
-                <React.Fragment>
+                <React.Fragment key={user.user_id}>
                   {userPhotos.map((userPhoto) => (
-                    <>
-                      {user.user_id == userPhoto.user_id &&
+                    <React.Fragment key={userPhoto.user_id}>
+                      {user.user_id === userPhoto.user_id &&
                       user.check === true ? (
                         userPhoto.photo !== "" ? (
                           <div className="userControl">
@@ -355,7 +458,7 @@ const TaskInfo = () => {
                           </div>
                         )
                       ) : null}
-                    </>
+                    </React.Fragment>
                   ))}
                 </React.Fragment>
               ))
