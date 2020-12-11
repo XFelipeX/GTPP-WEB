@@ -52,7 +52,7 @@
     margin-bottom: 13em;
     background-color: #2b2b2b;
     border-radius: 10px;
-    overflow:auto;
+
 }
 
 .modalHistoricContent{
@@ -91,10 +91,16 @@
     
 }
 
+.listHistoric{
+    overflow: auto;
+    height: 150px;
+}
+
 .modalHistoric .btnCloseHistoric{
     float: right;
-    
-}
+    position: relative;
+    right: .9em;
+}   
 
 /* Modal editar descrição do tópico */
 .modalEdit{
