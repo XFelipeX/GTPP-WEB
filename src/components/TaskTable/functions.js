@@ -28,7 +28,7 @@ export const loadUserImages = async (params,id) => {
   const AUTH = params.session
   // console.log("chegou aqui")
   try {
-    const  {data}  = await api.get('http://192.168.0.99:71/GLOBAL/Controller/EmployeePhoto.php', {params: {"AUTH": AUTH, "id": id, "app_id":3}})
+    const  {data}  = await api.get('http://192.168.0.99:71/GLOBAL/Controller/CCPP/EmployeePhoto.php', {params: {"AUTH": AUTH, "id": id, "app_id":3}})
     return data;
   } catch (error) {
     console.log(error)
@@ -51,7 +51,7 @@ export const loadCompanies = async () => {
   const AUTH = sessionStorage.getItem('token');
 
   try{
-      const {data} = await api.get('Company.php',{params:{AUTH:AUTH, app_id:3}});
+      const {data} = await api.get('CCPP/Company.php',{params:{AUTH:AUTH, app_id:3}});
        //console.log(data);
       return data;
   }catch(error){
@@ -63,7 +63,7 @@ export const loadShop = async () => {
   const AUTH = sessionStorage.getItem('token');
 
   try{
-      const {data} = await api.get('Shop.php',{params:{AUTH:AUTH, app_id:3}});
+      const {data} = await api.get('CCPP/Shop.php',{params:{AUTH:AUTH, app_id:3}});
       // console.log(data);
       return data;
   }catch(error){
@@ -75,7 +75,7 @@ export const loadDept = async () => {
   const AUTH = sessionStorage.getItem('token');
 
   try{
-      const {data} = await api.get('Departament.php',{params:{AUTH:AUTH, app_id:3}});
+      const {data} = await api.get('CCPP/Department.php',{params:{AUTH:AUTH, app_id:3}});
       // console.log(data);
       return data;
   }catch(error){

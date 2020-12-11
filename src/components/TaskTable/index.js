@@ -100,7 +100,7 @@ const TaskTable = () => {
     const AUTH = sessionStorage.getItem("token");
     try {
       const { data } = await api.get(
-        "http://192.168.0.99:71/GLOBAL/Controller/EmployeePhoto.php?AUTH=" +
+        "http://192.168.0.99:71/GLOBAL/Controller/CCPP/EmployeePhoto.php?AUTH=" +
           AUTH +
           "&app_id=3&id=" +
           idUser

@@ -158,16 +158,17 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
         {showHistoric ? (
           <div id={id} className="modalHistoric" onClick={() => {}}>
             <div>
-            <div className="modaHistoricContent">
-              <div className="btnCloseHistoric">
+            <div className="btnCloseHistoric">
                 <button
                   type="button"
                   style={{ backgroundColor: "#ff5251", color: "white" }}
                   onClick={() => setShowHistoric(false)}
                 >
-                  Fechar
+                  fechar
                 </button>
               </div>
+            <div className="modaHistoricContent">
+             
               <div className="listHistoric" style={{clear: "both"}}>
                 <div className="historicItems">
                 {taskHistoric ? (

@@ -13,7 +13,7 @@ const TaskCompany = ({ task }) => {
   const [companies, setCompanies] = useState([]);
 
   async function updateCompany() {
-    const { data } = await api.get("Com_sho_dep_sub.php", {
+    const { data } = await api.get("CCPP/Com_sho_dep_sub.php", {
       params: { AUTH: permissions.session, app_id: 3 },
     });
 

@@ -21,7 +21,7 @@ const Login = () => {
     try {
       let data = {};
       (async () => {
-        data = await fetch('http://192.168.0.99:71/GLOBAL/Controller/Login.php?login&app_id=3', { method:"post",
+        data = await fetch('http://192.168.0.99:71/GLOBAL/Controller/CCPP/Login.php?login&app_id=3', { method:"post",
         body:JSON.stringify(({"user":document.getElementById('user_name').value,"password":document.getElementById('password').value}))
         })
             .then(response => {

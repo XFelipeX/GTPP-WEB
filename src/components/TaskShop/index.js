@@ -14,7 +14,7 @@ const TaskShop = ({ task }) => {
 
   async function showShop() {
     try{
-      const { data } = await api.get("Com_sho_dep_sub.php", {
+      const { data } = await api.get("CCPP/Com_sho_dep_sub.php", {
         params: { AUTH: permissions.session, app_id: 3 },
       });
       if(data.error==true||data==null){

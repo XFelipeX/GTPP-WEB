@@ -15,7 +15,11 @@ export const updateDescription = async (taskId, description) => {
 
     // console.log(data);
   } catch (error) {
-    console.log(error.message);
+    let msg = String(error.message);
+    // console.log(msg);
+    if(msg.includes("Request failed with status code 403")){
+      alert("Somente o criador da tarefa ou administrador pode fazer isto!");
+    }
   }
 };
 
@@ -46,7 +50,7 @@ export const loadShopsCompany = async (idCompany) => {
 
   try {
     const { data } = await api.get(
-      "Shop.php?AUTH=" + AUTH + "&app_id=3&company_id=" + idCompany
+      "CCPP/Shop.php?AUTH=" + AUTH + "&app_id=3&company_id=" + idCompany
     );
 
     // console.log(data);
@@ -62,7 +66,7 @@ export const loadDeptsCompany = async (idCompany, idShop, idTask) => {
 
   try {
     const { data } = await api.get(
-      "Departament.php?AUTH=" +
+      "CCPP/Department.php?AUTH=" +
         AUTH +
         "&app_id=3&company_id=" +
         idCompany +
@@ -98,7 +102,41 @@ export const updateStateTask = async (idTask,reason,days) => {
     // console.log(data.data);
     return data.data;
   } catch (error) {
-    console.log(error.message);
+    let msg = String(error.message);
+    // console.log(msg);
+    if(msg.includes("Request failed with status code 403")){
+      alert("Somente o criador da tarefa ou administrador pode fazer isto!");
+    }
+  }
+}
+
+export const cancelStateTask = async (idTask,reason) => {
+  const AUTH = sessionStorage.getItem("token");
+
+
+  
+  try {
+    const data = await api
+      .put(`GTPP/_TaskState.php?AUTH=${AUTH}&app_id=3`, {
+        task_id: idTask,
+        reason:reason,
+        cancel:1
+      })
+      .then((response) => {
+         console.log(response)
+        debugger
+       
+        return response;
+      });
+
+    console.log(data.data);
+    return data.data;
+  } catch (error) {
+    let msg = String(error.message);
+    // console.log(msg);
+    if(msg.includes("Request failed with status code 403")){
+      alert("Somente o criador da tarefa ou administrador pode fazer isto!");
+    }
   }
 }
 

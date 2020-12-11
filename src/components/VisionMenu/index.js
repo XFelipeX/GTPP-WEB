@@ -66,14 +66,14 @@ let VisionMenu = () =>{
        
         <ul className="menuExpanded">
           <p htmlFor="">Itens na linha: </p>
-          <label htmlFor="">
+          {/* <label htmlFor="">
           <input type="checkbox" id="company" onChange={e => setCompanyVisibility(e.target.checked)} checked={visionMenu.company} />
           Companhia
           </label>
           <label htmlFor="">
           <input type="checkbox" id="shop" onChange={e => setShopVisibility(e.target.checked)} checked={visionMenu.shop}/>
           Loja
-          </label>
+          </label> */}
           <label htmlFor="">
           <input type="checkbox" id="priority" onChange={e => setPriorityVisibility(e.target.checked)} checked={visionMenu.priority} />
           Prioridade

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import { AiOutlineUser } from "react-icons/ai";
+import ConfirmAction from '../ConfirmAction';
 import { BiEdit } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -13,7 +14,8 @@ import {
   updateCheckDept,
   loadShopsCompany,
   loadDeptsCompany,
-  updateStateTask
+  updateStateTask,
+  cancelStateTask
 } from "./functions";
 import userImg from "../../assets/user@2x.png";
 import api from "../../services/api";
@@ -27,6 +29,7 @@ const TaskInfo = () => {
   const { userPhotos } = useSelector((state) => state);
   const { taskCompanies } = useSelector((state) => state);
   const { modalUpdate } = useSelector((state) => state);
+  // const {permissions} = useSelector(state => state);
   // const {vinculatedUsers} = useSelector(state => state);
 
   const [shops, setShops] = useState(false);
@@ -49,7 +52,12 @@ const TaskInfo = () => {
   const [showDept, setShowDept] = useState(false);
   const { stateUpdate } = useSelector((state) => state);
 
-  // console.log(vinculatedUsers)
+  // console.log(taskVisible)
+  
+  const [showModalAsk,setShowModalAsk] = useState(false);
+
+  const {permissions} = useSelector(state => state);
+
 
   useEffect(() => {
     async function loadTaskVisible() {
@@ -175,6 +183,7 @@ const TaskInfo = () => {
   });
 
   function updateState(stateId,reason,days){
+    // console.log("estado atual é o "+stateId);
     if(stateId==1 || stateId==2){
       if(reason==null){
         setShowReasonModal(true);
@@ -194,7 +203,10 @@ const TaskInfo = () => {
         updateStateTask(taskVisible.id,reason,days).then(response =>  (
           taskVisible.state_id = response.state_id,
           taskVisible.final_date = response.final_date
-        ) );
+        ) ).catch(error => {
+          // console.log(error.message);
+         
+        });
       dispatch(updateTask());
       dispatch(updateModal());
       setShowDayModal(false);
@@ -202,15 +214,55 @@ const TaskInfo = () => {
       }
 
     }
-    else{
-      updateStateTask(taskVisible.id).then(response => taskVisible.state_id = response.state_id);
+    else if(stateId!==5){
+      if(confirm==false){
+        setShowConfirmAction(true);
+        return;
+      }else{
+        updateStateTask(taskVisible.id).then(response => taskVisible.state_id = response.state_id);
       dispatch(updateTask());
       dispatch(updateModal());
+      setShowConfirmAction(false)
+      setShowConfirmAction(false)
+      }
+      
     }
   }
 
+  function cancelTask(stateId,reason){
+
+    // console.log("estado atual é o "+stateId);
+    if( reason === ""){
+      alert("o motivo é obrigatório!")
+      return;
+    }
+
+    if(stateId!==6 && stateId!==7){
+      cancelStateTask(stateId,reason).then(response => taskVisible.state_id = response.state_id).catch(error => {
+
+      });
+      dispatch(updateTask());
+      dispatch(updateModal());
+      setShowModalAsk(false);
+    }
+  }
+
+  console.log(permissions)
+  console.log(taskVisible)  
+
+  //contador button estados
+  let count = 0;
+
+
+  const [showConfirmAction,setShowConfirmAction] = useState(false);
+  const [confirm,setConfirm] = useState(false);
+
   return (
     <div className="taskInfo">
+      {showConfirmAction ? (
+        taskVisible.state_id == 6 ? ( <ConfirmAction confirm={() => setConfirm(true)} question="Tem certeza que deseja reabrir esta tarefa" action={() => updateState(taskVisible.state_id)} cancelAction={() => setShowConfirmAction(false)}/> ) : <ConfirmAction confirm={() => setConfirm(true)} question="Tem certeza que deseja finalizar esta tarefa" action={() => updateState(taskVisible.state_id)} cancelAction={() => setShowConfirmAction(false)}/> 
+      ) : null}
+
       {showReasonModal ? (
         <div  className="modalState">
               <div >
@@ -258,7 +310,7 @@ const TaskInfo = () => {
                   <input type="number"
                     min="1"
                     value={days}
-                    spellcheck="false"
+                    spellCheck="false"
                     rows="5"
                     onChange={(e) => setDays(e.target.value)}
                   ></input>
@@ -286,6 +338,43 @@ const TaskInfo = () => {
               </div>
       ) : null}
 
+      {showModalAsk ? (
+        <div  className="modalAsk">
+              <div >
+             
+              <ul  className="menuAsk">
+              <li>
+                  <h3>Cancelando a tarefa... Tem certeza?</h3>
+                  <h2>*Informe o motivo:</h2>
+                  <textarea
+                    spellCheck="false"
+                    rows="5"
+                    onChange={(e) => setReason(e.target.value)}
+                  ></textarea>
+                </li>
+                <li>
+                  <button
+                    className="btnConfirm"
+                    onClick={(e) =>
+                      cancelTask(taskVisible.id,reason)
+                    }
+                  >
+                    Confirmar
+                  </button>
+                  <button
+                    className="btnCancel"
+                    onClick={() =>
+                      setShowModalAsk(false)
+                    }
+                  >
+                    Cancelar
+                  </button>
+                </li>
+              </ul>
+              </div>
+              </div>
+      ) : null}
+
       <div className="row">
         <h1>Início : {dateInitial}</h1>
         <h1>Fim : {dateFinal}</h1>
@@ -294,8 +383,28 @@ const TaskInfo = () => {
           <React.Fragment key={state.id}>
             {state.id == taskVisible.state_id ? (
               <button
-                onKeyPress={() => {}}
-                onClick={() => updateState(state.id)}
+                onClick={() => {
+                  count++;
+
+                  setTimeout(() => {
+                    if(count==1){
+                      if(state.id==6||state.id==3){
+                        setShowConfirmAction(true);
+                      }else{
+                        updateState(state.id)
+                      }              
+                  } else if(count ==2){
+                    setShowModalAsk(true);
+                    return;
+                  }
+
+                  },500)
+
+                  setTimeout(() => {
+                    count = 0;
+                  },500)             
+                
+                }}
                 className="buttonState stateControl"
                 style={{ backgroundColor: "#" + state.color }}
               >
@@ -325,10 +434,10 @@ const TaskInfo = () => {
                   <h2>Descrição da tarefa</h2>
                   <textarea
                     placeholder="Esta tarefa tem como objetivo..."
-                    spellcheck="false"
+                    spellCheck="false"
                     rows="5"
                     value={fullDescription}
-                    onChange={(e) => setFullDescription(e.target.value)}
+                    onChange={(e) => permissions.id === taskVisible.user_id || permissions.administrator ===1 ? setFullDescription(e.target.value) : null}
                   ></textarea>
                 </li>
                 <li>
@@ -339,6 +448,20 @@ const TaskInfo = () => {
                     }
                   >
                     Salvar
+                  </button>
+
+                  <button
+                    className="btnCancel"
+                    onClick={() => {
+                      setShowDesc(false);
+                      setFullDescription(fullDescription);
+                    }
+                    
+                      
+                    }
+                    style={{margin:0}}
+                  >
+                    Cancelar
                   </button>
                 </li>
               </ul>
