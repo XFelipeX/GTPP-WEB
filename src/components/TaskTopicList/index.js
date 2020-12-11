@@ -18,6 +18,7 @@ import "./style.css";
 const TaskTopicList = ({ id = "modalEdit" }) => {
   const {topicUpdate} = useSelector(state => state);
   const { taskVisible } = useSelector((state) => state);
+  const {permissions} = useSelector(state => state);
   const { modalUpdate } = useSelector((state) => state);
   const [newItem, setNewItem] = useState("");
   const [taskItem, setTaskItem] = useState([{}]);
@@ -118,9 +119,13 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
         // console.log(response)
         taskVisible.progress = response.percent;
         taskVisible.state_id = response.state_id;
+
+        dispatch(updateModal());
+        dispatch(updateTopic());
+      }).catch(error => {
+        
       });
-      dispatch(updateModal());
-      dispatch(updateTopic());
+    
     }
   }
 
@@ -263,7 +268,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                 <div className="topicRight">
                   <a
                     href=""
-                    onClick={(e) => deleteItemTopic(e, taskVisible.id, item.id)}
+                    onClick={(e) => taskVisible.user_id === permissions.id || permissions.administrator ===1 ? deleteItemTopic(e, taskVisible.id, item.id) : (e.preventDefault(), alert("Somente o criador da tarefa ou administrador pode fazer isto!"))}
                   >
                     <FaTrash color="white" />
                   </a>

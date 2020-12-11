@@ -1,3 +1,5 @@
+import api from '../../services/api';
+
 function Authenticated(){
   // const [authenticated,setAuthenticated] = useState(false);
   const token = sessionStorage.getItem('token');

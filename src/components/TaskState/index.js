@@ -14,27 +14,27 @@ const TaskState = ({ task }) => {
   const dispatch = useDispatch();
 
 
-  const updateState = async (id) => {
-    try {
-      const {data} = api.put(`GTPP/Task.php?AUTH=${permissions.session}&app_id=3`, {
-        "id": task.id,
-        "description": task.description,
-        "full_description": task.full_description,
-        "final_date": task.final_date,
-        "state": id,
-        "priority": task.priority,
-        "user_id": task.user_id,
-      }).then(() => {
-        console.log("cai aqui")
-        dispatch(updateTask())
-        setShow(false);
-      });
+  // const updateState = async (id) => {
+  //   try {
+  //     const {data} = api.put(`GTPP/Task.php?AUTH=${permissions.session}&app_id=3`, {
+  //       "id": task.id,
+  //       "description": task.description,
+  //       "full_description": task.full_description,
+  //       "final_date": task.final_date,
+  //       "state": id,
+  //       "priority": task.priority,
+  //       "user_id": task.user_id,
+  //     }).then(() => {
+  //       console.log("cai aqui")
+  //       dispatch(updateTask())
+  //       setShow(false);
+  //     });
 
-      console.log(data);
-    } catch (error) {
-      alert(error);
-    }
-  }
+  //     console.log(data);
+  //   } catch (error) {
+  //     alert(error);
+  //   }
+  // }
 
   // let stateColors ={
   //   backgroundColor:'red',
@@ -52,7 +52,7 @@ const TaskState = ({ task }) => {
       {taskStates.map(state => (
         <React.Fragment key={state.id}>
           {
-            state.id === task.state_id ?
+            state.id == task.state_id ?
               
               <button className="buttonState" style={{backgroundColor:'#'+state.color}}>
                 {/* {console.log(state.color)} */}

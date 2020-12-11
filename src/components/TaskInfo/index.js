@@ -68,6 +68,9 @@ const TaskInfo = () => {
           "&app_id=3&mobile=1&task_id=" +
           taskVisible.id
       );
+
+      if(data)
+
       setTaskCsds(data.data.csds);
 
       if (data.data.csds !== null) {
@@ -190,7 +193,7 @@ const TaskInfo = () => {
       } else if( reason === ""){
         alert("o motivo é obrigatório!")
       }else{
-        updateStateTask(taskVisible.id,reason).then(response => taskVisible.state_id = response.state_id);
+        updateStateTask(taskVisible.id,reason).then(response => taskVisible.state_id = response.id).catch(error => {});
         dispatch(updateTask());
         dispatch(updateModal());
         setShowReasonModal(false);
@@ -201,7 +204,7 @@ const TaskInfo = () => {
         setShowDayModal(true);
       }else{
         updateStateTask(taskVisible.id,reason,days).then(response =>  (
-          taskVisible.state_id = response.state_id,
+          taskVisible.state_id = response.id,
           taskVisible.final_date = response.final_date
         ) ).catch(error => {
           // console.log(error.message);
@@ -218,14 +221,19 @@ const TaskInfo = () => {
       if(confirm==false){
         setShowConfirmAction(true);
         return;
-      }else{
-        updateStateTask(taskVisible.id).then(response => taskVisible.state_id = response.state_id);
+      }else if (confirm ==true){
+        updateStateTask(taskVisible.id).then(response => taskVisible.state_id = response.id).then(response => {
+          dispatch(updateTask());
+          dispatch(updateModal());
+          setShowConfirmAction(false)
+          setShowConfirmAction(false)
+        }).catch(error => {console.log(error)});
+     
+      return;
+      }
+      updateStateTask(taskVisible.id).then(response => taskVisible.state_id = response.id);
       dispatch(updateTask());
       dispatch(updateModal());
-      setShowConfirmAction(false)
-      setShowConfirmAction(false)
-      }
-      
     }
   }
 
@@ -237,18 +245,19 @@ const TaskInfo = () => {
       return;
     }
 
-    if(stateId!==6 && stateId!==7){
-      cancelStateTask(stateId,reason).then(response => taskVisible.state_id = response.state_id).catch(error => {
-
+    
+      // console.log('aqui')
+      cancelStateTask(stateId,reason).then(response => taskVisible.state_id = response.id).catch(error => {
+        // console.log(error);
       });
       dispatch(updateTask());
       dispatch(updateModal());
       setShowModalAsk(false);
-    }
+    
   }
 
-  console.log(permissions)
-  console.log(taskVisible)  
+  // console.log(permissions)
+  // console.log(taskVisible)  
 
   //contador button estados
   let count = 0;
@@ -257,10 +266,55 @@ const TaskInfo = () => {
   const [showConfirmAction,setShowConfirmAction] = useState(false);
   const [confirm,setConfirm] = useState(false);
 
+
+  let ModalCancel = (props) => {
+    const [reason,setReason] = useState("");
+    return(
+      <div  className="modalAsk">
+      <div >
+     
+      <ul  className="menuAsk">
+      <li>
+          <h3>{props.ask} tem certeza?</h3>
+          <h2>*Informe o motivo:</h2>
+          <textarea
+            spellCheck="false"
+            rows="5"
+            onChange={(e) => setReason(e.target.value)}
+          ></textarea>
+        </li>
+        <li>
+          <button
+            className="btnConfirm"
+            onClick={(e) =>
+              cancelTask(taskVisible.state_id,reason)
+            }
+          >
+            Confirmar
+          </button>
+          <button
+            className="btnCancel"
+            onClick={() =>
+              setShowModalAsk(false)
+            }
+          >
+            Cancelar
+          </button>
+        </li>
+      </ul>
+      </div>
+      </div>
+    )
+  } 
+
   return (
     <div className="taskInfo">
       {showConfirmAction ? (
-        taskVisible.state_id == 6 ? ( <ConfirmAction confirm={() => setConfirm(true)} question="Tem certeza que deseja reabrir esta tarefa" action={() => updateState(taskVisible.state_id)} cancelAction={() => setShowConfirmAction(false)}/> ) : <ConfirmAction confirm={() => setConfirm(true)} question="Tem certeza que deseja finalizar esta tarefa" action={() => updateState(taskVisible.state_id)} cancelAction={() => setShowConfirmAction(false)}/> 
+        <>
+        {taskVisible.state_id == 6 || taskVisible.state_id == 4 ? ( <ConfirmAction confirm={() => setConfirm(true)} question="Tem certeza que deseja reabrir esta tarefa" action={() => updateState(taskVisible.state_id)} cancelAction={() => setShowConfirmAction(false)}/> ) : (null)}
+        {taskVisible.state_id == 3 ? (<ConfirmAction confirm={() => setConfirm(true)} question="Tem certeza que deseja finalizar esta tarefa" action={() => updateState(taskVisible.state_id)} cancelAction={() => setShowConfirmAction(false)}/> ) : null}
+        {/* {taskVisible.state_id == 7 ? (<ConfirmAction confirm={() => setConfirm(true)} question="Tem certeza que deseja finalizar esta tarefa" action={() => updateState(taskVisible.state_id)} cancelAction={() => setShowConfirmAction(false)}/> ) : null} */}
+        </>
       ) : null}
 
       {showReasonModal ? (
@@ -339,40 +393,7 @@ const TaskInfo = () => {
       ) : null}
 
       {showModalAsk ? (
-        <div  className="modalAsk">
-              <div >
-             
-              <ul  className="menuAsk">
-              <li>
-                  <h3>Cancelando a tarefa... Tem certeza?</h3>
-                  <h2>*Informe o motivo:</h2>
-                  <textarea
-                    spellCheck="false"
-                    rows="5"
-                    onChange={(e) => setReason(e.target.value)}
-                  ></textarea>
-                </li>
-                <li>
-                  <button
-                    className="btnConfirm"
-                    onClick={(e) =>
-                      cancelTask(taskVisible.id,reason)
-                    }
-                  >
-                    Confirmar
-                  </button>
-                  <button
-                    className="btnCancel"
-                    onClick={() =>
-                      setShowModalAsk(false)
-                    }
-                  >
-                    Cancelar
-                  </button>
-                </li>
-              </ul>
-              </div>
-              </div>
+        taskVisible.state_id != 7 ? <ModalCancel ask="Cancelando a tarefa"/> : <ModalCancel ask="Retomando a tarefa"/>
       ) : null}
 
       <div className="row">
@@ -387,8 +408,8 @@ const TaskInfo = () => {
                   count++;
 
                   setTimeout(() => {
-                    if(count==1){
-                      if(state.id==6||state.id==3){
+                    if(count==1 && state.id!==7){
+                      if(state.id==6||state.id==3 || state.id==4){
                         setShowConfirmAction(true);
                       }else{
                         updateState(state.id)

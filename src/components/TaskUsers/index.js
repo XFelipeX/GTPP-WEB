@@ -29,8 +29,13 @@ let TaskUsers = ({ task }) => {
       },
     });
     // console.log(data);
-    dispatch(getVinculatedUsers(data.data));
-    setVinculatedUsers(data.data);
+    try {
+      dispatch(getVinculatedUsers(data.data));
+      setVinculatedUsers(data.data);
+    } catch (error) {
+      
+    }
+ 
     // console.log(vinculatedUsers)
   }
 

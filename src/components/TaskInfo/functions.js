@@ -88,7 +88,7 @@ export const updateStateTask = async (idTask,reason,days) => {
   const AUTH = sessionStorage.getItem("token");
 
   try {
-    const data = await api
+    const {data} = await api
       .put(`GTPP/_TaskState.php?AUTH=${AUTH}&app_id=3`, {
         task_id: idTask,
         reason:reason,
@@ -99,12 +99,12 @@ export const updateStateTask = async (idTask,reason,days) => {
         return response;
       });
 
-    // console.log(data.data);
-    return data.data;
+    // console.log(data.data[0]);
+    return data.data[0];
   } catch (error) {
-    let msg = String(error.message);
-    // console.log(msg);
-    if(msg.includes("Request failed with status code 403")){
+    let msg = String(error.response.data.message);
+    // console.log(error.response.data.message);
+    if(msg.includes("This user can not do this")){
       alert("Somente o criador da tarefa ou administrador pode fazer isto!");
     }
   }
@@ -112,67 +112,33 @@ export const updateStateTask = async (idTask,reason,days) => {
 
 export const cancelStateTask = async (idTask,reason) => {
   const AUTH = sessionStorage.getItem("token");
-
-
-  
   try {
-    const data = await api
+    const {data} = await api
       .put(`GTPP/_TaskState.php?AUTH=${AUTH}&app_id=3`, {
         task_id: idTask,
         reason:reason,
         cancel:1
+
       })
       .then((response) => {
-         console.log(response)
-        debugger
+        // console.log(response)
        
         return response;
       });
 
-    console.log(data.data);
-    return data.data;
+    console.log(data);
+    return data.data[0];
   } catch (error) {
-    let msg = String(error.message);
-    // console.log(msg);
-    if(msg.includes("Request failed with status code 403")){
+    let msg = String(error.response.data.message);
+    console.log(error.response.data.message);
+    if(msg.includes("This user can not do this")){
       alert("Somente o criador da tarefa ou administrador pode fazer isto!");
+    } else if(msg.includes("This state can not modified")){
+      alert("Este estado não pode ser cancelado!")
     }
   }
 }
 
-// export const updateStateTask = async (idTask, days, reason) => {
-//   const AUTH = sessionStorage.getItem("token");
-
-//   try {
-//     let data = {};
-//     (async () => {
-//       data = await fetch(
-//         "http://192.168.0.99:71/GLOBAL/Controller/GTPP/_TaskState.php?AUTH="+AUTH+"&app_id=3",
-//         {
-//           method: "PUT",
-//           body: JSON.stringify({
-//             task_id: idTask,
-//           })
-//         }
-//       )
-//         .then((response) => {
-//           console.log(response)
-//           return response.json();
-//         })
-//         .then((r) => {
-//           return r;
-//         })
-//         .catch((err) => {
-//           console.log(err+"aqui");
-//         });
-
-    
-//       console.log(data);
-//     })();
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
 
 export function formatDate(props) {
   const date = new Date(props);
