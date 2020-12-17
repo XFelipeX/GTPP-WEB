@@ -41,7 +41,7 @@ const TaskTable = () => {
       } else {
         // setTasks(response.data);
         try {
-          // console.log(response)
+          console.log(response)
           dispatch(getTask(response.data));
         } catch (error) {}
       }

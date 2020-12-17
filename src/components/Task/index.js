@@ -121,8 +121,8 @@ const Task = ({ task }) => {
         {taskVisible && taskVisible.info && taskVisible.task ? <TaskModal/> : null}
       </div>
       <div className="taskContent">
-        {visionMenu.shop === true ? <TaskShop task={task}/> : null}
-        {visionMenu.company === true ? <TaskCompany task={task}/> : null}
+        {/* {visionMenu.shop === true ? <TaskShop task={task}/> : null}
+        {visionMenu.company === true ? <TaskCompany task={task}/> : null} */}
         {visionMenu.vinc === true ? <TaskUsers task={task} /> : null}
         {visionMenu.state === true ? <TaskState task={task} /> : null}
         {visionMenu.date === true ? <TaskDate task={task} /> : null} 

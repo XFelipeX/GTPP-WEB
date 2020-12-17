@@ -62,9 +62,9 @@ let TaskUsers = ({ task }) => {
       dispatch(updateTask())
   }
 
-  useEffect(() => {
-    loadVinculateUsers();
-  }, [stateUpdate]);
+  // useEffect(() => {
+  //   loadVinculateUsers();
+  // }, [stateUpdate]);
 
   //    const domNode = useClickOutside(()=>{
   //       setShowUsers(false);
