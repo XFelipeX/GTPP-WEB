@@ -1,14 +1,16 @@
-.createTaskArea > ul{
-    padding: 10px 20px;
-    background-color:rgb(0, 162, 255);
+.create-task-area > ul{
+    /* padding: 10px 20px; */
+    background-color:transparent;
     color:white;
     font-size:18px;
-    margin-top: 20px;
+
     cursor: pointer;
     border-radius:5px;
     text-align: center;
-    display: inline-block;
-    width:200px;
+    display: flex;
+    align-items: center;
+    max-width:100px;
+    /* height: 41px; */
     z-index: 2;
 }
 
@@ -21,6 +23,8 @@
     padding:5px;
     box-shadow: 0 5px 10px 0;
     border-radius:2px 2px 5px 5px;
+    position: absolute;
+    z-index: 10;
 }
 
 .menuCreateTask label{
@@ -28,6 +32,11 @@
     font-size:16px;
     color:white;
    
+}
+
+.create-task-area{
+    z-index: 3;
+    margin-right: 20px;
 }
 
 .menuCreateTask button{
@@ -43,10 +52,6 @@
 .menuCreateTask input, .menuCreateTask select{
     width: 180px;
     padding:.3em .5em;
-}
-
-.createTaskArea{
-    z-index: 2;
 }
 
 .menuPriority li{

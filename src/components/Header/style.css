@@ -3,7 +3,7 @@
     color:white;
     font-size:22px;
     height: 4em;
-    width: 95%;
+    max-width: 95%;
     margin: 0 auto;
 }
 
@@ -25,7 +25,16 @@
     width: 50%;
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+    overflow: hidden;
 }
+
+.filter-vision{
+    display: flex;
+    justify-content: space-between;
+ 
+}
+
 
 @media only screen and (max-width:1317px){
     /* .container-custom{

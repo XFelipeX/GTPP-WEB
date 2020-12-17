@@ -1,24 +1,34 @@
 import { TASKVISIBLE } from './taskVisibleTypes';
 import {TASKINFO} from './taskVisibleTypes';
-import {TASKPROGRESS} from './taskVisibleTypes';
 import {UPDATETASKVISIBLE} from './taskVisibleTypes';
+import {SENDINFOMODAL} from './taskVisibleTypes';
 
-const initialState = false;
+let info;
+
+const initialState = [
+  {info:{percent:"",description:"",initial_date:"",final_date:"",task_id:1,user_id:"",state_id:""}},
+  {task:{csds:[{}],full_description:"",task_item:"",task_user:[]}}
+];
 
 
 
 const taskVisibleReducer = (state = initialState, action) => {
-  // console.log(action.info);
+  // console.log(action);
   switch (action.type) {
     case TASKVISIBLE:
       return !state 
     case TASKINFO:
-      return action.info
-    case TASKPROGRESS:
       return {
         ...state,
-        progress: action.progress
+        // info:action.info,
+        task:action.task
       }
+      case SENDINFOMODAL:
+        return {
+          ...state,
+          info:action.info,
+          // task:action.task
+        }
     case UPDATETASKVISIBLE:
         return {
           ...state,

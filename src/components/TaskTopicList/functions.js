@@ -8,9 +8,14 @@ export const changeItemChecked = async (taskId, itemId, check) => {
         { task_id: taskId, id: itemId, check: check }
       );
       // console.log(data);
-      return data;
+      return data.data;
     } catch (error) {
-      return [{}];
+      let msg = error.response.data.message;
+
+      if(msg.includes("Task with this state cannot be modified")){
+        alert("Tarefa neste estado não pode ser modificada!");
+      }
+      return null;
     }
   };
 
@@ -21,8 +26,12 @@ export const changeItemChecked = async (taskId, itemId, check) => {
       console.log(data);
       return data;
     } catch (error) {
-      alert("error ao excluir item");
-      return [{}];
+      let msg = error.response.data.message;
+
+      if(msg.includes("Task with this state cannot be modified")){
+        alert("Tarefa neste estado não pode ser modificada!");
+      }
+      return null;
     }
   }
   
@@ -32,10 +41,14 @@ export const changeItemChecked = async (taskId, itemId, check) => {
     try{
       const {data} = await api.post("GTPP/TaskItem.php?AUTH="+AUTH+"&app_id=3",{task_id:taskId,description:description});
       // console.log(data);
-      return data;
+      return data.data;
     }catch(error){
-      alert("erro ao inserir item");
-      return [{}];
+      let msg = error.response.data.message;
+
+      if(msg.includes("Task with this state cannot be modified")){
+        alert("Tarefa neste estado não pode ser modificada!");
+      }
+      return null;
     }
   }
 
@@ -49,7 +62,15 @@ export const changeItemChecked = async (taskId, itemId, check) => {
       // console.log(data);
       return data;
     } catch (error) {
-      return [{}];
+      let msg = error.response.data.message;
+
+      if(msg.includes("Task with this state cannot be modified")){
+        alert("Tarefa neste estado não pode ser modificada!");
+      }else if(msg.includes("Only the task creator or administrator can do this")){
+        alert("Somente o criador da tarefa ou administrador poder fazer isto!")
+      }
+      
+      return null;
     }
   };
 
@@ -57,7 +78,7 @@ export const changeItemChecked = async (taskId, itemId, check) => {
     const AUTH = sessionStorage.getItem("token");
     try {
       const { data } = await api.get('GTPP/TaskHistoric.php?AUTH='+AUTH+'&app_id=3&task_id='+taskId);
-      // console.log(data);
+      console.log(data);
       return data;
     } catch (error) {
       return [{}];

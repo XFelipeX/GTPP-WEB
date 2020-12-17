@@ -1,18 +1,21 @@
 import React from "react";
-//import {useDispatch} from 'react-redux';
-//import { logOff } from '../../redux/userAuth/userAuthActions';
+import {useDispatch} from 'react-redux';
+import { logOff } from '../../redux/userAuth/userAuthActions';
 import {useHistory} from 'react-router-dom';
+import {BiExit} from 'react-icons/bi';
+
 
 import './style.css'
+import { rgba } from "polished";
 
 const ButtonLogoff = () => {
 
   const history = useHistory();
-  //let dispatch = useDispatch();
+  let dispatch = useDispatch();
 
   function UserLogoff() {
     sessionStorage.removeItem('token');
-    // dispatch(logOff);
+    dispatch(logOff());
     history.push("/");
   }
 
@@ -20,7 +23,7 @@ const ButtonLogoff = () => {
     <div>
 
       <button type="button" onClick={() => {UserLogoff()}} className="buttonLogoff">
-        sair
+        <BiExit size={50} color="#959595"/>
       </button>
     </div>
   );

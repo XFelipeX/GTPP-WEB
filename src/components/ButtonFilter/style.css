@@ -1,12 +1,18 @@
 .buttonFilter{
-    margin-right: 50px;
+  
     font-size: 18px;
-    padding: 10px 20px;
-    background-color: #ccc;
+    /* padding: 10px 20px; */
+    background-color: transparent;
     border: none;
     outline: none;
+    height: 41px;
+    display: flex;
+    align-items: center;
 }
 
 .buttonFilterArea{
-    margin-top: 20px;
+    margin-right: 20px;
+    display: flex;
+    align-items: center;
+    height: 41px;
 }

@@ -18,7 +18,7 @@ const TaskPriority = ({ task }) => {
   const [open, setOpen] = useState(false);
 
 
-  async function updatePriority(id) {
+ function updatePriority(id) {
       const auth = sessionStorage.getItem('token');
       try {
         let data = {};
@@ -45,15 +45,22 @@ const TaskPriority = ({ task }) => {
               return r;
             })
             .catch((err) => {
-              // console.log(err);
+              console.log(err);
             });
 
-          if(data.error===true){
-            alert("Somente o criador da tarefa ou administrador pode fazer isto!")
-          }
+            let msg = data.message;
+
+        if(msg.includes("Only the task creator or administrator can do this")){
+          alert("Somente o criador da tarefa ou administrador pode fazer isto!")
+        }
+
         })();
+
+        // console.log(data)
       } catch (error) {
-        console.log(error);
+        
+
+        // console.log(error);
       }
     
   }

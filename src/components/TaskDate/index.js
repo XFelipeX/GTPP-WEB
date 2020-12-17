@@ -14,29 +14,7 @@ const TaskDate = ({ task }) => {
   const [open, setOpen] = useState(false);
   const initial_date = formatDate(task.initial_date)
   const final_date = formatDate(task.final_date);
-  const dispatch = useDispatch();
-
-  async function updateDate() {
-    const input = document.getElementById(`date${task.id}`).value;
-    if ( parseInt(input) === 0 || parseInt(input) < 0 ){
-      alert('não pode ser menor ou igual a zero');
-    }else{
-      try {
-        await api.put(`GTPP/Task.php?AUTH=${permissions.session}&app_id=3`, {
-          "task_id": task.id,
-          "days": parseInt(input)
-          
-        }).then(() => {
-         dispatch(updateTask())
-        // setShow(false);
-         input.value = null
-        })
-      } catch (error) {
-        console.log(error)
-      }
-    }
-  }
-
+  // const dispatch = useDispatch();
 
   
   function formatDate(props) {
@@ -73,7 +51,7 @@ const TaskDate = ({ task }) => {
           {final_date} 
         </h2>
       </div>
-      {open ? (
+      {/* {open ? (
          <div className="addDate">
         <div>
           <input placeholder="Adicionar dias" type="number" id = {'date' + task.id} />
@@ -81,7 +59,7 @@ const TaskDate = ({ task }) => {
         </div>
       </div>) : null
 
-      }
+      } */}
      
     </div>
   );

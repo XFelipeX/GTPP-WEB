@@ -7,7 +7,7 @@
     font-size: 18px;
     box-shadow: 0 2px 2px 0 black, 0 3px 3px 0 black;
     color:black;
-   
+    position: absolute;
 }
 
 .menuExpanded label > input{
@@ -27,18 +27,21 @@
 
 .visionMenu > p{
     box-sizing: border-box;
-    background-color:#ccc;
+    background-color:transparent;
     cursor:pointer;
-    display: inline-block;
-    padding:10px 20px;
+    display: flex;
+    align-items: center;
+    /* padding:10px 20px; */
     border-radius: 5px;
     color:black;
     font-size: 18px;
+    height: 41px;
 }
 
 .visionMenu{
     box-sizing: border-box;
-    width: 250px;
-    margin-top: 20px;
+    /* width: 250px; */
+    height: 41px;
+    margin-right: 20px;
     z-index: 2;
 }

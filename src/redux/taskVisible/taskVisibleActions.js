@@ -1,6 +1,6 @@
 import {TASKVISIBLE} from './taskVisibleTypes';
 import {TASKINFO} from './taskVisibleTypes';
-import {TASKPROGRESS} from './taskVisibleTypes';
+import {SENDINFOMODAL} from './taskVisibleTypes';
 
 export const taskVisibleUpdate = () => {
     return {
@@ -11,13 +11,15 @@ export const taskVisibleUpdate = () => {
 export const taskInfoShow = (task) => {
     return {
         type:TASKINFO,
-        info: task
+        task: task
     }
 }
 
-export const taskProgress = (progress) => {
+export const sendInfoModal = (taskId,percent,description,initial_date,final_date,state_id,user_id) => {
     return {
-       type: TASKPROGRESS,
-       progress: progress 
+        type:SENDINFOMODAL,
+        info: {task_id:taskId,percent:percent,description:description,initial_date:initial_date,final_date:final_date,state_id:state_id,user_id:user_id}
     }
-}
+}   
+
+

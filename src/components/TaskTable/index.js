@@ -18,6 +18,7 @@ import {
   getTask,
   getDepts,
   getShop,
+  loadingScreen,
 } from "../../redux";
 
 const TaskTable = () => {
@@ -40,7 +41,7 @@ const TaskTable = () => {
       } else {
         // setTasks(response.data);
         try {
-          console.log(response)
+          // console.log(response)
           dispatch(getTask(response.data));
         } catch (error) {}
       }
@@ -107,10 +108,18 @@ const TaskTable = () => {
           idUser
       );
 
+   
+
       if (data) {
+        if(data.photo==null){
+          data.user_id = idUser;
+          // console.log(data.user_id);
+        }
         data.photo = convertImage(data.photo);
         setTakePhotos((oldarray) => [...oldarray, data]);
+        
       }
+      // console.log(data)
       return data;
     } catch (error) {
       console.log(error);
@@ -121,6 +130,7 @@ const TaskTable = () => {
     vinculatedUsers.forEach((user) => {
       loadUserImages(user.user_id);
     });
+    // dispatch(loadingScreen())
   }, []);
 
   useEffect(() => {

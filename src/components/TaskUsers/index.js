@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import './style.css';
 import api from "../../services/api";
+// import {AiOutlineUser} from 'react-icons/ai';
+import userEmpty from '../../assets/nullphoto.jpeg';
 
 import userImg from "../../assets/user@2x.png";
 import { getVinculatedUsers, updateTask } from "../../redux";
@@ -24,7 +26,7 @@ let TaskUsers = ({ task }) => {
       params: {
         AUTH: permissions.session,
         task_id: task.id,
-        list_user:"",
+        list_user:1,
         app_id: 3,
       },
     });
@@ -40,7 +42,7 @@ let TaskUsers = ({ task }) => {
   }
 
   let loadUsersAmount = () => {
-      let count = 0;
+      let count = 1;
       if(vinculatedUsers){
         vinculatedUsers.forEach(e => e.check === true ? count++ : 0);
       }
@@ -55,7 +57,9 @@ let TaskUsers = ({ task }) => {
         task_id: task.id,
         user_id: id,
       })
-      .then(dispatch(updateTask()));
+      .then();
+
+      dispatch(updateTask())
   }
 
   useEffect(() => {
@@ -81,6 +85,10 @@ let TaskUsers = ({ task }) => {
     setShowUsers(false)
   })
 
+  // console.log(vinculatedUsers);
+  
+  // console.log(permissions)
+
   return (
     <div className="containerUsers">
       <div  ref={domNode} className="vinculatedUsers">
@@ -97,7 +105,7 @@ let TaskUsers = ({ task }) => {
                 
                 <>
                   {user.user_id === userPhoto.user_id &&
-                  user.check === true
+                  user.check === true && userPhoto.photo!=null
                  ? (
                 
                     <li>
@@ -111,11 +119,27 @@ let TaskUsers = ({ task }) => {
                         alt=""
                       />
                       <p>{user.name}</p>
-                      {user.user_id != permissions.id ? (<button onClick={() => changeUser(user.user_id)}>
+                      {task.user_id == permissions.id ? <button onClick={() => changeUser(user.user_id)}>
                         Remover
-                      </button>) : null}
+                      </button> : null}
                       
                     </li>
+                  ) : user.user_id == userPhoto.user_id &&
+                  user.check == true &&
+                  userPhoto.photo==null ?  (
+                    <li>
+                    <img
+                        src={userEmpty}
+                        width="35"
+                        height="35"
+                        alt=""
+                      />
+                      <p>{user.name}</p>
+                      {task.user_id == permissions.id ? (<button onClick={() => changeUser(user.user_id)}>
+                        Remover
+                      </button>) : null}
+                    </li>    
+                            
                   ) : null}
                 </>
               ))}
@@ -136,8 +160,8 @@ let TaskUsers = ({ task }) => {
               {userPhotos.map((userPhoto) => (
                 <a id={userPhoto.user_id}>
                   {user.user_id == userPhoto.user_id &&
-                  user.check === false &&
-                  user.user_id != permissions.id ? (
+                  user.check == false &&
+                  user.user_id != permissions.id && userPhoto.photo!=null ? (
                     <li>
                       <img
                         src={userPhoto.photo}
@@ -150,6 +174,22 @@ let TaskUsers = ({ task }) => {
                         Vincular
                       </button>
                     </li>
+                  ) : user.user_id == userPhoto.user_id &&
+                  user.check == false &&
+                  user.user_id != permissions.id && userPhoto.photo==null ?  (
+                    <li>
+                    <img
+                        src={userEmpty}
+                        width="35"
+                        height="35"
+                        alt=""
+                      />
+                      <p>{user.name}</p>
+                      <button onClick={() => changeUser(user.user_id)}>
+                        Vincular
+                      </button>
+                    </li>    
+                            
                   ) : null}
                 </a>
               ))}
@@ -163,3 +203,4 @@ let TaskUsers = ({ task }) => {
 };
 
 export default TaskUsers;
+

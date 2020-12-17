@@ -13,12 +13,14 @@ export const updateDescription = async (taskId, description) => {
         return response;
       });
 
-    // console.log(data);
+    console.log(data);
   } catch (error) {
-    let msg = String(error.message);
-    // console.log(msg);
-    if(msg.includes("Request failed with status code 403")){
+    let msg = String(error.response.data.message);
+    // console.log(error.response.data.message);
+    if(msg.includes("Only the task creator or administrator can do this")){
       alert("Somente o criador da tarefa ou administrador pode fazer isto!");
+    }else if(msg.includes("The full description cannot be empty")){
+      alert("A descrição completa não pode estar vazia!");
     }
   }
 };
@@ -28,7 +30,7 @@ export const updateCheckDept = async (taskId, deptId, shopId, companyId) => {
   // console.log(taskId,deptId,shopId,companyId);
   try {
     const data = await api.post(
-      "GTPP/TaskCompany.php?AUTH=" + AUTH + "&app_id=3",
+      "GTPP/TaskComShoDepSub.php?AUTH=" + AUTH + "&app_id=3",
       {
         task_id: taskId,
         company_id: companyId,
@@ -37,11 +39,17 @@ export const updateCheckDept = async (taskId, deptId, shopId, companyId) => {
       }
     );
 
-    // console.log(data);
+    console.log(data);
     return data;
   } catch (error) {
-    console.log(error.message);
-    return [{}];
+    let msg = String(error.response.data.message);
+    // console.log(error.response.data.message);
+    if(msg.includes("Task with this state cannot be modified")){
+      alert("Tarefa com este estado não pode ser modificada!");
+    }else if(msg.includes("Only the task creator or administrator can do this")){
+      alert("Somente o criador da tarefa ou administrador pode fazer isto!");
+    }
+    return null;
   }
 };
 
@@ -89,7 +97,7 @@ export const updateStateTask = async (idTask,reason,days) => {
 
   try {
     const {data} = await api
-      .put(`GTPP/_TaskState.php?AUTH=${AUTH}&app_id=3`, {
+      .put(`GTPP/TaskState.php?AUTH=${AUTH}&app_id=3`, {
         task_id: idTask,
         reason:reason,
         days:days
@@ -99,13 +107,15 @@ export const updateStateTask = async (idTask,reason,days) => {
         return response;
       });
 
-    // console.log(data.data[0]);
+    console.log(data.data[0]);
     return data.data[0];
   } catch (error) {
     let msg = String(error.response.data.message);
     // console.log(error.response.data.message);
     if(msg.includes("This user can not do this")){
       alert("Somente o criador da tarefa ou administrador pode fazer isto!");
+    }else if(msg.includes("Days cannot be negative")){
+      alert("A quantidade de dias não pode ser negativa!");
     }
   }
 }
@@ -114,7 +124,7 @@ export const cancelStateTask = async (idTask,reason) => {
   const AUTH = sessionStorage.getItem("token");
   try {
     const {data} = await api
-      .put(`GTPP/_TaskState.php?AUTH=${AUTH}&app_id=3`, {
+      .put(`GTPP/TaskState.php?AUTH=${AUTH}&app_id=3`, {
         task_id: idTask,
         reason:reason,
         cancel:1

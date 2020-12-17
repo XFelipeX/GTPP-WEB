@@ -3,6 +3,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {setCol, setOrder, updateTask, setStateVisi, setDateVisi, setVincVisi, setPriorityVisi, setCompanyVisi,setShopVisi} from '../../redux';
 import './style.css';
 import useClickOutside from '../ClickOutside';
+import {BsFilterLeft} from 'react-icons/bs';
 
 let VisionMenu = () =>{
   const [open, setOpen] = useState(false);
@@ -60,7 +61,7 @@ let VisionMenu = () =>{
 
   return (
     <div ref={domNode} className="visionMenu">
-      <p onClick={() => showMenu()}>Visualização</p>
+      <p onClick={() => showMenu()} style={{width:"70px"}}><BsFilterLeft size={70} color="#959595"/></p>
 
       {open ? (
        

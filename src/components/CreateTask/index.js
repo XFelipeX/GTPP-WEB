@@ -1,12 +1,13 @@
-import React, { useState } from "react";
-import { useEffect, useSelector,useDispatch } from "react-redux";
+import React, { useState,useEffect } from "react";
+import { useSelector,useDispatch } from "react-redux";
 import "./style.css";
 import lowPriority from '../../assets/Path1.png';
 import medPriority from '../../assets/Path2.png';
 import highPriority from '../../assets/Arrows.png';
-import api from "../../services/api";
+// import api from "../../services/api";
 import { updateTask } from "../../redux";
 import useClickOutside from '../ClickOutside';
+import { BiCommentAdd } from "react-icons/bi";
 
 let CreateTask = () => {
   const dispatch = useDispatch();
@@ -92,8 +93,8 @@ let CreateTask = () => {
   }
 
   return (
-    <div ref={domNode} className="createTaskArea">
-      <ul onClick={() => showMenu()}>criar tarefa</ul>
+    <div ref={domNode} className="create-task-area">
+      <ul onClick={() => showMenu()}><BiCommentAdd size={50} color="#959595"/></ul>
 
       {open ? (
         <li className="menuCreateTask">

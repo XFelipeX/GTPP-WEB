@@ -8,8 +8,10 @@ import TaskUsers from '../TaskUsers';
 import TaskCompany from '../TaskCompany';
 import TaskShop from '../TaskShop';
 import TaskModal from '../TaskModal';
-import {taskInfoShow, updateTask} from '../../redux'
-import {AiOutlineUser} from 'react-icons/ai';
+import {taskInfoShow,sendInfoModal} from '../../redux'
+// import {AiOutlineUser} from 'react-icons/ai';
+import userEmpty from '../../assets/nullphoto.jpeg';
+import api from '../../services/api';
 // import TaskDept from '../TaskDept'
 
 
@@ -19,10 +21,12 @@ const Task = ({ task }) => {
 
   const { userPhotos } = useSelector(state => state);
   const { visionMenu } = useSelector(state => state);
-  const {updateTaskVisible} = useSelector(state => state);
+  // const {updateTaskVisible} = useSelector(state => state);
   const { taskVisible } = useSelector(state => state);
-  const [taskShow,setTaskShow] = useState({});
-  const {stateUpdate} = useSelector(state => state);
+  // const [taskShow,setTaskShow] = useState({});
+  // const {stateUpdate} = useSelector(state => state);
+  const{permissions} =  useSelector(state => state);
+  const {vinculatedUsers} = useSelector(state => state);
  
   const dispatch = useDispatch();
 
@@ -61,32 +65,60 @@ const Task = ({ task }) => {
   //   console.log(taskShow);
   // },[taskShow])
 
+  async function loadTaskVisible(taskId,percent,description,initial_date,final_date,state_id,userId){
+    let auth = permissions.session;
+
+    try { 
+      let {data} = await api.get('GTPP/Task.php?AUTH='+auth+'&app_id=3&id='+taskId);
+      // console.log(taskVisible);
+
+      dispatch(sendInfoModal(taskId,percent,description,initial_date,final_date,state_id,userId))
+      dispatch(taskInfoShow(data.data))
+
+      
+      ;
+     
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // console.log(vinculatedUsers)
   return (
     <li className="containerTask">
       {visionMenu.priority === true ? <TaskPriority task={task} /> : null}
       <div className="taskName">
       
         <div className="tooltip" >
-          {photo == null ? (
-            
-                          <AiOutlineUser
-                            size="35"
+          {photo == null ? (    
+            <>                   
+                            <img
+                        src={userEmpty}
+                        width={30}
+                        height={30}
                             style={{
                               backgroundColor: "#353535",
                               borderRadius: "50%",
                             }}
                             alt=""
                             title=""
-                          />
+                      />
+                      {/* <span className="tooltiptext">{user.name}</span> */}
+                      {/* console.log("user "+task.user_id+" permissions "+permissions.id) */}
+                      </>
                         
           ): (
             <img src={photo} alt="" width='30' height='30' />
+            
           )}
+          {vinculatedUsers.map(user => user.user_id == task.user_id || permissions.id == task.user_id? (
+         
+            <span className="tooltiptext">{user.name}</span>
+          ) : null)}
           
-          <span className="tooltiptext">{task.user_name}</span>
         </div>
-        <h2 onClick={() => {dispatch(taskInfoShow(task))}}>{task.description}</h2>
-        {taskVisible ? <TaskModal/> : null}
+        <h2 onClick={() => {loadTaskVisible(task.id,task.percent,task.description,task.initial_date,task.final_date,task.state_id,task.user_id)}}>{task.description}</h2>
+        {taskVisible && taskVisible.info && taskVisible.task ? <TaskModal/> : null}
       </div>
       <div className="taskContent">
         {visionMenu.shop === true ? <TaskShop task={task}/> : null}
@@ -94,7 +126,7 @@ const Task = ({ task }) => {
         {visionMenu.vinc === true ? <TaskUsers task={task} /> : null}
         {visionMenu.state === true ? <TaskState task={task} /> : null}
         {visionMenu.date === true ? <TaskDate task={task} /> : null} 
-        { <h2>{task.progress}%</h2>}
+        { <h2>{task.percent}%</h2>}
       </div>
       
     </li>

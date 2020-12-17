@@ -25,3 +25,6 @@ export { updateTaskTopic} from './taskTopicUpdate/taskTopicUpdateActions';
 export {getTaskCsds} from './taskCsds/taskCsdsActions';
 export {updateModal} from './modalUpdate/modalUpdateActions';
 export {updateTopic} from './topicUpdate/topicUpdateActions';
+export {sendInfoModal} from './taskVisible/taskVisibleActions';
+export {getUserInfo} from './userInfo/userInfoActions';
+export {loadingScreen} from './loadingScreen/loadingScreenActions';

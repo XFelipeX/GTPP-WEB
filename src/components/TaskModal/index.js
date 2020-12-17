@@ -9,6 +9,8 @@ import TaskInfo from '../TaskInfo';
 
 let TaskModal = ({ id = "modal" }) => {
 
+  
+
   const dispatch = useDispatch();
   const { taskVisible } = useSelector((state) => state);
   // console.log(taskVisible)
@@ -21,7 +23,7 @@ let TaskModal = ({ id = "modal" }) => {
     <div id={id} className="modal" onClick={handleOutsideClick}>
       <div className="modalContainer">
         <div className="modalHeader">
-          <h1>{taskVisible.description}</h1>
+          <h1>{taskVisible.info ? taskVisible.info.description : null}</h1>
           <button
             className="modalClose"
             onClick={() => dispatch(taskVisibleUpdate())}

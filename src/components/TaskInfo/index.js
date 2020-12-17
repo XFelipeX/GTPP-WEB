@@ -18,11 +18,13 @@ import {
   cancelStateTask
 } from "./functions";
 import userImg from "../../assets/user@2x.png";
+import userEmpty from '../../assets/nullphoto.jpeg';
 import api from "../../services/api";
 import "./style.css";
 import useClickOutside from "../ClickOutside";
 
 const TaskInfo = () => {
+
   const dispatch = useDispatch();
   const { taskStates } = useSelector((state) => state);
   const { taskVisible } = useSelector((state) => state);
@@ -43,9 +45,14 @@ const TaskInfo = () => {
   
   const [days,setDays] = useState(1);
 
-  const [fullDescription, setFullDescription] = useState(
-    taskVisible.full_description
-  );
+  // console.log(taskVisible)
+
+  const [fullDescription, setFullDescription] = useState("");
+
+  // useEffect(() => {
+  //   setFullDescription();
+  // },[])
+
   const [reason,setReason] = useState("");
   const [vinculatedUsers, setVinculatedUsers] = useState([]);
   const [showDesc, setShowDesc] = useState(false);
@@ -65,9 +72,12 @@ const TaskInfo = () => {
       let { data } = await api.get(
         "GTPP/Task.php?AUTH=" +
           AUTH +
-          "&app_id=3&mobile=1&task_id=" +
-          taskVisible.id
+          "&app_id=3&id=" +
+          taskVisible.info.task_id
       );
+
+      // console.log(taskVisible)
+      //   console.log(data);
 
       if(data)
 
@@ -80,7 +90,7 @@ const TaskInfo = () => {
         loadDeptsCompany(
           data.data.csds[0].company_id,
           data.data.csds[0].shop_id,
-          taskVisible.id
+          taskVisible.info.task_id
         ).then((response) => {
           setDepts(response);
         });
@@ -98,8 +108,8 @@ const TaskInfo = () => {
   }, [modalUpdate]);
 
   //formatando datas
-  const dateInitial = formatDate(taskVisible.initial_date);
-  const dateFinal = formatDate(taskVisible.final_date);
+  const dateInitial = formatDate(taskVisible.info ? taskVisible.info.initial_date : "");
+  const dateFinal = formatDate(taskVisible.info ? taskVisible.info.final_date : "");
 
   function updateFullDescription(taskId, description) {
     updateDescription(taskId, description);
@@ -112,7 +122,7 @@ const TaskInfo = () => {
     const { data } = await api.get("GTPP/Task_User.php", {
       params: {
         AUTH: AUTH,
-        task_id: taskVisible.id,
+        task_id: taskVisible.info.task_id,
         list_user: "",
         app_id: 3,
       },
@@ -123,7 +133,7 @@ const TaskInfo = () => {
 
   useEffect(() => {
     loadVinculateUsers();
-  }, []);
+  }, [modalUpdate]);
 
   useEffect(() => {
     // console.log(company)
@@ -149,32 +159,40 @@ const TaskInfo = () => {
   // }, []);
 
   useEffect(() => {
-    loadDeptsCompany(company, shop, taskVisible.id).then((response) => {
+    loadDeptsCompany(company, shop, taskVisible.info.task_id).then((response) => {
       setDepts(response);
     });
   }, [shop,modalUpdate]);
+
+  // function loadCsds(){
+  //   for (let i = 0; i < taskcsds.length; i++) {
+  //     changeCheckDept(
+  //       taskVisible.info.task_id,
+  //       taskcsds[i].depart_id,
+  //       taskcsds[i].shop_id,
+  //       taskcsds[i].company_id
+  //     );
+  //   }
+  // }
 
   function changeCheckDept(taskId, deptId, shopId, companyId) {
     if (shopId == "-1" || companyId == "-1") {
       alert("Selecione companhia e loja!");
     } else {
       try {
-        if (taskcsds != null && companyId != taskcsds[0].company_id) {
-          for (let i = 0; i < taskcsds.length; i++) {
-            changeCheckDept(
-              taskVisible.id,
-              taskcsds[i].depart_id,
-              taskcsds[i].shop_id,
-              taskcsds[i].company_id
-            );
-          }
-        }
+       
+          updateCheckDept(taskId, deptId, shopId, companyId).then((response) => {
+            if(response==null){
+              setShowDept(false);
+              // loadCsds();
+            }
+            
+            // setShop(shop);
+          });
+        
 
-        updateCheckDept(taskId, deptId, shopId, companyId).then((response) => {
-          // console.log(response)
-          dispatch(updateModal());
-          // setShop(shop);
-        });
+        dispatch(updateModal());
+        
       } catch (error) {
         console.log("Erro ao selecionar departamento!");
       }
@@ -186,26 +204,27 @@ const TaskInfo = () => {
   });
 
   function updateState(stateId,reason,days){
-    // console.log("estado atual é o "+stateId);
-    if(stateId==1 || stateId==2){
+    // console.log("estado atual é o "+taskVisible);
+    if(taskVisible.info.state_id==1 || taskVisible.info.state_id==2){
       if(reason==null){
         setShowReasonModal(true);
       } else if( reason === ""){
         alert("o motivo é obrigatório!")
       }else{
-        updateStateTask(taskVisible.id,reason).then(response => taskVisible.state_id = response.id).catch(error => {});
+        updateStateTask(taskVisible.info.task_id,reason).then(response => taskVisible.info.state_id = response.id).catch(error => {});
         dispatch(updateTask());
         dispatch(updateModal());
         setShowReasonModal(false);
         setReason("");
       }
-    }else if(stateId==5){
+    }else if(taskVisible.info.state_id==5){
       if(days==null){
         setShowDayModal(true);
       }else{
-        updateStateTask(taskVisible.id,reason,days).then(response =>  (
-          taskVisible.state_id = response.id,
-          taskVisible.final_date = response.final_date
+        updateStateTask(taskVisible.info.task_id,reason,days).then(response =>  ( 
+          console.log(response.id),
+          taskVisible.info.state_id = response.id,
+          taskVisible.info.final_date = response.final_date
         ) ).catch(error => {
           // console.log(error.message);
          
@@ -217,12 +236,12 @@ const TaskInfo = () => {
       }
 
     }
-    else if(stateId!==5){
+    else if(taskVisible.info.state_id!==5){
       if(confirm==false){
         setShowConfirmAction(true);
         return;
       }else if (confirm ==true){
-        updateStateTask(taskVisible.id).then(response => taskVisible.state_id = response.id).then(response => {
+        updateStateTask(taskVisible.info.task_id).then(response => taskVisible.info.state_id = response.id).then(response => {
           dispatch(updateTask());
           dispatch(updateModal());
           setShowConfirmAction(false)
@@ -231,13 +250,13 @@ const TaskInfo = () => {
      
       return;
       }
-      updateStateTask(taskVisible.id).then(response => taskVisible.state_id = response.id);
+      updateStateTask(taskVisible.info.task_id).then(response => taskVisible.info.state_id = response.id);
       dispatch(updateTask());
       dispatch(updateModal());
     }
   }
 
-  function cancelTask(stateId,reason){
+  function cancelTask(taskId,reason){
 
     // console.log("estado atual é o "+stateId);
     if( reason === ""){
@@ -247,7 +266,7 @@ const TaskInfo = () => {
 
     
       // console.log('aqui')
-      cancelStateTask(stateId,reason).then(response => taskVisible.state_id = response.id).catch(error => {
+      cancelStateTask(taskId,reason).then(response => taskVisible.info.state_id = response.id).catch(error => {
         // console.log(error);
       });
       dispatch(updateTask());
@@ -287,7 +306,7 @@ const TaskInfo = () => {
           <button
             className="btnConfirm"
             onClick={(e) =>
-              cancelTask(taskVisible.state_id,reason)
+              cancelTask(taskVisible.info.task_id,reason)
             }
           >
             Confirmar
@@ -307,12 +326,16 @@ const TaskInfo = () => {
     )
   } 
 
+
+  // console.log(vinculatedUsers);
+  // console.log(taskVisible)
+
   return (
     <div className="taskInfo">
       {showConfirmAction ? (
         <>
-        {taskVisible.state_id == 6 || taskVisible.state_id == 4 ? ( <ConfirmAction confirm={() => setConfirm(true)} question="Tem certeza que deseja reabrir esta tarefa" action={() => updateState(taskVisible.state_id)} cancelAction={() => setShowConfirmAction(false)}/> ) : (null)}
-        {taskVisible.state_id == 3 ? (<ConfirmAction confirm={() => setConfirm(true)} question="Tem certeza que deseja finalizar esta tarefa" action={() => updateState(taskVisible.state_id)} cancelAction={() => setShowConfirmAction(false)}/> ) : null}
+        {taskVisible.info.state_id == 6 || taskVisible.info.state_id == 4 ? ( <ConfirmAction confirm={() => setConfirm(true)} question="Tem certeza que deseja reabrir esta tarefa" action={() => updateState(taskVisible.info.state_id)} cancelAction={() => setShowConfirmAction(false)}/> ) : (null)}
+        {taskVisible.info.state_id == 3 ? (<ConfirmAction confirm={() => setConfirm(true)} question="Tem certeza que deseja finalizar esta tarefa" action={() => updateState(taskVisible.info.state_id)} cancelAction={() => setShowConfirmAction(false)}/> ) : null}
         {/* {taskVisible.state_id == 7 ? (<ConfirmAction confirm={() => setConfirm(true)} question="Tem certeza que deseja finalizar esta tarefa" action={() => updateState(taskVisible.state_id)} cancelAction={() => setShowConfirmAction(false)}/> ) : null} */}
         </>
       ) : null}
@@ -335,7 +358,7 @@ const TaskInfo = () => {
                   <button
                     className="btnConfirm"
                     onClick={(e) =>
-                      updateState(taskVisible.state_id,reason)
+                      updateState(taskVisible.info.state_id,reason)
                     }
                   >
                     Confirmar
@@ -373,7 +396,7 @@ const TaskInfo = () => {
                   <button
                     className="btnConfirm"
                     onClick={(e) =>
-                      updateState(taskVisible.state_id,reason,days)
+                      updateState(taskVisible.info.state_id,reason,days)
                     }
                   >
                     Confirmar
@@ -393,7 +416,7 @@ const TaskInfo = () => {
       ) : null}
 
       {showModalAsk ? (
-        taskVisible.state_id != 7 ? <ModalCancel ask="Cancelando a tarefa"/> : <ModalCancel ask="Retomando a tarefa"/>
+        taskVisible.info.state_id != 7 ? <ModalCancel ask="Cancelando a tarefa"/> : <ModalCancel ask="Retomando a tarefa"/>
       ) : null}
 
       <div className="row">
@@ -402,7 +425,8 @@ const TaskInfo = () => {
 
         {taskStates.map((state) => (
           <React.Fragment key={state.id}>
-            {state.id == taskVisible.state_id ? (
+          {taskVisible.info ? (
+            state.id == taskVisible.info.state_id ? (
               <button
                 onClick={() => {
                   count++;
@@ -432,7 +456,9 @@ const TaskInfo = () => {
                 {/* {console.log(state.color)} */}
                 <h2>{state.description}</h2>
               </button>
-            ) : null}
+            ) : null
+          ) : null}
+            
           </React.Fragment>
         ))}
       </div>
@@ -457,15 +483,15 @@ const TaskInfo = () => {
                     placeholder="Esta tarefa tem como objetivo..."
                     spellCheck="false"
                     rows="5"
-                    value={fullDescription}
-                    onChange={(e) => permissions.id === taskVisible.user_id || permissions.administrator ===1 ? setFullDescription(e.target.value) : null}
+                    value={taskVisible.task.full_description!=null ? taskVisible.task.full_description : fullDescription}
+                    onChange={(e) => permissions.id === taskVisible.info.user_id || permissions.administrator ===1 ? setFullDescription(e.target.value) : null}
                   ></textarea>
                 </li>
                 <li>
                   <button
                     className="btnSaveDescription"
                     onClick={() =>
-                      updateFullDescription(taskVisible.id, fullDescription)
+                      updateFullDescription(taskVisible.info.task_id, fullDescription)
                     }
                   >
                     Salvar
@@ -546,7 +572,7 @@ const TaskInfo = () => {
                               checked={dept.check}
                               onChange={(e) => {
                                 changeCheckDept(
-                                  taskVisible.id,
+                                  taskVisible.info.task_id,
                                   dept.id,
                                   shop,
                                   company
@@ -577,7 +603,7 @@ const TaskInfo = () => {
                   {userPhotos.map((userPhoto) => (
                     <React.Fragment key={userPhoto.user_id}>
                       {user.user_id === userPhoto.user_id &&
-                      user.check === true ? (
+                      user.check === true && userPhoto.photo!=null ? (
                         userPhoto.photo !== "" ? (
                           <div className="userControl">
                             <img
@@ -601,6 +627,19 @@ const TaskInfo = () => {
                             }
                           </div>
                         )
+                      ) : user.user_id === userPhoto.user_id &&
+                      user.check === true && userPhoto.photo==null ? (
+                        <div className="userControl">
+
+                      
+                        <img
+                        src={userEmpty}
+                        width="35"
+                        height="35"
+                        alt={user.name}
+                        title={user.name}
+                      />
+                        </div>
                       ) : null}
                     </React.Fragment>
                   ))}

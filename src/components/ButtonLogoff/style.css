@@ -1,11 +1,13 @@
 .buttonLogoff{
     outline: none;
     border: none;
-    background:rgb(0, 162, 255);
+    background:transparent;
     color: white;
     font-size:18px;
-    padding: 10px 20px;
+    /* padding: 10px 20px; */
     border-radius: 5px;
-    margin-top: 20px;
-    display: inline-block;
+    /* margin-top: 20px; */
+    display: flex;
+    align-items: center;
+    height: 41px;
 }
