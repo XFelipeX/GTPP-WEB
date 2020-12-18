@@ -107,8 +107,8 @@ export const updateStateTask = async (idTask,reason,days) => {
         return response;
       });
 
-    console.log(data.data[0]);
-    return data.data[0];
+    // console.log(data);
+    return data.data;
   } catch (error) {
     let msg = String(error.response.data.message);
     // console.log(error.response.data.message);

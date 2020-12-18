@@ -28,3 +28,5 @@ export {updateTopic} from './topicUpdate/topicUpdateActions';
 export {sendInfoModal} from './taskVisible/taskVisibleActions';
 export {getUserInfo} from './userInfo/userInfoActions';
 export {loadingScreen} from './loadingScreen/loadingScreenActions';
+export {getUsersPhotos} from './taskUsersPhotos/taskUsersPhotosActions';
+

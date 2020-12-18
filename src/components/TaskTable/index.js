@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import api from "../../services/api";
 import "./style.css";
-
+import userEmpty from '../../assets/nullphoto.jpeg';
 import Task from "../Task";
 import {
   loadTask,
@@ -19,17 +19,22 @@ import {
   getDepts,
   getShop,
   loadingScreen,
+  getVinculatedUsers,
+  getUserPhotos,
 } from "../../redux";
+import Loading from "../Loading";
 
 const TaskTable = () => {
   const { permissions } = useSelector((state) => state);
   const { stateUpdate } = useSelector((state) => state);
   const { visionMenu } = useSelector((state) => state);
   // const {updateTaskVisible} = useSelector(state => state);
-  const { taskVisible } = useSelector((state) => state);
+  const { userPhotos } = useSelector((state) => state);
   const { vinculatedUsers } = useSelector((state) => state);
   const [takePhotos, setTakePhotos] = useState([]);
   const { tasks } = useSelector((state) => state);
+
+  const[loading,setLoading] = useState(true);
 
   const dispatch = useDispatch();
 
@@ -41,7 +46,7 @@ const TaskTable = () => {
       } else {
         // setTasks(response.data);
         try {
-          console.log(response)
+          // console.log(response)
           dispatch(getTask(response.data));
         } catch (error) {}
       }
@@ -98,6 +103,28 @@ const TaskTable = () => {
     });
   }, []);
 
+  async function loadVinculateUsers() {
+    const AUTH = permissions.session;
+
+    const { data } = await api.get("CCPP/User.php?AUTH="+AUTH+"&app_id=3");
+    // console.log(data);
+    try {
+      dispatch(getVinculatedUsers(data.data));
+      vinculatedUsers.map(user => user.photo = null);
+      dispatch(getVinculatedUsers(vinculatedUsers))
+      // console.log(vinculatedUsers)
+      // setVinculatedUsers(data.data);
+    } catch (error) {
+      
+    }
+ 
+    // console.log(vinculatedUsers)
+  }
+
+  useEffect(() => {
+    loadVinculateUsers();
+  }, []);
+
   const loadUserImages = async (idUser) => {
     const AUTH = sessionStorage.getItem("token");
     try {
@@ -111,15 +138,24 @@ const TaskTable = () => {
    
 
       if (data) {
-        if(data.photo==null){
+        // console.log(data);
+        if(data.photo==null||data.photo==""){
+          
           data.user_id = idUser;
           // console.log(data.user_id);
+          data.photo = userEmpty;
+          setTakePhotos((oldarray) => [...oldarray, data]);
+    
+         
+        }else{
+          data.photo = convertImage(data.photo);
+          setTakePhotos((oldarray) => [...oldarray, data]);
+     
         }
-        data.photo = convertImage(data.photo);
-        setTakePhotos((oldarray) => [...oldarray, data]);
+       
         
       }
-      // console.log(data)
+      
       return data;
     } catch (error) {
       console.log(error);
@@ -127,14 +163,28 @@ const TaskTable = () => {
   };
 
   useEffect(() => {
+    // let count=0;
     vinculatedUsers.forEach((user) => {
-      loadUserImages(user.user_id);
+      // let user = vinculatedUsers.users.filter(user => user.id == task.user_id);
+
+      // if(user[0].photo==null){
+      //   loadUserImages(task.user_id)
+      // }
+      
+    loadUserImages(user.id)
     });
-    // dispatch(loadingScreen())
+
+  
+
   }, []);
+
+  setTimeout(() => {
+    setLoading(false)
+  },1000)
 
   useEffect(() => {
     dispatch(setPhotos(takePhotos));
+    
   }, [takePhotos]);
 
   function convertImage(src) {
@@ -148,9 +198,12 @@ const TaskTable = () => {
   }
 
   return (
-    <ul className="taskList">
+    loading==true ? <Loading/> : (
+      <ul className="taskList">
       {tasks ? tasks.map((task) => <Task task={task} key={task.id} />) : null}
     </ul>
+    )
+   
   );
 };
 

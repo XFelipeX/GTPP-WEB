@@ -20,6 +20,7 @@ import modalUpdateReducer from "./modalUpdate/modalUpdateReducer";
 import topicUpdateReducer from "./topicUpdate/topicUpdateReducer";
 import userInfoReducer from "./userInfo/userInfoReducer";
 import loadingScreenReducer from './loadingScreen/loadingScreenReducer';
+import taskUsersPhotos from './taskUsersPhotos/taskUsersPhotosReducer';
 
 const rootReducer = combineReducers({
   permissions: userAuthReducer,
@@ -40,6 +41,7 @@ const rootReducer = combineReducers({
   topicUpdate: topicUpdateReducer,
   userInfo: userInfoReducer,
   loading: loadingScreenReducer,
+  taskUsersPhotos
 });
 
 const persistConfig = {

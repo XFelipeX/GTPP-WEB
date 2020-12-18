@@ -54,10 +54,12 @@ const TaskInfo = () => {
   // },[])
 
   const [reason,setReason] = useState("");
-  const [vinculatedUsers, setVinculatedUsers] = useState([]);
+  // const [vinculatedUsers, setVinculatedUsers] = useState([]);
+  const {vinculatedUsers} = useSelector(state => state);
   const [showDesc, setShowDesc] = useState(false);
   const [showDept, setShowDept] = useState(false);
   const { stateUpdate } = useSelector((state) => state);
+  const [users,setUsers] = useState([]);
 
   // console.log(taskVisible)
   
@@ -118,22 +120,29 @@ const TaskInfo = () => {
   }
 
   async function loadVinculateUsers() {
-    const AUTH = sessionStorage.getItem("token");
     const { data } = await api.get("GTPP/Task_User.php", {
       params: {
-        AUTH: AUTH,
+        AUTH: permissions.session,
         task_id: taskVisible.info.task_id,
-        list_user: "",
+        list_user:0,
         app_id: 3,
       },
     });
     // console.log(data);
-    setVinculatedUsers(data.data);
+    try {
+      // dispatch(getVinculatedUsers(data.data));
+      setUsers(data.data);
+    } catch (error) {
+      
+    }
+ 
+    // console.log(users)
+    // console.log(task.id)
   }
 
   useEffect(() => {
     loadVinculateUsers();
-  }, [modalUpdate]);
+  },[])
 
   useEffect(() => {
     // console.log(company)
@@ -326,6 +335,16 @@ const TaskInfo = () => {
     )
   } 
 
+  if(users.length>0){
+    users.map((user) => {
+ 
+      let result = vinculatedUsers.filter(users => users.id == user.user_id);
+    
+      
+      user.name = result[0].user;
+      // console.log(user.name)
+    })
+  }
 
   // console.log(vinculatedUsers);
   // console.log(taskVisible)
@@ -597,55 +616,38 @@ const TaskInfo = () => {
 
       <div className="usersVinculated">
         <div className="user">
-          {vinculatedUsers
-            ? vinculatedUsers.map((user) => (
-                <React.Fragment key={user.user_id}>
-                  {userPhotos.map((userPhoto) => (
-                    <React.Fragment key={userPhoto.user_id}>
-                      {user.user_id === userPhoto.user_id &&
-                      user.check === true && userPhoto.photo!=null ? (
-                        userPhoto.photo !== "" ? (
-                          <div className="userControl">
-                            <img
-                              src={userPhoto.photo}
-                              alt={user.name}
-                              title={user.name}
-                            />
-                          </div>
-                        ) : (
-                          <div className="userControl">
-                            {
-                              <AiOutlineUser
-                                size="35"
-                                style={{
-                                  backgroundColor: "#353535",
-                                  borderRadius: "50%",
-                                }}
-                                alt={user.name}
-                                title={user.name}
-                              />
-                            }
-                          </div>
-                        )
-                      ) : user.user_id === userPhoto.user_id &&
-                      user.check === true && userPhoto.photo==null ? (
-                        <div className="userControl">
+        {users.map((user) => (
+            
+            <React.Fragment key={user.user_id}>
+              {userPhotos.map((userPhoto) => (
+               
+                <React.Fragment key={userPhoto.user_id}>
+                  {user.user_id == userPhoto.user_id 
+                 ? (
+                
+               
 
+                      <div className="userControl">
+
+                      <img
                       
-                        <img
-                        src={userEmpty}
+                        src={userPhoto.photo}
                         width="35"
                         height="35"
                         alt={user.name}
                         title={user.name}
                       />
-                        </div>
-                      ) : null}
-                    </React.Fragment>
-                  ))}
+                     
+                     </div>
+                    
+                      
+                 
+                  ) : null}
                 </React.Fragment>
-              ))
-            : null}
+              ))}
+            </React.Fragment>
+          ))}
+         
         </div>
         {/* <div className="addUser">
                 <div>

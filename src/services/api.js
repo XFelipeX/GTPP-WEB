@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const api = axios.create({
  baseURL: 'http://192.168.0.99:71/GLOBAL/Controller/',
- method: 'POST',
+//  method: 'POST',
  headers: {
     // 'Access-Control-Allow-Origin': '*',
     // 'Access-Control-Allow-Credentials' : true,

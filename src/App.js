@@ -11,7 +11,7 @@ import {store, persistor} from './redux/store';
 export default function src() {
  return (
    <Provider store={store}>
-    <PersistGate loading={null} persistor={persistor}>
+    <PersistGate persistor={persistor}>
    <BrowserRouter>
   <Routes/>
    </BrowserRouter>

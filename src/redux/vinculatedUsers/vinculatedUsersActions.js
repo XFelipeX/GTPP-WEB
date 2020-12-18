@@ -1,4 +1,5 @@
 import {GET_VINCULATED_USERS} from './vinculatedUsersTypes';
+import {GET_USER_PHOTOS} from './vinculatedUsersTypes';
 
 export const getVinculatedUsers = (info) => {
     return {
@@ -7,3 +8,10 @@ export const getVinculatedUsers = (info) => {
     }
 }
 
+export const getUserPhotos = (photo) => {
+    return {
+        type:GET_USER_PHOTOS,
+        photo: photo
+    }
+
+}

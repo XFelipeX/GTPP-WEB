@@ -13,6 +13,8 @@ const Login = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const [access, setAccess] = useState(false);
+  // const {loading} = useSelector(state => state);
+  // console.log(loading)
 
   const [ permissions,setPermissions ] = useState({session:"",id:""});
   // const [status,setStatus] = useState(false);
@@ -72,11 +74,14 @@ const Login = () => {
                 alert("Este usuário não tem acesso a esta aplicação!");
               } else if (msg.includes("User or password error")) {
                 alert("usuário e/ou senha incorretos");
+              }else if (msg.includes("(user, password, app_id) is broken")) {
+                alert("Preencha todos os campos");
               }
             } else {
               sessionStorage.setItem("token", data.data.session);
               dispatch(logIn(data.data));
-              dispatch(loadingScreen());
+              // dispatch(loadingScreen());
+              // console.log(loading)
               setPermissions(data.data);
               history.push("/main");
             }

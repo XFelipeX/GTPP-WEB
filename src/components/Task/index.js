@@ -17,48 +17,50 @@ import api from '../../services/api';
 
 const Task = ({ task }) => {
 
-  const [photo, setPhoto] = useState('');
+  // const [photo, setPhoto] = useState('');
 
-  const { userPhotos } = useSelector(state => state);
+  // const { userPhotos } = useSelector(state => state);
   const { visionMenu } = useSelector(state => state);
-  // const {updateTaskVisible} = useSelector(state => state);
+  const {userPhotos} = useSelector(state => state);
   const { taskVisible } = useSelector(state => state);
   // const [taskShow,setTaskShow] = useState({});
   // const {stateUpdate} = useSelector(state => state);
   const{permissions} =  useSelector(state => state);
   const {vinculatedUsers} = useSelector(state => state);
+
+  // console.log(userPhotos)
  
   const dispatch = useDispatch();
 
  
-  async function loadUserImage() {
-    for (let index = 0; index < userPhotos.length; index++) {
-      // console.log(userPhotos[index].photo);
+  // async function loadUserImage() {
+  //   for (let index = 0; index < userPhotos.length; index++) {
+  //     // console.log(userPhotos[index].photo);
 
-      if(userPhotos[index].photo==null){
-        // console.log(userPhotos[index].photo);
+  //     if(userPhotos[index].photo==null){
+  //       // console.log(userPhotos[index].photo);
        
-          setPhoto(null);
-          return;
+  //         setPhoto(null);
+  //         return;
         
-      }else{
-        if (task.user_id == userPhotos[index].user_id) {
-          // console.log(userPhotos[index].photo);
-          setPhoto(userPhotos[index].photo)
-          return;
-        } else {
-          // setPhoto(null);
-        }
+  //     }else{
+  //       if (task.user_id == userPhotos[index].user_id) {
+  //         // console.log(userPhotos[index].photo);
+  //         setPhoto(userPhotos[index].photo)
+  //         return;
+  //       } else {
+  //         // setPhoto(null);
+  //       }
 
-      }
+  //     }
 
       
-    }
-  }
+  //   }
+  // }
 
-  useEffect(() => {
-    loadUserImage()
-  }, []);
+  // useEffect(() => {
+  //   loadUserImage()
+  // }, []);
 
   // useEffect(() =>{
   //   dispatch(taskInfoShow(taskShow))
@@ -83,39 +85,26 @@ const Task = ({ task }) => {
     }
   }
 
-  // console.log(vinculatedUsers)
+  let photo = userPhotos.filter(user => user.user_id == task.user_id)
+  let user = vinculatedUsers.filter(user => user.id == task.user_id)
+
+  // console.log(userPhotos)
   return (
     <li className="containerTask">
       {visionMenu.priority === true ? <TaskPriority task={task} /> : null}
       <div className="taskName">
       
-        <div className="tooltip" >
-          {photo == null ? (    
-            <>                   
-                            <img
-                        src={userEmpty}
-                        width={30}
-                        height={30}
-                            style={{
-                              backgroundColor: "#353535",
-                              borderRadius: "50%",
-                            }}
-                            alt=""
-                            title=""
-                      />
-                      {/* <span className="tooltiptext">{user.name}</span> */}
-                      {/* console.log("user "+task.user_id+" permissions "+permissions.id) */}
-                      </>
-                        
-          ): (
-            <img src={photo} alt="" width='30' height='30' />
+        <div className="tooltip" > 
             
-          )}
-          {vinculatedUsers.map(user => user.user_id == task.user_id || permissions.id == task.user_id? (
-         
-            <span className="tooltiptext">{user.name}</span>
-          ) : null)}
+              {photo[0] ? (
+                <>
+                <img src={photo[0].photo} alt="" width='30' height='30' />
+            <span className="tooltiptext">{user[0].user}</span>
+            </>    
+              ) : null}
           
+            
+              
         </div>
         <h2 onClick={() => {loadTaskVisible(task.id,task.percent,task.description,task.initial_date,task.final_date,task.state_id,task.user_id)}}>{task.description}</h2>
         {taskVisible && taskVisible.info && taskVisible.task ? <TaskModal/> : null}
