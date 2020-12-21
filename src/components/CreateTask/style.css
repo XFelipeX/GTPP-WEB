@@ -17,12 +17,12 @@
 .menuCreateTask{
     display: flex;
     flex-direction: column;
-    background-color:#343434;
+    background-color: #343434;
     width: auto;
-    color:black;
-    padding:5px;
-    box-shadow: 0 5px 10px 0;
-    border-radius:2px 2px 5px 5px;
+    color: black;
+    padding: 24px;
+    box-shadow: 0 0px 50px 15px #343434;
+    border-radius: 2px 2px 5px 5px;
     position: absolute;
     z-index: 10;
 }

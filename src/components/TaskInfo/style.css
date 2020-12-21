@@ -1,6 +1,6 @@
 .menuDept input{
     float:right;
-    
+
 }
 
 .depts p{
@@ -10,6 +10,7 @@
     border-radius: 5px;
     color:black;
     cursor: pointer;
+    width: 150px;
 }
 
 .depts{
@@ -33,9 +34,19 @@
 
 
 .rowCompShop div select{
-    width: 130px;
+    width: 150px;
     padding: 5px;
     border-radius: 5px;
+    background-color:#dddddd ;
+}
+
+.rowCompShop div select option{
+    max-width: 150px;
+    background-color:#353535 ;
+    color: white;
+ 
+    font-size: 16px;
+   
 }
 
 @media only screen and (max-width:1640px){
@@ -43,22 +54,28 @@
         flex-direction: column;
     }
 
-    .rowCompShop div{
+    .rowCompShop div:not(:last-child){
         margin-top: 15px;
     }
 
-    .depts p{
-        /* padding: 0; */
-        text-align: center;
-        width:200px;
+    .rowCompShop div:last-child{
+        margin-top: 8px;
     }
+
+    .depts p{ 
+               
+     }
+
+     .depts{
+         margin-bottom: 0;
+     }
 }
 
 
 .menuDept{
     display: flex;
     flex-direction: column;
-    width: 185px;
+    width: 150px;
     height: 130px;
     overflow: auto;
     justify-content: space-between;
@@ -66,13 +83,14 @@
     bottom: -120px;
     border-radius: 3px;
     padding: 3px;
-    background-color: #2b2b2b;
-  
+    background-color: #353535;
+    position: relative;
+    bottom:0em;
 }
 
 .menuDept li{
     padding: .2em .5em .2em 0;
-    width: 170px;
+    width: 130px;
     display: inline-block;
     border-bottom: 2px solid #3b6895;
 }
@@ -97,61 +115,9 @@
     border-radius: 5px;
 } */
 
-/* Modal editar descricao */
 
-.menuDescription li textarea{
-    width: 100%;
-    height: 150px;
-    font-size: 18px;
-    border-radius: 5px;
-    background-color: #c5c5c5;
-    color: black;
-    padding: .6em;
-} 
 
-.menuDescription li:first-child{
-    padding: 1em;
-}
 
-.menuDescription li:first-child h2{
-    width: 174px;
-    margin: 0 auto;
-    text-align: center;
-    padding-bottom: .5em;
-    font-size: 20px;
-    border-top: 2px solid #00a2ff;
-    padding-top: .2em;
-}
-
-.menuDescription li:last-child {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    position: relative;
-    padding: 1em;
-    bottom: .7em;
-}
-
-.modalDescription{
-    height: 99vh;
-    width: 100%;
-    position:absolute;
-    left: 0;
-    top: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 15;
-}
-
-.modalDescription > div{
-    width: 350px;
-    height: 280px;
-    border: 1px solid black;
-    margin-bottom: 13em;
-    background-color: #2b2b2b;
-    border-radius: 10px;
-}
 
 /* botões */
 
@@ -180,12 +146,13 @@
 
 .btnEdit{
     cursor: pointer;
+    margin-left: .5em;
 }
 
 /* Área de usuários vinculados */
 .usersVinculated{
     position: relative;
-    top: 4.3em;
+    bottom: 2em;
     width: 100%;
 }
 
@@ -193,7 +160,7 @@
     display: flex;
     flex-wrap: nowrap;
     flex-direction: row;
-    overflow-x: scroll;
+    overflow: auto;
     width: 100%;
 }
 

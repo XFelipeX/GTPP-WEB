@@ -60,9 +60,8 @@
 }
 
 .modalHistoric button{
-
-    margin: .4em;
-    padding:4px 20px;
+    background-color: transparent;
+    color:red;
 }
 
 .historicItems{
@@ -124,10 +123,15 @@
     border-radius: 10px;
 }
 
-.modalEdit button{
+.modalEdit button:last-child{
 
     margin: .4em;
     padding:4px 20px;
+}
+
+.modalEdit button:first-child{
+    background-color: transparent;
+    color:red;
 }
 
 .modalEdit textarea{

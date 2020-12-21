@@ -25,34 +25,20 @@
 
 .modal .modalContainer .modalClose{
     background-color: transparent;
+    
     outline: none;
-    width: 32px;
-    height: 32px;
+    
     border: none;
-    padding: 50px;
+    padding: 10px;
 }
 
-.modal .modalContainer .modalClose::before,.modal .modalContainer .modalClose::after{
-    content: ' ';
-    position: absolute;
+.modal .modalContainer .modalClose{
+    height: 50px;
     display: flex;
     align-items: center;
-    top: 12px;
-
-    right: 2em;
-    cursor: pointer;
-    width: 2.5px;
-    height: 24px;
-    background-color: red;
+    color: red;
 }
 
-.modalClose::before{
-    transform: rotate(45deg);
-}
-
-.modalClose::after{
-    transform: rotate(-45deg);
-}
 
 /* Modal Header */
 .modalHeader{
@@ -63,14 +49,32 @@
     height: 5em;
     background-color:#343434 ;
     border-bottom:3px solid #00a2ff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.modalHeader > h1{
+.modalHeader div > h1{
     text-transform: uppercase;
     color:white;
     position: absolute;
     left: 1em;
     top: 2em;
+    max-width: 160px;
+}
+
+.modalTaskDescription{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 250px;
+    overflow: auto;
+}
+
+.modalTaskDescription div:last-child {
+    display: flex;
+    align-items: center;
+    color: white;
 }
 
 /* Modal Conteúdo */
