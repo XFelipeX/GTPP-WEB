@@ -2,7 +2,7 @@ import {GET_VINCULATED_USERS} from './vinculatedUsersTypes';
 import {GET_USER_PHOTOS} from './vinculatedUsersTypes';
 
 const initialState = [
-  {users:[]},{photos:[]}
+  {}
 ]
 
 const vinculatedUsersReducer = (state = initialState, action) => {

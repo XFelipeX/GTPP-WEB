@@ -1,6 +1,6 @@
 import api from "../../services/api";
 
-export const updateDescription = async (taskId, description) => {
+export const updateFullDescription = async (taskId, description) => {
   const AUTH = sessionStorage.getItem("token");
 
   try {
@@ -13,7 +13,7 @@ export const updateDescription = async (taskId, description) => {
         return response;
       });
 
-    console.log(data);
+    // console.log(data);
   } catch (error) {
     let msg = String(error.response.data.message);
     // console.log(error.response.data.message);
@@ -21,9 +21,13 @@ export const updateDescription = async (taskId, description) => {
       alert("Somente o criador da tarefa ou administrador pode fazer isto!");
     }else if(msg.includes("The full description cannot be empty")){
       alert("A descrição completa não pode estar vazia!");
+    }else if(msg.includes("Task with this state cannot be modified")){
+      alert("Tarefa neste estado não pode ser modificada!")
     }
   }
 };
+
+
 
 export const updateCheckDept = async (taskId, deptId, shopId, companyId) => {
   const AUTH = sessionStorage.getItem("token");
@@ -107,8 +111,8 @@ export const updateStateTask = async (idTask,reason,days) => {
         return response;
       });
 
-    // console.log(data);
-    return data.data;
+    console.log(data);
+    return data.data[0];
   } catch (error) {
     let msg = String(error.response.data.message);
     // console.log(error.response.data.message);

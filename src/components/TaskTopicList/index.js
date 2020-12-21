@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FaTrash } from "react-icons/fa";
 import { BiCommentAdd } from "react-icons/bi";
+import { AiOutlineClose } from "react-icons/ai";
 import { AiOutlineClockCircle, AiOutlineEdit } from "react-icons/ai";
 import api from "../../services/api";
 import {
@@ -183,10 +184,10 @@ const TaskTopicList = ({ id = "modalEdit"}) => {
             <div className="btnCloseHistoric">
                 <button
                   type="button"
-                  style={{ backgroundColor: "#ff5251", color: "white" }}
+               
                   onClick={() => setShowHistoric(false)}
                 >
-                  fechar
+                  <AiOutlineClose size={30}/>
                 </button>
               </div>
             <div className="modaHistoricContent">
@@ -220,10 +221,9 @@ const TaskTopicList = ({ id = "modalEdit"}) => {
             <div className="btnEditTopic">
               <button
                 type="button"
-                style={{ backgroundColor: "#ff5251", color: "white" }}
                 onClick={() => setShowEdit(false)}
               >
-                Fechar
+                <AiOutlineClose size={30}/>
               </button>
               <button
                 type="button"

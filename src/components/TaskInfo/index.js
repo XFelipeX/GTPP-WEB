@@ -1,30 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { AiOutlineUserAdd } from "react-icons/ai";
-import { AiOutlineUser } from "react-icons/ai";
-import ConfirmAction from '../ConfirmAction';
+import ConfirmAction from "../ConfirmAction";
 import { BiEdit } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
+import { updateTask, updateModal } from "../../redux";
 import {
-  updateTask,
-  updateModal,
-} from "../../redux";
-import {
-  updateDescription,
+  updateFullDescription,
   formatDate,
   updateCheckDept,
   loadShopsCompany,
   loadDeptsCompany,
   updateStateTask,
-  cancelStateTask
+  cancelStateTask,
 } from "./functions";
-import userImg from "../../assets/user@2x.png";
-import userEmpty from '../../assets/nullphoto.jpeg';
 import api from "../../services/api";
 import "./style.css";
 import useClickOutside from "../ClickOutside";
+import ModalDescription from '../ModalDescription';
 
 const TaskInfo = () => {
-
   const dispatch = useDispatch();
   const { taskStates } = useSelector((state) => state);
   const { taskVisible } = useSelector((state) => state);
@@ -40,33 +34,38 @@ const TaskInfo = () => {
   const [shop, setShop] = useState({});
 
   const [taskcsds, setTaskCsds] = useState([]);
-  const [showReasonModal,setShowReasonModal] = useState(false);
-  const [showDayModal,setShowDayModal] = useState(false);
-  
-  const [days,setDays] = useState(1);
+  const [showReasonModal, setShowReasonModal] = useState(false);
+  const [showDayModal, setShowDayModal] = useState(false);
+
+  const [days, setDays] = useState(1);
 
   // console.log(taskVisible)
 
-  const [fullDescription, setFullDescription] = useState("");
+  const [fullDescription, setFullDescription] = useState(
+    taskVisible.task.full_description
+  );
+  
+  
+
 
   // useEffect(() => {
   //   setFullDescription();
   // },[])
 
-  const [reason,setReason] = useState("");
+  const [reason, setReason] = useState("");
   // const [vinculatedUsers, setVinculatedUsers] = useState([]);
-  const {vinculatedUsers} = useSelector(state => state);
-  const [showDesc, setShowDesc] = useState(false);
+  const { vinculatedUsers } = useSelector((state) => state);
+  const [showFullDesc, setShowFullDesc] = useState(false);
+
   const [showDept, setShowDept] = useState(false);
   const { stateUpdate } = useSelector((state) => state);
-  const [users,setUsers] = useState([]);
+  const [users, setUsers] = useState([]);
 
   // console.log(taskVisible)
-  
-  const [showModalAsk,setShowModalAsk] = useState(false);
 
-  const {permissions} = useSelector(state => state);
+  const [showModalAsk, setShowModalAsk] = useState(false);
 
+  const { permissions } = useSelector((state) => state);
 
   useEffect(() => {
     async function loadTaskVisible() {
@@ -81,9 +80,7 @@ const TaskInfo = () => {
       // console.log(taskVisible)
       //   console.log(data);
 
-      if(data)
-
-      setTaskCsds(data.data.csds);
+      if (data) setTaskCsds(data.data.csds);
 
       if (data.data.csds !== null) {
         loadShopsCompany(data.data.csds[0].company_id).then((response) => {
@@ -110,21 +107,27 @@ const TaskInfo = () => {
   }, [modalUpdate]);
 
   //formatando datas
-  const dateInitial = formatDate(taskVisible.info ? taskVisible.info.initial_date : "");
-  const dateFinal = formatDate(taskVisible.info ? taskVisible.info.final_date : "");
+  const dateInitial = formatDate(
+    taskVisible.info ? taskVisible.info.initial_date : ""
+  );
+  const dateFinal = formatDate(
+    taskVisible.info ? taskVisible.info.final_date : ""
+  );
 
-  function updateFullDescription(taskId, description) {
-    updateDescription(taskId, description);
-    setShowDesc(false);
+  function upFullDescription(taskId, description) {
+    updateFullDescription(taskId, description).then(() => {setFullDescription(description)});
+    setShowFullDesc(false);
     dispatch(updateTask());
   }
+
+
 
   async function loadVinculateUsers() {
     const { data } = await api.get("GTPP/Task_User.php", {
       params: {
         AUTH: permissions.session,
         task_id: taskVisible.info.task_id,
-        list_user:0,
+        list_user: 0,
         app_id: 3,
       },
     });
@@ -132,17 +135,15 @@ const TaskInfo = () => {
     try {
       // dispatch(getVinculatedUsers(data.data));
       setUsers(data.data);
-    } catch (error) {
-      
-    }
- 
+    } catch (error) {}
+
     // console.log(users)
     // console.log(task.id)
   }
 
   useEffect(() => {
     loadVinculateUsers();
-  },[])
+  }, []);
 
   useEffect(() => {
     // console.log(company)
@@ -168,10 +169,12 @@ const TaskInfo = () => {
   // }, []);
 
   useEffect(() => {
-    loadDeptsCompany(company, shop, taskVisible.info.task_id).then((response) => {
-      setDepts(response);
-    });
-  }, [shop,modalUpdate]);
+    loadDeptsCompany(company, shop, taskVisible.info.task_id).then(
+      (response) => {
+        setDepts(response);
+      }
+    );
+  }, [shop, modalUpdate]);
 
   // function loadCsds(){
   //   for (let i = 0; i < taskcsds.length; i++) {
@@ -189,19 +192,16 @@ const TaskInfo = () => {
       alert("Selecione companhia e loja!");
     } else {
       try {
-       
-          updateCheckDept(taskId, deptId, shopId, companyId).then((response) => {
-            if(response==null){
-              setShowDept(false);
-              // loadCsds();
-            }
-            
-            // setShop(shop);
-          });
-        
+        updateCheckDept(taskId, deptId, shopId, companyId).then((response) => {
+          if (response == null) {
+            setShowDept(false);
+            // loadCsds();
+          }
+
+          // setShop(shop);
+        });
 
         dispatch(updateModal());
-        
       } catch (error) {
         console.log("Erro ao selecionar departamento!");
       }
@@ -212,139 +212,139 @@ const TaskInfo = () => {
     setShowDept(false);
   });
 
-  function updateState(stateId,reason,days){
+  function updateState(stateId, reason, days) {
     // console.log("estado atual é o "+taskVisible);
-    if(taskVisible.info.state_id==1 || taskVisible.info.state_id==2){
-      if(reason==null){
+    if (taskVisible.info.state_id == 1 || taskVisible.info.state_id == 2) {
+      if (reason == null) {
         setShowReasonModal(true);
-      } else if( reason === ""){
-        alert("o motivo é obrigatório!")
-      }else{
-        updateStateTask(taskVisible.info.task_id,reason).then(response => taskVisible.info.state_id = response.id).catch(error => {});
+      } else if (reason === "") {
+        alert("o motivo é obrigatório!");
+      } else {
+        updateStateTask(taskVisible.info.task_id, reason)
+          .then((response) => (taskVisible.info.state_id = response.id))
+          .catch((error) => {});
         dispatch(updateTask());
         dispatch(updateModal());
         setShowReasonModal(false);
         setReason("");
       }
-    }else if(taskVisible.info.state_id==5){
-      if(days==null){
+    } else if (taskVisible.info.state_id == 5) {
+      if (days == null) {
         setShowDayModal(true);
-      }else{
-        updateStateTask(taskVisible.info.task_id,reason,days).then(response =>  ( 
-          console.log(response.id),
-          taskVisible.info.state_id = response.id,
-          taskVisible.info.final_date = response.final_date
-        ) ).catch(error => {
-          // console.log(error.message);
-         
-        });
-      dispatch(updateTask());
-      dispatch(updateModal());
-      setShowDayModal(false);
-      setDays("");
+      } else {
+        updateStateTask(taskVisible.info.task_id, reason, days)
+          .then(
+            (response) => (
+              console.log(response.id),
+              (taskVisible.info.state_id = response.id),
+              (taskVisible.info.final_date = response.final_date)
+            )
+          )
+          .catch((error) => {
+            // console.log(error.message);
+          });
+        dispatch(updateTask());
+        dispatch(updateModal());
+        setShowDayModal(false);
+        setDays("");
       }
-
-    }
-    else if(taskVisible.info.state_id!==5){
-      if(confirm==false){
+    } else if (taskVisible.info.state_id !== 5) {
+      if (confirm == false) {
         setShowConfirmAction(true);
         return;
-      }else if (confirm ==true){
-        updateStateTask(taskVisible.info.task_id).then(response => taskVisible.info.state_id = response.id).then(response => {
-          dispatch(updateTask());
-          dispatch(updateModal());
-          setShowConfirmAction(false)
-          setShowConfirmAction(false)
-        }).catch(error => {console.log(error)});
-     
-      return;
+      } else if (confirm == true) {
+        updateStateTask(taskVisible.info.task_id)
+          .then((response) => (taskVisible.info.state_id = response.id))
+          .then((response) => {
+            dispatch(updateTask());
+            dispatch(updateModal());
+            setShowConfirmAction(false);
+            setShowConfirmAction(false);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+
+        return;
       }
-      updateStateTask(taskVisible.info.task_id).then(response => taskVisible.info.state_id = response.id);
-      dispatch(updateTask());
-      dispatch(updateModal());
+      // updateStateTask(taskVisible.info.task_id).then(response => taskVisible.info.state_id = response.id);
+      // dispatch(updateTask());
+      // dispatch(updateModal());
     }
   }
 
-  function cancelTask(taskId,reason){
-
+  function cancelTask(taskId, reason) {
     // console.log("estado atual é o "+stateId);
-    if( reason === ""){
-      alert("o motivo é obrigatório!")
+    if (reason === "") {
+      alert("o motivo é obrigatório!");
       return;
     }
 
-    
-      // console.log('aqui')
-      cancelStateTask(taskId,reason).then(response => taskVisible.info.state_id = response.id).catch(error => {
+    // console.log('aqui')
+    cancelStateTask(taskId, reason)
+      .then((response) => (taskVisible.info.state_id = response.id))
+      .catch((error) => {
         // console.log(error);
       });
-      dispatch(updateTask());
-      dispatch(updateModal());
-      setShowModalAsk(false);
-    
+    dispatch(updateTask());
+    dispatch(updateModal());
+    setShowModalAsk(false);
   }
 
   // console.log(permissions)
-  // console.log(taskVisible)  
+  // console.log(taskVisible)
 
   //contador button estados
   let count = 0;
 
-
-  const [showConfirmAction,setShowConfirmAction] = useState(false);
-  const [confirm,setConfirm] = useState(false);
-
+  const [showConfirmAction, setShowConfirmAction] = useState(false);
+  const [confirm, setConfirm] = useState(false);
 
   let ModalCancel = (props) => {
-    const [reason,setReason] = useState("");
-    return(
-      <div  className="modalAsk">
-      <div >
-     
-      <ul  className="menuAsk">
-      <li>
-          <h3>{props.ask} tem certeza?</h3>
-          <h2>*Informe o motivo:</h2>
-          <textarea
-            spellCheck="false"
-            rows="5"
-            onChange={(e) => setReason(e.target.value)}
-          ></textarea>
-        </li>
-        <li>
-          <button
-            className="btnConfirm"
-            onClick={(e) =>
-              cancelTask(taskVisible.info.task_id,reason)
-            }
-          >
-            Confirmar
-          </button>
-          <button
-            className="btnCancel"
-            onClick={() =>
-              setShowModalAsk(false)
-            }
-          >
-            Cancelar
-          </button>
-        </li>
-      </ul>
+    const [reason, setReason] = useState("");
+    return (
+      <div className="modalAsk">
+        <div>
+          <ul className="menuAsk">
+            <li>
+              <h3>{props.ask} tem certeza?</h3>
+              <h2>*Informe o motivo:</h2>
+              <textarea
+                spellCheck="false"
+                rows="5"
+                onChange={(e) => setReason(e.target.value)}
+              ></textarea>
+            </li>
+            <li>
+              <button
+                className="btnConfirm"
+                onClick={(e) => cancelTask(taskVisible.info.task_id, reason)}
+              >
+                Confirmar
+              </button>
+              <button
+                className="btnCancel"
+                onClick={() => setShowModalAsk(false)}
+              >
+                Cancelar
+              </button>
+            </li>
+          </ul>
+        </div>
       </div>
-      </div>
-    )
-  } 
+    );
+  };
 
-  if(users.length>0){
+  if (users.length > 0) {
     users.map((user) => {
- 
-      let result = vinculatedUsers.filter(users => users.id == user.user_id);
-    
-      
+      let result = vinculatedUsers.filter((users) => users.id == user.user_id);
+
       user.name = result[0].user;
       // console.log(user.name)
-    })
+    });
   }
+
+  
 
   // console.log(vinculatedUsers);
   // console.log(taskVisible)
@@ -353,90 +353,109 @@ const TaskInfo = () => {
     <div className="taskInfo">
       {showConfirmAction ? (
         <>
-        {taskVisible.info.state_id == 6 || taskVisible.info.state_id == 4 ? ( <ConfirmAction confirm={() => setConfirm(true)} question="Tem certeza que deseja reabrir esta tarefa" action={() => updateState(taskVisible.info.state_id)} cancelAction={() => setShowConfirmAction(false)}/> ) : (null)}
-        {taskVisible.info.state_id == 3 ? (<ConfirmAction confirm={() => setConfirm(true)} question="Tem certeza que deseja finalizar esta tarefa" action={() => updateState(taskVisible.info.state_id)} cancelAction={() => setShowConfirmAction(false)}/> ) : null}
-        {/* {taskVisible.state_id == 7 ? (<ConfirmAction confirm={() => setConfirm(true)} question="Tem certeza que deseja finalizar esta tarefa" action={() => updateState(taskVisible.state_id)} cancelAction={() => setShowConfirmAction(false)}/> ) : null} */}
+          {taskVisible.info.state_id == 6 || taskVisible.info.state_id == 4 ? (
+            <ConfirmAction
+              confirm={() => setConfirm(true)}
+              question="Tem certeza que deseja reabrir esta tarefa"
+              action={() => updateState(taskVisible.info.state_id)}
+              cancelAction={() => setShowConfirmAction(false)}
+            />
+          ) : null}
+          {taskVisible.info.state_id == 3 ? (
+            <ConfirmAction
+              confirm={() => setConfirm(true)}
+              question="Tem certeza que deseja finalizar esta tarefa"
+              action={() => updateState(taskVisible.info.state_id)}
+              cancelAction={() => setShowConfirmAction(false)}
+            />
+          ) : null}
+          {/* {taskVisible.state_id == 7 ? (<ConfirmAction confirm={() => setConfirm(true)} question="Tem certeza que deseja finalizar esta tarefa" action={() => updateState(taskVisible.state_id)} cancelAction={() => setShowConfirmAction(false)}/> ) : null} */}
         </>
       ) : null}
 
       {showReasonModal ? (
-        <div  className="modalState">
-              <div >
-             
-              <ul  className="menuState">
+        <div className="modalState">
+          <div>
+            <ul className="menuState">
               <li>
-                  <h3>Alterar tarefa para o estado <strong>parado</strong>?</h3>
-                  <h2>*Informe o motivo:</h2>
-                  <textarea
-                    spellcheck="false"
-                    rows="5"
-                    onChange={(e) => setReason(e.target.value)}
-                  ></textarea>
-                </li>
-                <li>
-                  <button
-                    className="btnConfirm"
-                    onClick={(e) =>
-                      updateState(taskVisible.info.state_id,reason)
-                    }
-                  >
-                    Confirmar
-                  </button>
-                  <button
-                    className="btnCancel"
-                    onClick={() =>
-                      setShowReasonModal(false)
-                    }
-                  >
-                    Cancelar
-                  </button>
-                </li>
-              </ul>
-              </div>
-              </div>
+                <h3>
+                  Alterar tarefa para o estado <strong>parado</strong>?
+                </h3>
+                <h2>*Informe o motivo:</h2>
+                <textarea
+                  spellcheck="false"
+                  rows="5"
+                  onChange={(e) => setReason(e.target.value)}
+                ></textarea>
+              </li>
+              <li>
+                <button
+                  className="btnConfirm"
+                  onClick={(e) =>
+                    updateState(taskVisible.info.state_id, reason)
+                  }
+                >
+                  Confirmar
+                </button>
+                <button
+                  className="btnCancel"
+                  onClick={() => setShowReasonModal(false)}
+                >
+                  Cancelar
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
       ) : null}
 
       {showDayModal ? (
-        <div  className="modalDays">
-              <div >
-             
-              <ul  className="menuDays">
+        <div className="modalDays">
+          <div>
+            <ul className="menuDays">
               <li>
-                  <h3>Informe a quantidade de dias que deseja prolongar esta tarefa:</h3>
-                  <input type="number"
-                    min="1"
-                    value={days}
-                    spellCheck="false"
-                    rows="5"
-                    onChange={(e) => setDays(e.target.value)}
-                  ></input>
-                </li>
-                <li>
-                  <button
-                    className="btnConfirm"
-                    onClick={(e) =>
-                      updateState(taskVisible.info.state_id,reason,days)
-                    }
-                  >
-                    Confirmar
-                  </button>
-                  <button
-                    className="btnCancel"
-                    onClick={() =>
-                      setShowDayModal(false)
-                    }
-                  >
-                    Cancelar
-                  </button>
-                </li>
-              </ul>
-              </div>
-              </div>
+                <h3>
+                  Informe a quantidade de dias que deseja prolongar esta tarefa:
+                </h3>
+                <input
+                  type="number"
+                  min="1"
+                  value={days}
+                  spellCheck="false"
+                  rows="5"
+                  onChange={(e) => setDays(e.target.value)}
+                ></input>
+              </li>
+              <li>
+                <button
+                  className="btnConfirm"
+                  onClick={(e) =>
+                    updateState(taskVisible.info.state_id, reason, days)
+                  }
+                >
+                  Confirmar
+                </button>
+                <button
+                  className="btnCancel"
+                  onClick={() => setShowDayModal(false)}
+                >
+                  Cancelar
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
       ) : null}
 
       {showModalAsk ? (
-        taskVisible.info.state_id != 7 ? <ModalCancel ask="Cancelando a tarefa"/> : <ModalCancel ask="Retomando a tarefa"/>
+        taskVisible.info.state_id != 7 ? (
+          <ModalCancel ask="Cancelando a tarefa" />
+        ) : (
+          <ModalCancel ask="Retomando a tarefa" />
+        )
       ) : null}
+
+      
 
       <div className="row">
         <h1>Início : {dateInitial}</h1>
@@ -444,40 +463,37 @@ const TaskInfo = () => {
 
         {taskStates.map((state) => (
           <React.Fragment key={state.id}>
-          {taskVisible.info ? (
-            state.id == taskVisible.info.state_id ? (
-              <button
-                onClick={() => {
-                  count++;
+            {taskVisible.info ? (
+              state.id == taskVisible.info.state_id ? (
+                <button
+                  onClick={() => {
+                    count++;
 
-                  setTimeout(() => {
-                    if(count==1 && state.id!==7){
-                      if(state.id==6||state.id==3 || state.id==4){
-                        setShowConfirmAction(true);
-                      }else{
-                        updateState(state.id)
-                      }              
-                  } else if(count ==2){
-                    setShowModalAsk(true);
-                    return;
-                  }
+                    setTimeout(() => {
+                      if (count == 1 && state.id !== 7) {
+                        if (state.id == 6 || state.id == 3 || state.id == 4) {
+                          setShowConfirmAction(true);
+                        } else {
+                          updateState(state.id);
+                        }
+                      } else if (count == 2) {
+                        setShowModalAsk(true);
+                        return;
+                      }
+                    }, 500);
 
-                  },500)
-
-                  setTimeout(() => {
-                    count = 0;
-                  },500)             
-                
-                }}
-                className="buttonState stateControl"
-                style={{ backgroundColor: "#" + state.color }}
-              >
-                {/* {console.log(state.color)} */}
-                <h2>{state.description}</h2>
-              </button>
-            ) : null
-          ) : null}
-            
+                    setTimeout(() => {
+                      count = 0;
+                    }, 500);
+                  }}
+                  className="buttonState stateControl"
+                  style={{ backgroundColor: "#" + state.color }}
+                >
+                  {/* {console.log(state.color)} */}
+                  <h2>{state.description}</h2>
+                </button>
+              ) : null
+            ) : null}
           </React.Fragment>
         ))}
       </div>
@@ -485,88 +501,115 @@ const TaskInfo = () => {
       <div className="comshopsubArea">
         <div className="row">
           <div className="col taskDescription">
-            <h1>Descrição</h1>
-            <BiEdit
-              size="22"
-              onClick={() => setShowDesc(!showDesc)}
-              className="btnEdit"
-            />
-            {showDesc ? (
-              <div  className="modalDescription">
-              <div >
-             
-              <ul  className="menuDescription">
-                <li>
-                  <h2>Descrição da tarefa</h2>
-                  <textarea
-                    placeholder="Esta tarefa tem como objetivo..."
-                    spellCheck="false"
-                    rows="5"
-                    value={taskVisible.task.full_description!=null ? taskVisible.task.full_description : fullDescription}
-                    onChange={(e) => permissions.id === taskVisible.info.user_id || permissions.administrator ===1 ? setFullDescription(e.target.value) : null}
-                  ></textarea>
-                </li>
-                <li>
-                  <button
-                    className="btnSaveDescription"
-                    onClick={() =>
-                      updateFullDescription(taskVisible.info.task_id, fullDescription)
-                    }
-                  >
-                    Salvar
-                  </button>
+            <div className="descriptionArea">
+              <h1>Descrição Completa:</h1>
+              <textarea
+                placeholder="Esta tarefa tem como objetivo..."
+                spellCheck="false"
+                rows="5"
+                value={fullDescription}
+                readOnly
+              ></textarea>
+              <BiEdit
+                size="25"
+                onClick={() => setShowFullDesc(!showFullDesc)}
+                className="btnEdit"
+              />
+            </div>
 
-                  <button
-                    className="btnCancel"
-                    onClick={() => {
-                      setShowDesc(false);
-                      setFullDescription(fullDescription);
-                    }
-                    
-                      
-                    }
-                    style={{margin:0}}
-                  >
-                    Cancelar
-                  </button>
-                </li>
-              </ul>
-              </div>
-              </div>
+            {showFullDesc ? (
+              <ModalDescription description={fullDescription} setShowDesc={(info)=> setShowFullDesc(info)} updateDesc={(info) => upFullDescription(taskVisible.info.task_id,info)} question="Descrição completa da tarefa" />
             ) : null}
+
+            {/* <div className="modalDescription">
+                <div>
+                  <ul className="menuDescription">
+                    <li>
+                      <h2>Descrição da tarefa</h2>
+                      <textarea
+                        placeholder="Esta tarefa tem como objetivo..."
+                        spellCheck="false"
+                        rows="5"
+                        value={fullDescription}
+                        onChange={(e) =>
+                          permissions.administrator === 1 ||
+                          taskVisible.info.user_id === permissions.id
+                            ? setFullDescription(e.target.value)
+                            : alert(
+                                "Você não tem permissão para realizar esta ação!"
+                              )
+                        }
+                      ></textarea>
+                    </li>
+                    <li>
+                      <button
+                        className="btnSaveDescription"
+                        onClick={() =>
+                          permissions.administrator === 1 ||
+                          taskVisible.info.user_id === permissions.id
+                            ? (setFullDescBack(fullDescription),
+                              updateFullDescription(
+                                taskVisible.info.task_id,
+                                fullDescription
+                              ))
+                            : (alert(
+                                "Você não tem permissão para realizar esta ação!"
+                              ),
+                              setShowDesc(false))
+                        }
+                      >
+                        Salvar
+                      </button>
+
+                      <button
+                        className="btnCancel"
+                        onClick={() => {
+                          setShowDesc(false);
+                          setFullDescription(fullDescBack);
+                        }}
+                        style={{ margin: 0 }}
+                      >
+                        Cancelar
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </div> */}
           </div>
         </div>
         <div className="rowCompShop">
           <div>
-            <select value={company} onChange={(e) => setCompany(e.target.value)} id="company">
-              <option value="-1">
-                Selecione uma Companhia
-              </option>
+            <select
+              value={company}
+              onChange={(e) => setCompany(e.target.value)}
+              id="company"
+            >
+              <option value="-1">Selecionar Companhia</option>
 
               {taskCompanies.map((comp) => (
-                <>              
-                    <option key={comp.id} value={comp.id}>
-                      {comp.description}
-                    </option>               
+                <>
+                  <option key={comp.id} value={comp.id}>
+                    {comp.description}
+                  </option>
                 </>
               ))}
             </select>
           </div>
 
           <div>
-            <select id="shop" value={shop} onChange={(e) => setShop(e.target.value)}>
-              <option value="-1">
-                Selecione uma Loja
-              </option>
+            <select
+              id="shop"
+              value={shop}
+              onChange={(e) => setShop(e.target.value)}
+            >
+              <option value="-1">Selecionar Loja</option>
 
               {shops
                 ? shops.map((shop) => (
                     <>
-                   
-                        <option key={shop.id} value={shop.id}>
-                          {shop.description}
-                        </option>
-                      
+                      <option key={shop.id} value={shop.id}>
+                        {shop.description}
+                      </option>
                     </>
                   ))
                 : null}
@@ -576,7 +619,7 @@ const TaskInfo = () => {
           <div>
             <div ref={domNodeDept} className="depts">
               <p onClick={() => (depts ? setShowDept(!showDept) : null)}>
-                Selecione os departamentos
+                Departamentos
               </p>
 
               {showDept ? (
@@ -616,38 +659,23 @@ const TaskInfo = () => {
 
       <div className="usersVinculated">
         <div className="user">
-        {users.map((user) => (
-            
+          {users.map((user) => (
             <React.Fragment key={user.user_id}>
-              {userPhotos.map((userPhoto) => (
-               
-                <React.Fragment key={userPhoto.user_id}>
-                  {user.user_id == userPhoto.user_id 
-                 ? (
-                
-               
-
-                      <div className="userControl">
-
-                      <img
-                      
-                        src={userPhoto.photo}
-                        width="35"
-                        height="35"
-                        alt={user.name}
-                        title={user.name}
-                      />
-                     
-                     </div>
-                    
-                      
-                 
-                  ) : null}
-                </React.Fragment>
-              ))}
+              {userPhotos.map((userPhoto) =>
+                user.user_id == userPhoto.user_id ? (
+                  <div className="userControl" key={userPhoto.user_id}>
+                    <img
+                      src={userPhoto.photo}
+                      width="35"
+                      height="35"
+                      alt={user.name}
+                      title={user.name}
+                    />
+                  </div>
+                ) : null
+              )}
             </React.Fragment>
           ))}
-         
         </div>
         {/* <div className="addUser">
                 <div>

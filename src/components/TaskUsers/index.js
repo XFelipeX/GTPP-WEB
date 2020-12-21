@@ -22,6 +22,8 @@ let TaskUsers = ({ task }) => {
   const [showUsers, setShowUsers] = useState(false);
   const [open, setOpen] = useState(false);
   const [photos,setPhotos] = useState([]);
+   
+  const [allUsers,setAllUsers] = useState([]);
   const dispatch = useDispatch();
 
 
@@ -49,71 +51,95 @@ let TaskUsers = ({ task }) => {
 
   useEffect(() => {
     loadVinculateUsers();
-  },[])
+  },[stateUpdate])
 
-  function convertImage(src) {
-    if (src != null) {
-      var image = new Image();
-      image.src = "data:image/jpeg;base64, " + src;
-      return image.src;
-    } else {
-      return null;
+  async function loadAllUsers(){
+    const {data} =  await api.get("GTPP/Task_User.php",{
+      params: {
+        AUTH: permissions.session,
+        task_id: task.id,
+        list_user:1,
+        app_id: 3,
+      },
+    });
+
+    try {
+      // console.log(data);
+      setAllUsers(data.data);
+    } catch (error) {
+      console.log(error)
     }
   }
 
+  useEffect(() => {
+    loadAllUsers();
+  },[stateUpdate])
 
-  const loadUserImages = async (idUser) => {
-    const AUTH = sessionStorage.getItem("token");
-    try {
-      const { data } = await api.get(
-        "http://192.168.0.99:71/GLOBAL/Controller/CCPP/EmployeePhoto.php?AUTH=" +
-          AUTH +
-          "&app_id=3&id=" +
-          idUser
-      );
+  // const [allUsers]
+
+  // function convertImage(src) {
+  //   if (src != null) {
+  //     var image = new Image();
+  //     image.src = "data:image/jpeg;base64, " + src;
+  //     return image.src;
+  //   } else {
+  //     return null;
+  //   }
+  // }
+
+
+  // const loadUserImages = async (idUser) => {
+  //   const AUTH = sessionStorage.getItem("token");
+  //   try {
+  //     const { data } = await api.get(
+  //       "http://192.168.0.99:71/GLOBAL/Controller/CCPP/EmployeePhoto.php?AUTH=" +
+  //         AUTH +
+  //         "&app_id=3&id=" +
+  //         idUser
+  //     );
 
    
 
-      if (data) {
-        // console.log(data);
-        if(data.photo==null||data.photo==""){
+  //     if (data) {
+  //       // console.log(data);
+  //       if(data.photo==null||data.photo==""){
           
-          data.user_id = idUser;
-          // console.log(data.user_id);
-          data.photo = userEmpty;
-          setTakePhotos((oldarray) => [...oldarray, data]);
+  //         data.user_id = idUser;
+  //         // console.log(data.user_id);
+  //         data.photo = userEmpty;
+  //         setTakePhotos((oldarray) => [...oldarray, data]);
     
          
-        }else{
-          data.photo = convertImage(data.photo);
-          setTakePhotos((oldarray) => [...oldarray, data]);
+  //       }else{
+  //         data.photo = convertImage(data.photo);
+  //         setTakePhotos((oldarray) => [...oldarray, data]);
      
-        }
+  //       }
        
         
-      }
+  //     }
       
-      return data;
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //     return data;
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
-  useEffect(() => {
-    // let count=0;
-    users.forEach((user) => {
-      // let user = vinculatedUsers.users.filter(user => user.id == task.user_id);
+  // useEffect(() => {
+  //   // let count=0;
+  //   users.forEach((user) => {
+  //     // let user = vinculatedUsers.users.filter(user => user.id == task.user_id);
 
-      // if(user[0].photo==null){
-      //   loadUserImages(task.user_id)
-      // }
+  //     // if(user[0].photo==null){
+  //     //   loadUserImages(task.user_id)
+  //     // }
       
-    loadUserImages(user.user_id)
-    });
+  //   loadUserImages(user.user_id)
+  //   });
 
   
 
-  }, []);
+  // }, []);
 
   useEffect(() => {
     dispatch(getUsersPhotos(takePhotos));
@@ -131,14 +157,27 @@ let TaskUsers = ({ task }) => {
   }
 
   async function changeUser(id) {
-    await api
+
+    try {
+      await api
       .put(`GTPP/Task_User.php?AUTH=${permissions.session}&app_id=3`, {
         task_id: task.id,
         user_id: id,
-      })
-      .then(() => { setAllUsers(loadAllUsers()) });
+      });
 
       dispatch(updateTask())
+    } catch (error) {
+      // console.log(error)
+      let msg = error.response.data.message;
+
+      if(msg.includes("Task with this state cannot be modified")){
+        alert("Tarefa neste estado não pode ser modificada!")
+      }else if(msg.includes("Only the task creator or administrator can do this")){
+        alert("Somente o criador da tarefa ou administrador pode fazer isto!")
+      }
+    }
+
+    
   }
 
 
@@ -159,7 +198,7 @@ let TaskUsers = ({ task }) => {
   // console.log(users)
 
  
-  if(users){
+  if(users.length>0){
     users.map((user) => {
       let result = vinculatedUsers.filter(users => users.id == user.user_id);
       user.name = result[0].user;
@@ -168,38 +207,37 @@ let TaskUsers = ({ task }) => {
   }
  
 
-  function loadAllUsers(){
-    let allUsers = [];
+  // function loadAllUsers(){
+  //   let allUsers = [];
 
-    // for(let i=0;i<vinculatedUsers.length;i++){
-    //   let user = users.filter((user) => user.user_id!=vinculatedUsers[i].id);
-    //   console.log(user)
-    //   if(user.lenght>=0){
+  //   // for(let i=0;i<vinculatedUsers.length;i++){
+  //   //   let user = users.filter((user) => user.user_id!=vinculatedUsers[i].id);
+  //   //   console.log(user)
+  //   //   if(user.lenght>=0){
 
-    //   }else{
-    //     allUsers.push(vinculatedUsers[i]);
-    //   }
+  //   //   }else{
+  //   //     allUsers.push(vinculatedUsers[i]);
+  //   //   }
    
-    // }
+  //   // }
 
-    // let result = vinculatedUsers.filter(user => user.id!==)
+  //   // let result = vinculatedUsers.filter(user => user.id!==)
 
-    console.log(allUsers)
-    return allUsers;
-  }
-  
-  const [allUsers,setAllUsers] = useState();
+  //   // console.log(allUsers)
+  //   return allUsers;
+  // }
+ 
 
-  useEffect(() => {
-    let users = loadAllUsers;
-    setAllUsers(users);
-  },[stateUpdate])
+  // useEffect(() => {
+  //   let users = loadAllUsers;
+  //   setAllUsers(users);
+  // },[stateUpdate])
 
 
-  useEffect(() => {
+  // useEffect(() => {
    
-    setAllUsers(loadAllUsers);
-  },[])
+  //   setAllUsers(loadAllUsers);
+  // },[])
 
   // let allUsers = loadAllUsers();
 
@@ -219,11 +257,11 @@ let TaskUsers = ({ task }) => {
             <React.Fragment key={user.user_id}>
               {userPhotos.map((userPhoto) => (
                
-                <React.Fragment key={userPhoto.user_id}>
+                <React.Fragment >
                   {user.user_id == userPhoto.user_id 
                  ? (
                 
-                    <li>
+                    <li key={userPhoto.user_id}>
 
 
                       <img
@@ -234,7 +272,7 @@ let TaskUsers = ({ task }) => {
                         alt=""
                       />
                       <p style={{color:'white',paddingLeft:'5px',fontSize:'16px'}}>{user.name}</p>
-                      {task.user_id == permissions.id || permissions.administrator==1? <button onClick={() => changeUser(user.user_id)}>
+                      {task.user_id == permissions.id || permissions.administrator==1 && user.user_id!= permissions.id? <button onClick={() => changeUser(user.user_id)}>
                         Remover
                       </button> : null}
                       
@@ -263,8 +301,8 @@ let TaskUsers = ({ task }) => {
 
               {userPhotos.map((userPhoto) => (
                 <a id={userPhoto.user_id}>
-                  {user.id == userPhoto.user_id &&
-                  user.user_id != permissions.id  ? (
+                  {user.user_id == userPhoto.user_id &&
+                  user.user_id != permissions.id && user.check==false  ? (
                     <li>
                       <img
                         src={userPhoto.photo}
@@ -272,9 +310,9 @@ let TaskUsers = ({ task }) => {
                         height="35"
                         alt=""
                       />
-                      <p style={{color:'white',paddingLeft:'5px',fontSize:'16px'}}>{user.user}</p>
+                      <p style={{color:'white',paddingLeft:'5px',fontSize:'16px'}}>{user.name}</p>
                       <button onClick={() => {
-                        changeUser(user.id)
+                        changeUser(user.user_id)
           
                       }}>
                         Vincular

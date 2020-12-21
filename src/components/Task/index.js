@@ -67,14 +67,14 @@ const Task = ({ task }) => {
   //   console.log(taskShow);
   // },[taskShow])
 
-  async function loadTaskVisible(taskId,percent,description,initial_date,final_date,state_id,userId){
+  async function loadTaskVisible(taskId,percent,description,initial_date,final_date,state_id,userId,priority){
     let auth = permissions.session;
 
     try { 
       let {data} = await api.get('GTPP/Task.php?AUTH='+auth+'&app_id=3&id='+taskId);
       // console.log(taskVisible);
 
-      dispatch(sendInfoModal(taskId,percent,description,initial_date,final_date,state_id,userId))
+      dispatch(sendInfoModal(taskId,percent,description,initial_date,final_date,state_id,userId,priority))
       dispatch(taskInfoShow(data.data))
 
       
@@ -88,12 +88,11 @@ const Task = ({ task }) => {
   let photo = userPhotos.filter(user => user.user_id == task.user_id)
   let user = vinculatedUsers.filter(user => user.id == task.user_id)
 
-  // console.log(userPhotos)
+  // console.log(task)
   return (
     <li className="containerTask">
       {visionMenu.priority === true ? <TaskPriority task={task} /> : null}
-      <div className="taskName">
-      
+      <div className="taskName">   
         <div className="tooltip" > 
             
               {photo[0] ? (
@@ -101,12 +100,10 @@ const Task = ({ task }) => {
                 <img src={photo[0].photo} alt="" width='30' height='30' />
             <span className="tooltiptext">{user[0].user}</span>
             </>    
-              ) : null}
-          
-            
+              ) : null}     
               
         </div>
-        <h2 onClick={() => {loadTaskVisible(task.id,task.percent,task.description,task.initial_date,task.final_date,task.state_id,task.user_id)}}>{task.description}</h2>
+        <h2 onClick={() => {loadTaskVisible(task.id,task.percent,task.description,task.initial_date,task.final_date,task.state_id,task.user_id,task.priority)}}>{task.description}</h2>
         {taskVisible && taskVisible.info && taskVisible.task ? <TaskModal/> : null}
       </div>
       <div className="taskContent">

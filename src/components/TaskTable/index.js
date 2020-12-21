@@ -30,7 +30,7 @@ const TaskTable = () => {
   const { visionMenu } = useSelector((state) => state);
   // const {updateTaskVisible} = useSelector(state => state);
   const { userPhotos } = useSelector((state) => state);
-  const { vinculatedUsers } = useSelector((state) => state);
+  const [ vinculatedUsers,setVinculatedUsers ] = useState([]);
   const [takePhotos, setTakePhotos] = useState([]);
   const { tasks } = useSelector((state) => state);
 
@@ -110,73 +110,86 @@ const TaskTable = () => {
     // console.log(data);
     try {
       dispatch(getVinculatedUsers(data.data));
-      vinculatedUsers.map(user => user.photo = null);
-      dispatch(getVinculatedUsers(vinculatedUsers))
+      setVinculatedUsers(data.data);
+      // vinculatedUsers.map(user => user.photo = null);
+      // dispatch(getVinculatedUsers(vinculatedUsers))
       // console.log(vinculatedUsers)
       // setVinculatedUsers(data.data);
     } catch (error) {
       
     }
  
-    // console.log(vinculatedUsers)
+  
   }
+
+  // console.log(vinculatedUsers)
 
   useEffect(() => {
     loadVinculateUsers();
   }, []);
 
   const loadUserImages = async (idUser) => {
-    const AUTH = sessionStorage.getItem("token");
-    try {
-      const { data } = await api.get(
-        "http://192.168.0.99:71/GLOBAL/Controller/CCPP/EmployeePhoto.php?AUTH=" +
-          AUTH +
-          "&app_id=3&id=" +
-          idUser
-      );
-
-   
-
-      if (data) {
-        // console.log(data);
-        if(data.photo==null||data.photo==""){
-          
-          data.user_id = idUser;
-          // console.log(data.user_id);
-          data.photo = userEmpty;
-          setTakePhotos((oldarray) => [...oldarray, data]);
-    
-         
-        }else{
-          data.photo = convertImage(data.photo);
-          setTakePhotos((oldarray) => [...oldarray, data]);
+    if(idUser){
+      const AUTH = sessionStorage.getItem("token");
+      try {
+        const { data } = await api.get(
+          "http://192.168.0.99:71/GLOBAL/Controller/CCPP/EmployeePhoto.php?AUTH=" +
+            AUTH +
+            "&app_id=3&id=" +
+            idUser
+        );
+  
      
-        }
-       
-        
-      }
+  
+        if (data) {
+          // console.log(data);
+          if(data.photo==null||data.photo==""){
+            
+            data.user_id = idUser;
+            // console.log(data.user_id);
+            data.photo = userEmpty;
+            setTakePhotos((oldarray) => [...oldarray, data]);
       
-      return data;
-    } catch (error) {
-      console.log(error);
+           
+          }else{
+            data.photo = convertImage(data.photo);
+            setTakePhotos((oldarray) => [...oldarray, data]);
+       
+          }
+         
+          
+        }
+        
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
     }
+   
   };
 
   useEffect(() => {
     // let count=0;
-    vinculatedUsers.forEach((user) => {
-      // let user = vinculatedUsers.users.filter(user => user.id == task.user_id);
+    
+      vinculatedUsers.forEach((user) => {
+        // let user = vinculatedUsers.users.filter(user => user.id == task.user_id);
+  
+        // if(user[0].photo==null){
+        //   loadUserImages(task.user_id)
+        // }
+        
+        // console.log(user)
 
-      // if(user[0].photo==null){
-      //   loadUserImages(task.user_id)
-      // }
+        loadUserImages(user.id)
+     
       
-    loadUserImages(user.id)
-    });
+      });
+    
+   
 
   
 
-  }, []);
+  }, [vinculatedUsers]);
 
   setTimeout(() => {
     setLoading(false)
