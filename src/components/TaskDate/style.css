@@ -9,7 +9,7 @@
 }
 .dataShow {
   /* cursor: pointer; */
-  width: 90px;
+  max-width: 115px;
   height: 100%;
   display: flex;
   align-items: center;
@@ -47,7 +47,7 @@
 }
 
 .initialDate{
-  width: 90px;
+  max-width: 115px;
   padding: 5px;
   display: inline-block;
   margin-right: 20px;

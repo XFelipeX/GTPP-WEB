@@ -172,7 +172,7 @@
     padding: 10px;
 }
 
-.topicList{
+#topicList{
     height: 270px;
     overflow: auto;
 }

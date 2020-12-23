@@ -2,12 +2,13 @@
 
 .menuDescription li textarea{
     width: 100%;
-    height: 150px;
+    max-height: 120px;
     font-size: 18px;
     border-radius: 5px;
     background-color: #c5c5c5;
     color: black;
     padding: .6em;
+    resize: none;
 } 
 
 .menuDescription li:first-child{
@@ -22,6 +23,11 @@
     font-size: 20px;
     border-top: 2px solid #00a2ff;
     padding-top: .2em;
+}
+
+.menuDescription li:first-child h2:hover{
+    text-decoration: none;
+    background-color: transparent;
 }
 
 .menuDescription li:last-child {
@@ -46,7 +52,7 @@
 
 .modalDescription > div{
     width: 350px;
-    height: 280px;
+    max-height: 300px;
     border: 1px solid black;
     margin-bottom: 13em;
     background-color: #2b2b2b;
@@ -68,4 +74,5 @@
     border: 1px solid black;
     border-radius: 10px;
     padding: 10px;
+    resize: none;
 }
