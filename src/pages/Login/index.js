@@ -121,10 +121,15 @@ const Login = () => {
         <label htmlFor="">Senha</label>
         <input type="password" id="password" />
         <button onClick={() => UserLogin()}>Entrar</button>
+        
       </form>
+      <span className="version">
+      Task - App version 0.75 Created by Felipe
+      </span>
       <div className="divisor" />
       <div className="artSection">
         <img src={img} alt="" />
+        
       </div>
     </div>
   );

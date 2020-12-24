@@ -171,7 +171,7 @@
 
 .userControl{
     margin: 0 1em .5em 0;
-    
+    cursor: pointer;
     background-size: cover;
     min-width: 30px;
     min-height: 33px;

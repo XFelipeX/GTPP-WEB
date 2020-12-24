@@ -17,6 +17,7 @@ import api from "../../services/api";
 import "./style.css";
 import useClickOutside from "../ClickOutside";
 import ModalDescription from "../ModalDescription";
+import InfoUserCard from '../InfoUserCard';
 
 const TaskInfo = () => {
   const dispatch = useDispatch();
@@ -44,6 +45,8 @@ const TaskInfo = () => {
   const [fullDescription, setFullDescription] = useState(
     taskVisible.task.full_description
   );
+  const [showInfoUser,setShowInfoUser] = useState(false);
+  const [infoUserId,setInfoUserId] = useState();
 
   const [reason, setReason] = useState("");
   // const [vinculatedUsers, setVinculatedUsers] = useState([]);
@@ -317,7 +320,7 @@ const TaskInfo = () => {
     setShowModalAsk(false);
   }
 
-  // console.log(permissions)
+ 
   // console.log(taskVisible)
 
   //contador button estados
@@ -640,6 +643,7 @@ const TaskInfo = () => {
                         height="35"
                         alt={user.name}
                         title={user.name}
+                        onClick={() => (setShowInfoUser(true), setInfoUserId(user.user_id))}
                       />
                     </div>
                   ) : null}
@@ -648,6 +652,10 @@ const TaskInfo = () => {
             </React.Fragment>
           ))}
         </div>
+
+        {showInfoUser ==true ? (
+          <InfoUserCard id={infoUserId} close={() => setShowInfoUser(false)}/>
+        ) : null}
         {/* <div className="addUser">
                 <div>
                   <AiOutlineUserAdd size="20" />
