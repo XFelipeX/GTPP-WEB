@@ -18,18 +18,17 @@ import {
   getTask,
   getDepts,
   getShop,
-  loadingScreen,
-  getVinculatedUsers,
-  getUserPhotos,
+  getVinculatedUsers
 } from "../../redux";
 import Loading from "../Loading";
 
 const TaskTable = () => {
   const { permissions } = useSelector((state) => state);
+  const AUTH = permissions.session;
   const { stateUpdate } = useSelector((state) => state);
   const { visionMenu } = useSelector((state) => state);
   // const {updateTaskVisible} = useSelector(state => state);
-  const { userPhotos } = useSelector((state) => state);
+  // const { userPhotos } = useSelector((state) => state);
   const [ vinculatedUsers,setVinculatedUsers ] = useState([]);
   const [takePhotos, setTakePhotos] = useState([]);
   const { tasks } = useSelector((state) => state);
@@ -38,9 +37,11 @@ const TaskTable = () => {
 
   const dispatch = useDispatch();
 
+  
+
 
   useEffect(() => {
-    loadTask(permissions, visionMenu).then((response) => {
+    loadTask(visionMenu,AUTH).then((response) => {
       if (response.error === true) {
         alert("error");
       } else {
@@ -54,7 +55,7 @@ const TaskTable = () => {
   }, [stateUpdate]);
 
   useEffect(() => {
-    loadCompanies().then((response) => {
+    loadCompanies(AUTH).then((response) => {
       if (response.error === true) {
         alert("error");
       } else {
@@ -67,7 +68,7 @@ const TaskTable = () => {
   }, []);
 
   useEffect(() => {
-    loadShop().then((response) => {
+    loadShop(AUTH).then((response) => {
       if (response.error === true) {
         alert("error");
       } else {
@@ -80,7 +81,7 @@ const TaskTable = () => {
   }, []);
 
   useEffect(() => {
-    loadTaskStates(permissions).then((response) => {
+    loadTaskStates(AUTH).then((response) => {
       if (response.error === true) {
         alert("error");
       } else {
@@ -92,7 +93,7 @@ const TaskTable = () => {
   }, []);
 
   useEffect(() => {
-    loadDept().then((response) => {
+    loadDept(AUTH).then((response) => {
       if (response.error === true) {
         alert("error");
       } else {
@@ -104,7 +105,7 @@ const TaskTable = () => {
   }, []);
 
   async function loadVinculateUsers() {
-    const AUTH = permissions.session;
+    // const AUTH = permissions.session;
 
     const { data } = await api.get("CCPP/User.php?AUTH="+AUTH+"&app_id=3");
     // console.log(data);
@@ -130,7 +131,7 @@ const TaskTable = () => {
 
   const loadUserImages = async (idUser) => {
     if(idUser){
-      const AUTH = sessionStorage.getItem("token");
+      // const AUTH = sessionStorage.getItem("token");
       try {
         const { data } = await api.get(
           "http://192.168.0.99:71/GLOBAL/Controller/CCPP/EmployeePhoto.php?AUTH=" +
