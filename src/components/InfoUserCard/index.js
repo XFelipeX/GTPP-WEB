@@ -54,7 +54,7 @@ let InfoUserCard = ({ id, close }) => {
               <img src={photo} ></img>
             </div>
             <div>
-              <p style={{ fontSize: "20px", marginLeft: ".3em" }}>
+              <p style={{ fontSize: "18px", marginLeft: ".4em" }}>
                 <strong>{userInfo[0].name} </strong>
               </p>
 
