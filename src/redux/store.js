@@ -22,7 +22,7 @@ import userInfoReducer from "./userInfo/userInfoReducer";
 import loadingScreenReducer from './loadingScreen/loadingScreenReducer';
 import taskUsersPhotos from './taskUsersPhotos/taskUsersPhotosReducer';
 
-const rootReducer = combineReducers({
+const appReducer = combineReducers({
   permissions: userAuthReducer,
   taskStates: taskStatesReducer,
   stateUpdate: stateUpdateReducer,
@@ -44,12 +44,20 @@ const rootReducer = combineReducers({
   taskUsersPhotos
 });
 
+const rootReducer = (state, action) => {
+  if (action.type === 'LOGOFF') {
+    state = undefined
+  }
+
+  return appReducer(state, action)
+}
+
 const persistConfig = {
   key: "primary",
   storage,
 };
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+const persistedReducer = persistReducer(persistConfig,rootReducer);
 
 export const store = createStore(
   persistedReducer,

@@ -1,41 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { logIn } from "../../redux/userAuth/userAuthActions";
+import { useDispatch } from "react-redux";
+// import {getTask, taskInfoShow} from '../../redux';
+import { logIn, logOff } from "../../redux/userAuth/userAuthActions";
 import "./style.css";
 import img from "../../assets/art.png";
 import logo from "../../assets/logo.png";
 import api from "../../services/api";
-import {getUserInfo, loadingScreen} from '../../redux';
+
 
 
 const Login = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const [access, setAccess] = useState(false);
-  // const {loading} = useSelector(state => state);
-  // console.log(loading)
-
-  const [ permissions,setPermissions ] = useState({session:"",id:""});
-  // const [status,setStatus] = useState(false);
-  // console.log(permissions);
-
-  async function userInfo(){
-    let AUTH = permissions.session;
-    let userId = permissions.id;
-    try {
-      let {data} = await api.get('CCPP/Employee.php?AUTH='+AUTH+"&app_id=3&id="+userId);
-      // console.log(data)
-      dispatch(getUserInfo(data.data));
-    } catch (error) {
-      // console.log(error)
-    }
-    
-  }
-
+  // const {taskVisible} = useSelector(state => state);
   useEffect(() => {
-    userInfo();
-  },[permissions])
+    dispatch(logOff());
+    // dispatch(getTask([{}]));
+  },[])
+
+  // console.log(taskVisible)
 
   async function UserLogin() {
     verifyVersion();
@@ -82,7 +67,7 @@ const Login = () => {
               dispatch(logIn(data.data));
               // dispatch(loadingScreen());
               // console.log(loading)
-              setPermissions(data.data);
+              // setPermissions(data.data);
               history.push("/main");
             }
           } catch (error) {}
@@ -95,7 +80,7 @@ const Login = () => {
   }
 
   async function verifyVersion() {
-    const version = 1.0;
+    const version = 0.75;
 
     try {
       let { data } = await api.get("CCPP/AppVersion.php?id=3");
@@ -147,14 +132,3 @@ const Login = () => {
 
 export default Login;
 
-// function options(e){
-//     console.log(e.value);
-// }
-
-/* <div>
-<select id="opcoes" onChange={ () => options(document.getElementById('opcoes'))}>
-    <option value="">selecione uma opcao</option>
-    <option value="opcao1">opção 1</option>
-    <option value="opcao2">opção 2</option>
-</select>
-</div> */
