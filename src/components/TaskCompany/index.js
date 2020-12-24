@@ -3,13 +3,12 @@ import { useSelector, useDispatch } from "react-redux";
 import "./style.css";
 import api from "../../services/api";
 
-
 const TaskCompany = ({ task }) => {
   const { permissions } = useSelector((state) => state);
   const dispatch = useDispatch();
 
   const { tasks } = useSelector((state) => state);
-  const { stateUpdate } = useSelector((state) => state);
+  // const { stateUpdate } = useSelector((state) => state);
   const [companies, setCompanies] = useState([]);
 
   async function updateCompany() {
@@ -28,18 +27,19 @@ const TaskCompany = ({ task }) => {
   return (
     <div className="containerCompany">
       <div className="company">
-        { companies ?
-          companies.map((company) => {
-          <React.Fragment>
-            {tasks.map((task) => {
-              <>
-                {company.id === task.comshopdepsub_id ? (
-                  <h1>{company.company_name}</h1>
-                ) : null}
-              </>;
-            })}
-          </React.Fragment>;
-        }) : null}
+        {companies
+          ? companies.map((company) => {
+              <React.Fragment>
+                {tasks.map((task) => {
+                  <>
+                    {company.id === task.comshopdepsub_id ? (
+                      <h1>{company.company_name}</h1>
+                    ) : null}
+                  </>;
+                })}
+              </React.Fragment>;
+            })
+          : null}
       </div>
     </div>
   );

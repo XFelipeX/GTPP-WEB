@@ -12,6 +12,7 @@ import useClickOutside from '../ClickOutside';
 
 let TaskUsers = ({ task }) => {
   const { permissions } = useSelector((state) => state);
+  const AUTH = permissions.session;
   const { userPhotos } = useSelector((state) => state);
   const { stateUpdate } = useSelector((state) => state); 
   const { taskUsersPhotos} = useSelector((state) => state);   
@@ -31,7 +32,7 @@ let TaskUsers = ({ task }) => {
   async function loadVinculateUsers() {
     const { data } = await api.get("GTPP/Task_User.php", {
       params: {
-        AUTH: permissions.session,
+        AUTH: AUTH,
         task_id: task.id,
         list_user:0,
         app_id: 3,
@@ -56,7 +57,7 @@ let TaskUsers = ({ task }) => {
   async function loadAllUsers(){
     const {data} =  await api.get("GTPP/Task_User.php",{
       params: {
-        AUTH: permissions.session,
+        AUTH: AUTH,
         task_id: task.id,
         list_user:1,
         app_id: 3,
@@ -146,21 +147,21 @@ let TaskUsers = ({ task }) => {
     
   }, [takePhotos]);
 
-  let loadUsersAmount = () => {
-      let count = 1;
-      if(vinculatedUsers.users){
-        vinculatedUsers.users.forEach(e => e.check === true ? count++ : 0);
-      }
+  // let loadUsersAmount = () => {
+  //     let count = 1;
+  //     if(vinculatedUsers.users){
+  //       vinculatedUsers.users.forEach(e => e.check === true ? count++ : 0);
+  //     }
      
 
-      return count;
-  }
+  //     return count;
+  // }
 
   async function changeUser(id) {
 
     try {
       await api
-      .put(`GTPP/Task_User.php?AUTH=${permissions.session}&app_id=3`, {
+      .put(`GTPP/Task_User.php?AUTH=${AUTH}&app_id=3`, {
         task_id: task.id,
         user_id: id,
       });
@@ -168,13 +169,24 @@ let TaskUsers = ({ task }) => {
       dispatch(updateTask())
     } catch (error) {
       // console.log(error)
-      let msg = error.response.data.message;
+      let msg = "";
 
-      if(msg.includes("Task with this state cannot be modified")){
-        alert("Tarefa neste estado não pode ser modificada!")
-      }else if(msg.includes("Only the task creator or administrator can do this")){
-        alert("Somente o criador da tarefa ou administrador pode fazer isto!")
+      if(error.response){
+        msg = error.response.data.message;
+      
+        if(msg.includes("Task with this state cannot be modified")){
+          alert("Tarefa neste estado não pode ser modificada!")
+        }else if(msg.includes("Only the task creator or administrator can do this")){
+          alert("Somente o criador da tarefa ou administrador pode fazer isto!")
+        }
+      }else{
+        msg = error.message;
+
+        if(msg.includes("Network Error")){
+          alert("Autorização negada!")
+        }
       }
+     
     }
 
     
@@ -250,18 +262,18 @@ let TaskUsers = ({ task }) => {
           {/* <p>{vinculatedUsers.length}</p> */}
           {users ? users.length : null}
         </div>
-        { open  && loadUsersAmount() > 0 ? (
+        { open  && users.length > 0 ? (
           <ul className="vinculatedList" >
           {users.map((user) => (
             
             <React.Fragment key={user.user_id}>
               {userPhotos.map((userPhoto) => (
                
-                <React.Fragment >
+                <React.Fragment key={userPhoto.user_id}>
                   {user.user_id == userPhoto.user_id 
                  ? (
                 
-                    <li key={userPhoto.user_id}>
+                    <li >
 
 
                       <img
@@ -300,7 +312,7 @@ let TaskUsers = ({ task }) => {
               
 
               {userPhotos.map((userPhoto) => (
-                <a id={userPhoto.user_id}>
+                <a id={userPhoto.user_id} key={userPhoto.user_id}>
                   {user.user_id == userPhoto.user_id &&
                   user.user_id != permissions.id && user.check==false  ? (
                     <li>

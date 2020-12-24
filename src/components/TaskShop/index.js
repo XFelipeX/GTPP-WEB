@@ -6,16 +6,16 @@ import api from "../../services/api";
 
 const TaskShop = ({ task }) => {
   const { permissions } = useSelector((state) => state);
-
+  const AUTH = permissions.session;
   const { tasks } = useSelector((state) => state);
-  const { stateUpdate } = useSelector((state) => state);
-  const initialState = () => [];
+  // const { stateUpdate } = useSelector((state) => state);
+  // const initialState = () => [];
   const [shops, setShops] = useState([]);
 
   async function showShop() {
     try{
       const { data } = await api.get("CCPP/Com_sho_dep_sub.php", {
-        params: { AUTH: permissions.session, app_id: 3 },
+        params: { AUTH: AUTH, app_id: 3 },
       });
       if(data.error==true||data==null){
         console.log(data.error);

@@ -13,87 +13,91 @@ import useClickOutside from '../ClickOutside';
 const TaskPriority = ({ task }) => {
 
   const { permissions } = useSelector(state => state);
+  const AUTH = permissions.session;
   const dispatch = useDispatch();
 
   const [open, setOpen] = useState(false);
 
 
- function updatePriority(id) {
-      const auth = sessionStorage.getItem('token');
-      try {
-        let data = {};
-        (async () => {
-          data = await fetch(
-            "http://192.168.0.99:71/GLOBAL/Controller/GTPP/Task.php?AUTH=" +
-              auth +
-              "&app_id=3",
-            {
-              method: "put",
-              body: JSON.stringify({
-                 id:task.id,
-                 description: task.description,
-                 priority:id
-              }),
-            }
-          )
-            .then((response) => {
-              return response.json();
-            })
-            .then((r) => {
-              setOpen(false);
-              dispatch(updateTask());
-              return r;
-            })
-            .catch((err) => {
-              console.log(err);
-            });
+//  function updatePriority(id) {
+//       // const auth = sessionStorage.getItem('token');
+//       try {
+//         let data = {};
+//         (async () => {
+//           data = await fetch(
+//             "http://192.168.0.99:71/GLOBAL/Controller/GTPP/Task.php?AUTH=" +
+//               AUTH +
+//               "&app_id=3",
+//             {
+//               method: "put",
+//               body: JSON.stringify({
+//                  id:task.id,
+//                  description: task.description,
+//                  priority:id
+//               }),
+//             }
+//           )
+//             .then((response) => {
+//               return response.json();
+//             })
+//             .then((r) => {
+//               setOpen(false);
+//               dispatch(updateTask());
+//               return r;
+//             })
+//             .catch((err) => {
+//               console.log(err);
+//             });
+            
+//             console.log(data)
+//             let msg = data.message;
 
-            let msg = data.message;
+//         if(msg.includes("Only the task creator or administrator can do this")){
+//           alert("Somente o criador da tarefa ou administrador pode fazer isto!")
+//         }
 
-        if(msg.includes("Only the task creator or administrator can do this")){
-          alert("Somente o criador da tarefa ou administrador pode fazer isto!")
-        }
+//         })();
 
-        })();
-
-        // console.log(data)
-      } catch (error) {
+//         // console.log(data)
+//       } catch (error) {
         
 
-        // console.log(error);
-      }
+//         // console.log(error);
+//       }
     
+//   }
+
+  const updatePriority = async (id) => {
+    // console.log(id, "entrei")
+    
+
+    
+
+     try{
+      const data = await api.put(`GTPP/Task.php?AUTH=${AUTH}&app_id=3`, {
+        "id":task.id,
+        "description": task.description,
+        "priority":id
+      }).then((response) => {
+        dispatch(updateTask())
+        setOpen(false);
+        return response;
+      })
+
+      console.log(data);
+     }catch(error){
+       let msg = error.message;
+
+       if(msg.includes("Network Error")){
+         alert("Autorização Negada!")
+       }
+
+
+     } 
+     
+
   }
 
-  // const updatePriority = async (id) => {
-  //   // console.log(id, "entrei")
-    
-
-    
-
-  //   //  try{
-  //   //   const data = await api.put(`GTPP/Task.php?AUTH=${permissions.session}&app_id=3`, {
-  //       "id":task.id,
-  //       "description": task.description,
-  //       "priority":id
-  //   //   }).then((response) => {
-  //   //     dispatch(updateTask())
-  //   //     setOpen(false);
-  //   //     return response;
-  //   //   })
-
-  //   //   console.log(data);
-  //   //  }catch(error){
-  //   //    console.log(error.message);
-  //   //  } 
-     
-  //     // console.log(message);
-
-  // }
-
-//   let domNode = useClickOutside(() =>{
-//     setShow(false)
-//   })
 
 let domNode = useClickOutside(() =>{
   setOpen(false)
@@ -107,7 +111,7 @@ let domNode = useClickOutside(() =>{
 
       {open ? (
         <ul className="options">
-        <li onClick={() => updatePriority(0)}>
+        <li onClick={() => updatePriority("0")}>
           <div>
             <img src={lowPriority} alt="prioridade" />
           </div>

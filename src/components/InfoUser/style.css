@@ -1,0 +1,53 @@
+.user-info-area{
+    display: flex;
+    align-items: center;   
+    font-size: 15px;
+}
+
+.user-img img{
+    border-radius: 50%; 
+}
+
+.user-img{
+    margin-left: 30px; 
+    cursor:pointer;
+}
+
+.user-info-content{
+    display: flex;
+    /* flex-direction: column; */
+    background-color: #343434;
+    max-width: 480px;
+    color: white;
+    padding: 15px;
+    box-shadow: 0 0px 20px 2px black;
+    border-radius:10px;
+    position: absolute;
+    height: 170px;
+    top: 15px;
+    z-index: 10;
+}
+
+.user-info-content p {
+    padding: .3em;
+    margin-left: .5em;
+
+}
+
+.user-img-card{
+    height: 100%;
+}
+
+.user-img-card img{
+    height: 100%;
+    max-width: 150px;
+}
+
+.user-info-content p input{ 
+    margin-left: 1em;
+}
+
+.show-admin{
+    border-bottom: 1px solid #406d9a;
+    max-width: 320px;
+}

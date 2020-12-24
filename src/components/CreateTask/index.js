@@ -4,7 +4,6 @@ import "./style.css";
 import lowPriority from '../../assets/Path1.png';
 import medPriority from '../../assets/Path2.png';
 import highPriority from '../../assets/Arrows.png';
-// import api from "../../services/api";
 import { updateTask } from "../../redux";
 import useClickOutside from '../ClickOutside';
 import { BiCommentAdd } from "react-icons/bi";
@@ -15,11 +14,12 @@ let CreateTask = () => {
   const [dateInitial, setDateInitial] = useState("");
   const [dateFinal, setDateFinal] = useState("");
   const [priority, setPriority] = useState("");
+  const {permissions} = useSelector(state => state);
 
   const [open, setOpen] = useState(false);
   const [showPriority, setShowPriority] = useState(false);
 
-  const auth = sessionStorage.getItem("token");
+  const auth = permissions.session;
 
   function showMenu() {
     setOpen(!open);
@@ -59,14 +59,20 @@ let CreateTask = () => {
               dispatch(updateTask());
               return r;
             })
-            .catch((err) => {
-              console.log(err);
-            });
 
-          console.log(data);
+            console.log(data)
+            
+          if(data.error==true){
+            let msg = data.message;
+
+          if(msg.includes("Authorization denied")){
+            alert("Autorização negada!")
+          }
+          }
         })();
       } catch (error) {
-        console.log(error);
+       
+        // console.log(error1.message);
       }
     }
   }

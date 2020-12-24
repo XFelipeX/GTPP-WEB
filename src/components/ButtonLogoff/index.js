@@ -6,7 +6,7 @@ import {BiExit} from 'react-icons/bi';
 import ConfirmAction from '../ConfirmAction';
 
 import './style.css'
-import { rgba } from "polished";
+// import { rgba } from "polished";
 
 const ButtonLogoff = () => {
   const [showConfirmAction,setShowConfirmAction] = useState();

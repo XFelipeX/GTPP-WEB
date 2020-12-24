@@ -37,9 +37,9 @@ let VisionMenu = () =>{
     dispatch(setShopVisi(value))
   }
 
-  const setCompanyVisibility = (value) => {
-    dispatch(setCompanyVisi(value))
-  }
+  // const setCompanyVisibility = (value) => {
+  //   dispatch(setCompanyVisi(value))
+  // }
 
   const setDateVisibility = (value) => {
     dispatch(setDateVisi(value))

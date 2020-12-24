@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import './style.css';
-import api from '../../services/api';
-import { updateTask } from '../../redux';
+// import api from '../../services/api';
+// import { updateTask } from '../../redux';
 
 // import useClickOutside from '../Button/index';
 
 const TaskState = ({ task }) => {
 
   const { taskStates } = useSelector(state => state);
-  const { permissions } = useSelector(state => state);
-  const [show, setShow] = useState(false);
-  const dispatch = useDispatch();
+  // const { permissions } = useSelector(state => state);
+  // const [show, setShow] = useState(false);
+  // const dispatch = useDispatch();
 
 
   // const updateState = async (id) => {
