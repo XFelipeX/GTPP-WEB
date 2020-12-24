@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { AiOutlineUserAdd } from "react-icons/ai";
+// import { AiOutlineUserAdd } from "react-icons/ai";
 import ConfirmAction from "../ConfirmAction";
 import { BiEdit } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,7 +16,7 @@ import {
 import api from "../../services/api";
 import "./style.css";
 import useClickOutside from "../ClickOutside";
-import ModalDescription from '../ModalDescription';
+import ModalDescription from "../ModalDescription";
 
 const TaskInfo = () => {
   const dispatch = useDispatch();
@@ -28,12 +28,12 @@ const TaskInfo = () => {
   // const {permissions} = useSelector(state => state);
   // const {vinculatedUsers} = useSelector(state => state);
 
-  const [shops, setShops] = useState(false);
-  const [depts, setDepts] = useState(false);
+  const [shops, setShops] = useState([]);
+  const [depts, setDepts] = useState([]);
   const [company, setCompany] = useState(false);
   const [shop, setShop] = useState({});
 
-  const [taskcsds, setTaskCsds] = useState([]);
+  const [taskcsds, setTaskcsds] = useState([]);
   const [showReasonModal, setShowReasonModal] = useState(false);
   const [showDayModal, setShowDayModal] = useState(false);
 
@@ -44,13 +44,6 @@ const TaskInfo = () => {
   const [fullDescription, setFullDescription] = useState(
     taskVisible.task.full_description
   );
-  
-  
-
-
-  // useEffect(() => {
-  //   setFullDescription();
-  // },[])
 
   const [reason, setReason] = useState("");
   // const [vinculatedUsers, setVinculatedUsers] = useState([]);
@@ -66,10 +59,11 @@ const TaskInfo = () => {
   const [showModalAsk, setShowModalAsk] = useState(false);
 
   const { permissions } = useSelector((state) => state);
+  const AUTH = permissions.session;
 
   useEffect(() => {
     async function loadTaskVisible() {
-      let AUTH = sessionStorage.getItem("token");
+      // let AUTH = sessionStorage.getItem("token");
       let { data } = await api.get(
         "GTPP/Task.php?AUTH=" +
           AUTH +
@@ -78,25 +72,32 @@ const TaskInfo = () => {
       );
 
       // console.log(taskVisible)
-      //   console.log(data);
+      // console.log(data);
 
-      if (data) setTaskCsds(data.data.csds);
+      if (data.data.csds == null) {
+        // console.log('aqui')
+        setTaskcsds([]);
+      } else {
+        setTaskcsds(data.data.csds);
+      }
 
-      if (data.data.csds !== null) {
-        loadShopsCompany(data.data.csds[0].company_id).then((response) => {
+      if (data.data.csds != null) {
+        loadShopsCompany(data.data.csds[0].company_id,AUTH).then((response) => {
           setShops(response.data);
         });
         loadDeptsCompany(
           data.data.csds[0].company_id,
           data.data.csds[0].shop_id,
-          taskVisible.info.task_id
+          taskVisible.info.task_id,
+          AUTH
         ).then((response) => {
           setDepts(response);
         });
         setCompany(data.data.csds[0].company_id);
         setShop(data.data.csds[0].shop_id);
-      } else {
-        setDepts(false);
+      } else if(data.data.csds ==null){
+        // console.log('aqui')
+        setDepts([]);
         setShops([]);
         setCompany(false);
         setShowDept(false);
@@ -115,17 +116,17 @@ const TaskInfo = () => {
   );
 
   function upFullDescription(taskId, description) {
-    updateFullDescription(taskId, description).then(() => {setFullDescription(description)});
+    updateFullDescription(taskId, description,AUTH).then(() => {
+      setFullDescription(description);
+    });
     setShowFullDesc(false);
     dispatch(updateTask());
   }
 
-
-
   async function loadVinculateUsers() {
     const { data } = await api.get("GTPP/Task_User.php", {
       params: {
-        AUTH: permissions.session,
+        AUTH: AUTH,
         task_id: taskVisible.info.task_id,
         list_user: 0,
         app_id: 3,
@@ -153,7 +154,7 @@ const TaskInfo = () => {
         setDepts(false);
         setShowDept(false);
         setCompany(company);
-        loadShopsCompany(company).then((response) => {
+        loadShopsCompany(company,AUTH).then((response) => {
           setShops(response.data);
         });
       }
@@ -169,7 +170,7 @@ const TaskInfo = () => {
   // }, []);
 
   useEffect(() => {
-    loadDeptsCompany(company, shop, taskVisible.info.task_id).then(
+    loadDeptsCompany(company, shop, taskVisible.info.task_id,AUTH).then(
       (response) => {
         setDepts(response);
       }
@@ -187,22 +188,47 @@ const TaskInfo = () => {
   //   }
   // }
 
+  // console.log(taskVisible)
+
   function changeCheckDept(taskId, deptId, shopId, companyId) {
     if (shopId == "-1" || companyId == "-1") {
       alert("Selecione companhia e loja!");
     } else {
       try {
-        updateCheckDept(taskId, deptId, shopId, companyId).then((response) => {
-          if (response == null) {
-            setShowDept(false);
-            // loadCsds();
+        if (taskcsds != null) {
+          // console.log(taskcsds);
+
+          let csds = taskcsds.filter((csds) => csds.company_id !== companyId || csds.shop_id !== shopId);
+
+          if (csds.length >= 1) {
+            // console.log(csds);
+            updateCheckDept(
+              taskId,
+              csds[0].depart_id,
+              csds[0].shop_id,
+              csds[0].company_id,
+              AUTH
+            );
+
+            // dispatch(updateModal());
           }
 
-          // setShop(shop);
-        });
+      
+        }
 
-        dispatch(updateModal());
+        updateCheckDept(taskId, deptId, shopId, companyId,AUTH)
+          .then((response) => {
+            if (response == null) {
+              setShowDept(false);
+              setDepts([]);
+              // loadCsds();
+            }
+
+            // setShop(shop);
+          })
+          .then(dispatch(updateModal()));
       } catch (error) {
+        console.log(error);
         console.log("Erro ao selecionar departamento!");
       }
     }
@@ -220,8 +246,8 @@ const TaskInfo = () => {
       } else if (reason === "") {
         alert("o motivo é obrigatório!");
       } else {
-        updateStateTask(taskVisible.info.task_id, reason)
-          .then((response) => (taskVisible.info.state_id = response.id))
+        updateStateTask(taskVisible.info.task_id, reason,null,AUTH)
+          .then((response) => (taskVisible.info.state_id = response[0].id))
           .catch((error) => {});
         dispatch(updateTask());
         dispatch(updateModal());
@@ -232,10 +258,10 @@ const TaskInfo = () => {
       if (days == null) {
         setShowDayModal(true);
       } else {
-        updateStateTask(taskVisible.info.task_id, reason, days)
+        updateStateTask(taskVisible.info.task_id, reason, days,AUTH)
           .then(
             (response) => (
-              console.log(response.id),
+              // console.log(response.id),
               (taskVisible.info.state_id = response.id),
               (taskVisible.info.final_date = response.final_date)
             )
@@ -253,8 +279,8 @@ const TaskInfo = () => {
         setShowConfirmAction(true);
         return;
       } else if (confirm == true) {
-        updateStateTask(taskVisible.info.task_id)
-          .then((response) => (taskVisible.info.state_id = response.id))
+        updateStateTask(taskVisible.info.task_id,null,null,AUTH)
+          .then((response) => (taskVisible.info.state_id = response[0].id))
           .then((response) => {
             dispatch(updateTask());
             dispatch(updateModal());
@@ -281,7 +307,7 @@ const TaskInfo = () => {
     }
 
     // console.log('aqui')
-    cancelStateTask(taskId, reason)
+    cancelStateTask(taskId, reason,AUTH)
       .then((response) => (taskVisible.info.state_id = response.id))
       .catch((error) => {
         // console.log(error);
@@ -307,7 +333,7 @@ const TaskInfo = () => {
         <div>
           <ul className="menuAsk">
             <li>
-              <h3>{props.ask} tem certeza?</h3>
+              <h3>{props.ask}, tem certeza?</h3>
               <h2>*Informe o motivo:</h2>
               <textarea
                 spellCheck="false"
@@ -318,7 +344,7 @@ const TaskInfo = () => {
             <li>
               <button
                 className="btnConfirm"
-                onClick={(e) => cancelTask(taskVisible.info.task_id, reason)}
+                onClick={(e) => cancelTask(taskVisible.info.task_id, reason,AUTH)}
               >
                 Confirmar
               </button>
@@ -343,8 +369,6 @@ const TaskInfo = () => {
       // console.log(user.name)
     });
   }
-
-  
 
   // console.log(vinculatedUsers);
   // console.log(taskVisible)
@@ -455,8 +479,6 @@ const TaskInfo = () => {
         )
       ) : null}
 
-      
-
       <div className="row">
         <h1>Início : {dateInitial}</h1>
         <h1>Fim : {dateFinal}</h1>
@@ -518,63 +540,15 @@ const TaskInfo = () => {
             </div>
 
             {showFullDesc ? (
-              <ModalDescription description={fullDescription} setShowDesc={(info)=> setShowFullDesc(info)} updateDesc={(info) => upFullDescription(taskVisible.info.task_id,info)} question="Descrição completa da tarefa" />
+              <ModalDescription
+                description={fullDescription}
+                setShowDesc={(info) => setShowFullDesc(info)}
+                updateDesc={(info) =>
+                  upFullDescription(taskVisible.info.task_id, info)
+                }
+                question="Descrição completa da tarefa"
+              />
             ) : null}
-
-            {/* <div className="modalDescription">
-                <div>
-                  <ul className="menuDescription">
-                    <li>
-                      <h2>Descrição da tarefa</h2>
-                      <textarea
-                        placeholder="Esta tarefa tem como objetivo..."
-                        spellCheck="false"
-                        rows="5"
-                        value={fullDescription}
-                        onChange={(e) =>
-                          permissions.administrator === 1 ||
-                          taskVisible.info.user_id === permissions.id
-                            ? setFullDescription(e.target.value)
-                            : alert(
-                                "Você não tem permissão para realizar esta ação!"
-                              )
-                        }
-                      ></textarea>
-                    </li>
-                    <li>
-                      <button
-                        className="btnSaveDescription"
-                        onClick={() =>
-                          permissions.administrator === 1 ||
-                          taskVisible.info.user_id === permissions.id
-                            ? (setFullDescBack(fullDescription),
-                              updateFullDescription(
-                                taskVisible.info.task_id,
-                                fullDescription
-                              ))
-                            : (alert(
-                                "Você não tem permissão para realizar esta ação!"
-                              ),
-                              setShowDesc(false))
-                        }
-                      >
-                        Salvar
-                      </button>
-
-                      <button
-                        className="btnCancel"
-                        onClick={() => {
-                          setShowDesc(false);
-                          setFullDescription(fullDescBack);
-                        }}
-                        style={{ margin: 0 }}
-                      >
-                        Cancelar
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </div> */}
           </div>
         </div>
         <div className="rowCompShop">
@@ -624,7 +598,7 @@ const TaskInfo = () => {
 
               {showDept ? (
                 <ul className="menuDept">
-                  {depts
+                  {depts.length>0
                     ? depts.map((dept) => (
                         <li key={dept.id}>
                           <>
@@ -645,11 +619,6 @@ const TaskInfo = () => {
                         </li>
                       ))
                     : null}
-
-                  {/* <li>
-                <label htmlFor="">1 TI</label>
-                <input type="checkbox" />
-              </li> */}
                 </ul>
               ) : null}
             </div>
@@ -661,19 +630,21 @@ const TaskInfo = () => {
         <div className="user">
           {users.map((user) => (
             <React.Fragment key={user.user_id}>
-              {userPhotos.map((userPhoto) =>
-                user.user_id == userPhoto.user_id ? (
-                  <div className="userControl" key={userPhoto.user_id}>
-                    <img
-                      src={userPhoto.photo}
-                      width="35"
-                      height="35"
-                      alt={user.name}
-                      title={user.name}
-                    />
-                  </div>
-                ) : null
-              )}
+              {userPhotos.map((userPhoto) => (
+                <React.Fragment key={userPhoto.user_id}>
+                  {user.user_id == userPhoto.user_id ? (
+                    <div className="userControl">
+                      <img
+                        src={userPhoto.photo}
+                        width="35"
+                        height="35"
+                        alt={user.name}
+                        title={user.name}
+                      />
+                    </div>
+                  ) : null}
+                </React.Fragment>
+              ))}
             </React.Fragment>
           ))}
         </div>

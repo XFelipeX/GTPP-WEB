@@ -1,7 +1,7 @@
 import api from "../../services/api";
 
-export const updateFullDescription = async (taskId, description) => {
-  const AUTH = sessionStorage.getItem("token");
+export const updateFullDescription = async (taskId, description,auth) => {
+  const AUTH = auth;
 
   try {
     const data = await api
@@ -29,8 +29,8 @@ export const updateFullDescription = async (taskId, description) => {
 
 
 
-export const updateCheckDept = async (taskId, deptId, shopId, companyId) => {
-  const AUTH = sessionStorage.getItem("token");
+export const updateCheckDept = async (taskId, deptId, shopId, companyId,auth) => {
+  const AUTH = auth;
   // console.log(taskId,deptId,shopId,companyId);
   try {
     const data = await api.post(
@@ -43,7 +43,7 @@ export const updateCheckDept = async (taskId, deptId, shopId, companyId) => {
       }
     );
 
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (error) {
     let msg = String(error.response.data.message);
@@ -57,8 +57,8 @@ export const updateCheckDept = async (taskId, deptId, shopId, companyId) => {
   }
 };
 
-export const loadShopsCompany = async (idCompany) => {
-  const AUTH = sessionStorage.getItem("token");
+export const loadShopsCompany = async (idCompany,auth) => {
+  const AUTH = auth;
 
   try {
     const { data } = await api.get(
@@ -73,8 +73,8 @@ export const loadShopsCompany = async (idCompany) => {
   }
 };
 
-export const loadDeptsCompany = async (idCompany, idShop, idTask) => {
-  const AUTH = sessionStorage.getItem("token");
+export const loadDeptsCompany = async (idCompany, idShop, idTask,auth) => {
+  const AUTH = auth;
 
   try {
     const { data } = await api.get(
@@ -96,8 +96,8 @@ export const loadDeptsCompany = async (idCompany, idShop, idTask) => {
   }
 };
 
-export const updateStateTask = async (idTask,reason,days) => {
-  const AUTH = sessionStorage.getItem("token");
+export const updateStateTask = async (idTask,reason,days,auth) => {
+  const AUTH = auth;
 
   try {
     const {data} = await api
@@ -111,8 +111,8 @@ export const updateStateTask = async (idTask,reason,days) => {
         return response;
       });
 
-    console.log(data);
-    return data.data[0];
+    // console.log(data);
+    return data.data;
   } catch (error) {
     let msg = String(error.response.data.message);
     // console.log(error.response.data.message);
@@ -124,8 +124,8 @@ export const updateStateTask = async (idTask,reason,days) => {
   }
 }
 
-export const cancelStateTask = async (idTask,reason) => {
-  const AUTH = sessionStorage.getItem("token");
+export const cancelStateTask = async (idTask,reason,auth) => {
+  const AUTH = auth;
   try {
     const {data} = await api
       .put(`GTPP/TaskState.php?AUTH=${AUTH}&app_id=3`, {
@@ -140,7 +140,7 @@ export const cancelStateTask = async (idTask,reason) => {
         return response;
       });
 
-    console.log(data);
+    // console.log(data);
     return data.data[0];
   } catch (error) {
     let msg = String(error.response.data.message);
