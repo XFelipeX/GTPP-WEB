@@ -1,7 +1,7 @@
 import api from '../../services/api';
 
-export const updateDescription = async (taskId, description, priority) => {
-    const AUTH = sessionStorage.getItem("token");
+export const updateDescription = async (taskId, description, priority,auth) => {
+    const AUTH = auth;
   
     try {
       const data = await api.put(`GTPP/Task.php?AUTH=${AUTH}&app_id=3`, {

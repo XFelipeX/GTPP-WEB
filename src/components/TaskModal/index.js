@@ -11,16 +11,18 @@ import {updateDescription} from './functions';
 import ModalDescription from '../ModalDescription';
 
 
-let TaskModal = ({ id = "modal" }) => {
+let TaskModal = ({ id = "modal",close }) => {
   const dispatch = useDispatch();
   const { taskVisible } = useSelector((state) => state);
+  const {permissions} = useSelector(state => state);
+  const AUTH = permissions.session;
   const [description, setDescription] = useState(
     taskVisible.info.description
   );
   const [showDesc, setShowDesc] = useState(false);
 
   function upDescription(taskId,description,priority){
-    updateDescription(taskId, description,priority).then(() => {setDescription(description)});
+    updateDescription(taskId, description,priority,AUTH).then(() => {setDescription(description)});
     setShowDesc(false);
     dispatch(updateTask());
   }
@@ -28,7 +30,10 @@ let TaskModal = ({ id = "modal" }) => {
   // console.log(taskVisible)
   const handleOutsideClick = (e) => {
     // console.log(e.target.id);
-    if (e.target.id === id) dispatch(taskVisibleUpdate());
+    if (e.target.id === id) {
+      dispatch(taskVisibleUpdate())
+      close()
+    };
   };
 
   const [loading, setLoading] = useState(true);
@@ -39,7 +44,7 @@ let TaskModal = ({ id = "modal" }) => {
 
   return (
     <div id={id} className="modal" onClick={handleOutsideClick}>
-      {loading ? <Loading /> : null}
+      {loading==true ? <Loading /> : null}
       {showDesc ? (
               <ModalDescription description={description} setShowDesc={(info)=> setShowDesc(info)} updateDesc={(info) => upDescription(taskVisible.info.task_id,info,taskVisible.info.priority)} question="Descrição da tarefa" />
             ) : null}
@@ -57,7 +62,7 @@ let TaskModal = ({ id = "modal" }) => {
           <div>
             <button
               className="modalClose"
-              onClick={() => dispatch(taskVisibleUpdate())}
+              onClick={() => close()}
             >
               <AiOutlineClose size={35} />
             </button>
