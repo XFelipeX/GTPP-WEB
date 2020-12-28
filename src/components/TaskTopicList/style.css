@@ -1,6 +1,6 @@
 /* aréa do checklist dos tópicos da tarefa */
 .taskTopicList{
-    width: 50%;
+    width: 55%;
     height: 100%;
     background-color: #2b2b2b;
     border-radius: 0 0 17px 0;
@@ -10,7 +10,7 @@
 .topic{
     padding: 5px;
     margin: 0 auto;
-    width: 90%;
+    width: 95%;
     color: white;
     border-bottom: 2px solid #3b6895;
     display: flex;
@@ -29,6 +29,10 @@
 .topic .topicLeft{
     display: flex;
     align-items: center;
+}
+
+.topic .topicLeft a:first-child{
+    margin-right: 1em;
 }
 
 /* Modal histórico da tarefa */
