@@ -1,40 +1,38 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import './style.css';
+import "./style.css";
 import api from "../../services/api";
 // import {AiOutlineUser} from 'react-icons/ai';
-import userEmpty from '../../assets/nullphoto.jpeg';
+import userEmpty from "../../assets/nullphoto.jpeg";
 
 import userImg from "../../assets/user@2x.png";
 import { getUsersPhotos, getVinculatedUsers, updateTask } from "../../redux";
 
-import useClickOutside from '../ClickOutside';
+import useClickOutside from "../ClickOutside";
 
 let TaskUsers = ({ task }) => {
   const { permissions } = useSelector((state) => state);
   const AUTH = permissions.session;
   const { userPhotos } = useSelector((state) => state);
-  const { stateUpdate } = useSelector((state) => state); 
-  const { taskUsersPhotos} = useSelector((state) => state);   
+  const { stateUpdate } = useSelector((state) => state);
+  const { taskUsersPhotos } = useSelector((state) => state);
   const [takePhotos, setTakePhotos] = useState([]);
   // const [vinculatedUsers, setVinculatedUsers] = useState([]);
-  const {vinculatedUsers} = useSelector(state => state);
-  const [users,setUsers] = useState([]);
+  const { vinculatedUsers } = useSelector((state) => state);
+  const [users, setUsers] = useState([]);
   const [showUsers, setShowUsers] = useState(false);
   const [open, setOpen] = useState(false);
-  const [photos,setPhotos] = useState([]);
-   
-  const [allUsers,setAllUsers] = useState([]);
+  const [photos, setPhotos] = useState([]);
+
+  const [allUsers, setAllUsers] = useState([]);
   const dispatch = useDispatch();
-
-
 
   async function loadVinculateUsers() {
     const { data } = await api.get("GTPP/Task_User.php", {
       params: {
         AUTH: AUTH,
         task_id: task.id,
-        list_user:0,
+        list_user: 0,
         app_id: 3,
       },
     });
@@ -42,39 +40,56 @@ let TaskUsers = ({ task }) => {
     try {
       // dispatch(getVinculatedUsers(data.data));
       setUsers(data.data);
-    } catch (error) {
-      
-    }
- 
+    } catch (error) {}
+
     // console.log(users)
     // console.log(task.id)
   }
 
   useEffect(() => {
     loadVinculateUsers();
-  },[stateUpdate])
+  }, [stateUpdate]);
 
-  async function loadAllUsers(){
-    const {data} =  await api.get("GTPP/Task_User.php",{
-      params: {
-        AUTH: AUTH,
-        task_id: task.id,
-        list_user:1,
-        app_id: 3,
-      },
-    });
-
+  async function loadAllUsers() {
     try {
-      // console.log(data);
-      setAllUsers(data.data);
+      const { data } = await api.get("GTPP/Task_User.php", {
+        params: {
+          AUTH: AUTH,
+          task_id: task.id,
+          list_user: 1,
+          app_id: 3,
+        },
+      });
+      return data;
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
   useEffect(() => {
-    loadAllUsers();
-  },[stateUpdate])
+    loadAllUsers().then((response) => {
+      if (response.error === false) {
+        setAllUsers(response.data);
+      }
+    });
+  }, [stateUpdate]);
+
+  // console.log(allUsers)
+
+  // let teste = "teste";
+
+  const [filterUser, setFilterUser] = useState(null);
+
+  function searchUser(e) {
+    let userName = e.target.value.toLowerCase();
+    if (userName != "") {
+      setFilterUser(
+        allUsers.filter((user) => user.name.toLowerCase().includes(userName))
+      );
+    } else {
+      setFilterUser(null);
+    }
+  }
 
   // const [allUsers]
 
@@ -88,7 +103,6 @@ let TaskUsers = ({ task }) => {
   //   }
   // }
 
-
   // const loadUserImages = async (idUser) => {
   //   const AUTH = sessionStorage.getItem("token");
   //   try {
@@ -99,27 +113,23 @@ let TaskUsers = ({ task }) => {
   //         idUser
   //     );
 
-   
-
   //     if (data) {
   //       // console.log(data);
   //       if(data.photo==null||data.photo==""){
-          
+
   //         data.user_id = idUser;
   //         // console.log(data.user_id);
   //         data.photo = userEmpty;
   //         setTakePhotos((oldarray) => [...oldarray, data]);
-    
-         
+
   //       }else{
   //         data.photo = convertImage(data.photo);
   //         setTakePhotos((oldarray) => [...oldarray, data]);
-     
+
   //       }
-       
-        
+
   //     }
-      
+
   //     return data;
   //   } catch (error) {
   //     console.log(error);
@@ -134,17 +144,14 @@ let TaskUsers = ({ task }) => {
   //     // if(user[0].photo==null){
   //     //   loadUserImages(task.user_id)
   //     // }
-      
+
   //   loadUserImages(user.user_id)
   //   });
-
-  
 
   // }, []);
 
   useEffect(() => {
     dispatch(getUsersPhotos(takePhotos));
-    
   }, [takePhotos]);
 
   // let loadUsersAmount = () => {
@@ -152,72 +159,68 @@ let TaskUsers = ({ task }) => {
   //     if(vinculatedUsers.users){
   //       vinculatedUsers.users.forEach(e => e.check === true ? count++ : 0);
   //     }
-     
 
   //     return count;
   // }
 
   async function changeUser(id) {
-
     try {
-      await api
-      .put(`GTPP/Task_User.php?AUTH=${AUTH}&app_id=3`, {
+      await api.put(`GTPP/Task_User.php?AUTH=${AUTH}&app_id=3`, {
         task_id: task.id,
         user_id: id,
       });
 
-      dispatch(updateTask())
+      dispatch(updateTask());
     } catch (error) {
       // console.log(error)
       let msg = "";
 
-      if(error.response){
+      if (error.response) {
         msg = error.response.data.message;
-      
-        if(msg.includes("Task with this state cannot be modified")){
-          alert("Tarefa neste estado não pode ser modificada!")
-        }else if(msg.includes("Only the task creator or administrator can do this")){
-          alert("Somente o criador da tarefa ou administrador pode fazer isto!")
+
+        if (msg.includes("Task with this state cannot be modified")) {
+          alert("Tarefa neste estado não pode ser modificada!");
+        } else if (
+          msg.includes("Only the task creator or administrator can do this")
+        ) {
+          alert(
+            "Somente o criador da tarefa ou administrador pode fazer isto!"
+          );
         }
-      }else{
+      } else {
         msg = error.message;
 
-        if(msg.includes("Network Error")){
-          alert("Autorização negada!")
+        if (msg.includes("Network Error")) {
+          alert("Autorização negada!");
         }
       }
-     
+    }finally{
+      setFilterUser(null);
     }
-
-    
   }
-
-
-
 
   // console.log(userPhotos);
 
-  let domNode = useClickOutside(() =>{
-    setOpen(false)
-  })
+  let domNode = useClickOutside(() => {
+    setOpen(false);
+  });
 
-  let domNode2 = useClickOutside(() =>{
-    setShowUsers(false)
-  })
+  let domNode2 = useClickOutside(() => {
+    setShowUsers(false);
+    setFilterUser(null);
+  });
 
   // console.log(vinculatedUsers);
-  
+
   // console.log(users)
 
- 
-  if(users.length>0){
+  if (users.length > 0) {
     users.map((user) => {
-      let result = vinculatedUsers.filter(users => users.id == user.user_id);
+      let result = vinculatedUsers.filter((users) => users.id == user.user_id);
       user.name = result[0].user;
       // console.log(user.name)
-    })
+    });
   }
- 
 
   // function loadAllUsers(){
   //   let allUsers = [];
@@ -230,7 +233,7 @@ let TaskUsers = ({ task }) => {
   //   //   }else{
   //   //     allUsers.push(vinculatedUsers[i]);
   //   //   }
-   
+
   //   // }
 
   //   // let result = vinculatedUsers.filter(user => user.id!==)
@@ -238,109 +241,162 @@ let TaskUsers = ({ task }) => {
   //   // console.log(allUsers)
   //   return allUsers;
   // }
- 
 
   // useEffect(() => {
   //   let users = loadAllUsers;
   //   setAllUsers(users);
   // },[stateUpdate])
 
-
   // useEffect(() => {
-   
+
   //   setAllUsers(loadAllUsers);
   // },[])
 
   // let allUsers = loadAllUsers();
 
-
-
   return (
     <div className="containerUsers">
-      <div  ref={domNode} className="vinculatedUsers">
-        <div onClick={() => setOpen(!open) }>
+      <div ref={domNode} className="vinculatedUsers">
+        <div onClick={() => setOpen(!open)}>
           {/* <p>{vinculatedUsers.length}</p> */}
           {users ? users.length : null}
         </div>
-        { open  && users.length > 0 ? (
-          <ul className="vinculatedList" >
-          {users.map((user) => (
-            
-            <React.Fragment key={user.user_id}>
-              {userPhotos.map((userPhoto) => (
-               
-                <React.Fragment key={userPhoto.user_id}>
-                  {user.user_id == userPhoto.user_id 
-                 ? (
-                
-                    <li >
-
-
-                      <img
-                      
-                        src={userPhoto.photo}
-                        width="35"
-                        height="35"
-                        alt=""
-                      />
-                      <p style={{color:'white',paddingLeft:'5px',fontSize:'16px'}}>{user.name}</p>
-                      {task.user_id == permissions.id || permissions.administrator==1 && user.user_id!= permissions.id? <button onClick={() => changeUser(user.user_id)}>
-                        Remover
-                      </button> : null}
-                      
-                    </li>
-                  ) : null}
-                </React.Fragment>
-              ))}
-            </React.Fragment>
-          ))}
-        </ul>
+        {open && users.length > 0 ? (
+          <ul className="vinculatedList">
+            {users.map((user) => (
+              <React.Fragment key={user.user_id}>
+                {userPhotos.map((userPhoto) => (
+                  <React.Fragment key={userPhoto.user_id}>
+                    {user.user_id == userPhoto.user_id ? (
+                      <li>
+                        <img
+                          src={userPhoto.photo}
+                          width="35"
+                          height="35"
+                          alt=""
+                        />
+                        <p
+                          style={{
+                            color: "white",
+                            paddingLeft: "5px",
+                            fontSize: "16px",
+                          }}
+                        >
+                          {user.name}
+                        </p>
+                        {task.user_id == permissions.id ||
+                        (permissions.administrator == 1 &&
+                          user.user_id != permissions.id) ? (
+                          <button onClick={() => changeUser(user.user_id)}>
+                            Remover
+                          </button>
+                        ) : null}
+                      </li>
+                    ) : null}
+                  </React.Fragment>
+                ))}
+              </React.Fragment>
+            ))}
+          </ul>
         ) : null}
-     
       </div>
       <div ref={domNode2} className="userList">
-        <div onClick={() => {
-          setShowUsers(!showUsers)
-          
-        }}>
+        <div
+          onClick={() => {
+            setShowUsers(!showUsers);
+          }}
+        >
           <img src={userImg} alt="" width="" />
         </div>
-        {showUsers ? (
-        <ul>
-          {allUsers.map((user) => (
-            <React.Fragment key={user.user_id}>
-              
 
-              {userPhotos.map((userPhoto) => (
-                <a id={userPhoto.user_id} key={userPhoto.user_id}>
-                  {user.user_id == userPhoto.user_id &&
-                  user.user_id != permissions.id && user.check==false  ? (
-                    <li>
-                      <img
-                        src={userPhoto.photo}
-                        width="35"
-                        height="35"
-                        alt=""
-                      />
-                      <p style={{color:'white',paddingLeft:'5px',fontSize:'16px'}}>{user.name}</p>
-                      <button onClick={() => {
-                        changeUser(user.user_id)
-          
-                      }}>
-                        Vincular
-                      </button>
-                    </li>
-                  ) : null}
-                </a>
-              ))}
-            </React.Fragment>
-          ))}
-        </ul> ) : null}
+        {showUsers ? (
+          <>
+            <div className="search-user">
+              <label>Pesquisar</label>
+              <input type="text" onChange={(e) => searchUser(e)} />
+            </div>
+            <ul>
+              {filterUser != null
+                ? filterUser.map((user) => (
+                    <React.Fragment key={user.user_id}>
+                      {userPhotos.map((userPhoto) => (
+                        <a id={userPhoto.user_id} key={userPhoto.user_id}>
+                          {user.user_id == userPhoto.user_id &&
+                          user.user_id != permissions.id &&
+                          user.check == false ? (
+                            <li>
+                              <img
+                                src={userPhoto.photo}
+                                width="35"
+                                height="35"
+                                alt=""
+                              />
+                              <p
+                                style={{
+                                  color: "white",
+                                  paddingLeft: "5px",
+                                  fontSize: "16px",
+                                  width: "240px",
+                                }}
+                              >
+                                {user.name}
+                              </p>
+                              <button
+                                onClick={() => {
+                                  changeUser(user.user_id);
+                                }}
+                              >
+                                Vincular
+                              </button>
+                            </li>
+                          ) : null}
+                        </a>
+                      ))}
+                    </React.Fragment>
+                  ))
+                : allUsers.map((user) => (
+                    <React.Fragment key={user.user_id}>
+                      {userPhotos.map((userPhoto) => (
+                        <a id={userPhoto.user_id} key={userPhoto.user_id}>
+                          {user.user_id == userPhoto.user_id &&
+                          user.user_id != permissions.id &&
+                          user.check == false ? (
+                            <li>
+                              <img
+                                src={userPhoto.photo}
+                                width="35"
+                                height="35"
+                                alt=""
+                              />
+                              <p
+                                style={{
+                                  color: "white",
+                                  paddingLeft: "5px",
+                                  fontSize: "16px",
+                                  width: "240px",
+                                }}
+                              >
+                                {user.name}
+                              </p>
+                              <button
+                                onClick={() => {
+                                  changeUser(user.user_id);
+                                }}
+                              >
+                                Vincular
+                              </button>
+                            </li>
+                          ) : null}
+                        </a>
+                      ))}
+                    </React.Fragment>
+                  ))}
+            </ul>
+          </>
+        ) : null}
       </div>
-     
     </div>
   );
 };
 
 export default TaskUsers;
-
