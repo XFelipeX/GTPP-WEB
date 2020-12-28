@@ -8,8 +8,6 @@ import img from "../../assets/art.png";
 import logo from "../../assets/logo.png";
 import api from "../../services/api";
 
-
-
 const Login = () => {
   const history = useHistory();
   const dispatch = useDispatch();
@@ -18,7 +16,7 @@ const Login = () => {
   useEffect(() => {
     dispatch(logOff());
     // dispatch(getTask([{}]));
-  },[])
+  }, []);
 
   // console.log(taskVisible)
 
@@ -58,8 +56,8 @@ const Login = () => {
               ) {
                 alert("Este usuário não tem acesso a esta aplicação!");
               } else if (msg.includes("User or password error")) {
-                alert("usuário e/ou senha incorretos");
-              }else if (msg.includes("(user, password, app_id) is broken")) {
+                alert("Usuário e/ou senha incorreto(s)");
+              } else if (msg.includes("(user, password, app_id) is broken")) {
                 alert("Preencha todos os campos");
               }
             } else {
@@ -74,13 +72,13 @@ const Login = () => {
         })();
       } catch (error) {
         console.log(error);
-        alert("Usuario o senha incorretos");
+        alert("usuário e/ou senha incorreto(s)");
       }
     }
   }
 
   async function verifyVersion() {
-    const version = 0.75;
+    const version = 0.82;
 
     try {
       let { data } = await api.get("CCPP/AppVersion.php?id=3");
@@ -121,19 +119,14 @@ const Login = () => {
         <label htmlFor="">Senha</label>
         <input type="password" id="password" />
         <button onClick={() => UserLogin()}>Entrar</button>
-        
       </form>
-      <span className="version">
-      Task - App version 0.75 Created by Felipe
-      </span>
+      <span className="version">Task - App version 0.82 Created by Felipe</span>
       <div className="divisor" />
       <div className="artSection">
         <img src={img} alt="" />
-        
       </div>
     </div>
   );
 };
 
 export default Login;
-

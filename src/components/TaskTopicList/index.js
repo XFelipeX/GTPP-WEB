@@ -40,12 +40,6 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
         params: { AUTH: AUTH, app_id: 3, task_id: taskVisible.info.task_id },
       });
       // console.log(data)
-      if (data.error === true) {
-        setTaskItem([{}]);
-        //alert("error");
-      } else {
-        setTaskItem(data.data);
-      }
 
       return data;
     } catch (error) {
@@ -81,10 +75,23 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
     // console.log(e)
   }
 
+  const [showBottom, setShowBottom] = useState(false);
+
   useEffect(() => {
-    loadTaskItems();
-    // dispatch(setInfoTask(taskItem));
+    loadTaskItems().then((response) => {
+      // console.log(response)
+      if(response.error==false){
+        setTaskItem(response.data);
+      }else {
+        setTaskItem([{}]);
+      }
+     
+    });
   }, [topicUpdate]);
+
+  useEffect(() => {
+    handleClick();
+  }, [showBottom]);
 
   function addNewItem(taskId, description) {
     if (taskVisible.info.state_id == 5 || taskVisible.info.state_id == 4) {
@@ -96,14 +103,21 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
       );
     } else {
       if (description !== "") {
-        addItem(taskId, description, AUTH).then((response) => {
-          if (response != null) {
-            taskVisible.info.percent = response.percent;
-            taskVisible.info.state_id = response.state_id;
-            dispatch(updateModal());
-            dispatch(updateTopic());
-          }
-        });
+        addItem(taskId, description, AUTH)
+          .then((response) => {
+            if (response != null) {
+              taskVisible.info.percent = response.percent;
+              taskVisible.info.state_id = response.state_id;
+              dispatch(updateTopic());
+              dispatch(updateModal());
+
+              setTimeout(() => {
+                setShowBottom(!showBottom);
+              },500)
+             
+            }
+          })
+          .finally();
         setNewItem("");
       }
     }
@@ -116,7 +130,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
     // list.scrollTop = 9999999999;
     // console.log(list.scrollTop)
 
-    handleClick();
+    // handleClick()
   }
 
   function deleteItemTopic(e, taskId, itemId) {
@@ -130,16 +144,21 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
     } else {
       deleteItem(taskId, itemId, AUTH)
         .then((response) => {
+          
           if (response != null) {
             taskVisible.info.percent = response.percent;
             taskVisible.info.state_id = response.state_id;
+
+              dispatch(updateModal());
+    dispatch(updateTopic());
+          
+            
           }
         })
         .catch((error) => {});
     }
 
-    dispatch(updateModal());
-    dispatch(updateTopic());
+    
   }
 
   function updateTopicItem(itemId, description, taskId) {
@@ -170,10 +189,11 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   // const [loadHistoric, setLoadHistoric] = useState(false);
 
   const handleClick = () => {
-    ref.current.scrollIntoViewIfNeeded(true, {
-      behavior: "smooth",
-      block: "end",
-    });
+    if (ref.current)
+      ref.current.scrollIntoView(true, {
+        behavior: "smooth",
+        block: "end",
+      });
   };
 
   const ref = React.createRef();
@@ -186,7 +206,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
           type="button"
           onClick={() => (
             setShowHistoric(!showHistoric),
-            takeHistoricTask(taskVisible.info.task_id,AUTH).then((response) =>
+            takeHistoricTask(taskVisible.info.task_id, AUTH).then((response) =>
               setTaskHistoric(response.data)
             )
           )}
@@ -264,8 +284,11 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
 
                   <div className="topic" ref={ref}>
                     {/* {console.log(item.check)} */}
-
+                   
                     <div className="topicLeft">
+                    <a>
+                    {item.order}
+                    </a>
                       <input
                         type="checkbox"
                         onChange={(e) => {

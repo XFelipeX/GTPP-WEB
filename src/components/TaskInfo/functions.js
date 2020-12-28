@@ -157,12 +157,20 @@ export const cancelStateTask = async (idTask,reason,auth) => {
 export function formatDate(props) {
   const date = new Date(props);
   var day = date.getDate();
+  var month = date.getMonth();
   day++;
   if (day < 10) {
     day = "0" + day;
+  }else if(day==32){
+    day = "0"+1;
+    if(month<12){
+    month++;}else{
+      month = 0;
+    }
   }
-  var month = date.getMonth();
-  month++;
+  
+  if(month<12){
+    month++;}
   if (month < 10) {
     month = "0" + month;
   }
