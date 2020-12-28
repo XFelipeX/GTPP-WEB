@@ -20,6 +20,7 @@
     max-height: 40%;
     background-color: #fff;
     border-radius: 20px;
+    max-height: 38vh;
     
 }
 
@@ -137,6 +138,7 @@
 .modalContent .taskInfo > h2{
     height: .5em;
 }
+
 
 
 

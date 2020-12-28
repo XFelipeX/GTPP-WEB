@@ -76,3 +76,9 @@
     padding: 10px;
     resize: none;
 }
+
+@media only screen and (max-width: 1400px){
+    .descriptionArea textarea{
+        width: 240px;
+    }
+}
