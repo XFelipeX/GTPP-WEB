@@ -43,7 +43,7 @@ let InfoUserCard = ({ id, close }) => {
     loadUserInfo();
   }, []);
 
-  console.log(userInfo);
+//   console.log(userInfo);
 
   return (
     <div className="info-user-task" ref={domNode}>

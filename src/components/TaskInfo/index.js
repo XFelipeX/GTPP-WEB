@@ -80,6 +80,10 @@ const TaskInfo = () => {
       if (data.data.csds == null) {
         // console.log('aqui')
         setTaskcsds([]);
+        setDepts([]);
+        setShops([]);
+        setCompany(false);
+        setShowDept(false);
       } else {
         setTaskcsds(data.data.csds);
       }
@@ -98,13 +102,8 @@ const TaskInfo = () => {
         });
         setCompany(data.data.csds[0].company_id);
         setShop(data.data.csds[0].shop_id);
-      } else if(data.data.csds ==null){
-        // console.log('aqui')
-        setDepts([]);
-        setShops([]);
-        setCompany(false);
-        setShowDept(false);
-      }
+        // return true;
+      } 
     }
 
     loadTaskVisible();
@@ -213,7 +212,7 @@ const TaskInfo = () => {
               AUTH
             );
 
-            // dispatch(updateModal());
+            dispatch(updateModal());
           }
 
       
@@ -229,7 +228,7 @@ const TaskInfo = () => {
 
             // setShop(shop);
           })
-          .then(dispatch(updateModal()));
+          .then(() => dispatch(updateModal()));
       } catch (error) {
         console.log(error);
         console.log("Erro ao selecionar departamento!");
