@@ -27,7 +27,7 @@ let TaskModal = ({ id = "modal",close }) => {
     dispatch(updateTask());
   }
 
-  // console.log(taskVisible)
+  console.log(taskVisible)
   const handleOutsideClick = (e) => {
     // console.log(e.target.id);
     if (e.target.id === id) {

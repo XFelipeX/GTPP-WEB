@@ -29,6 +29,8 @@
 .topic .topicLeft{
     display: flex;
     align-items: center;
+    /* max-width: 50px; */
+    justify-content: left;
 }
 
 .topic .topicLeft a:first-child{
@@ -177,7 +179,7 @@
 }
 
 #topicList{
-    height: 270px;
+    height: 260px;
     overflow: auto;
 }
 
