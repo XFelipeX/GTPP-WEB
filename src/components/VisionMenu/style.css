@@ -1,13 +1,15 @@
 .menuExpanded{
     display: flex;
     flex-direction: column;
-    background-color:rgb(168, 168, 168);
-    padding: .5em;
-    border-radius: 5px;
-    font-size: 18px;
-    box-shadow: 0 2px 2px 0 black, 0 3px 3px 0 black;
-    color:black;
+    background-color: #2b2b2b;
+    width: auto;
+    color: white;
+    padding: 24px;
+    box-shadow: 0 0px 50px 15px #343434;
+    border-radius: 2px 2px 5px 5px;
     position: absolute;
+    z-index: 10;
+    font-size: 18px;
 }
 
 .menuExpanded label > input{
@@ -23,6 +25,10 @@
 .menuExpanded > select{
     background-color:#ccc;
     margin: 2px 0;
+}
+
+.menuExpanded > p {
+    padding: .3em 0 .3em 0;
 }
 
 .visionMenu > p{

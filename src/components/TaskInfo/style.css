@@ -53,7 +53,7 @@
     height: 200px;
 }
 
-@media only screen and (max-width:1640px){
+@media only screen and (max-width:1740px){
     .rowCompShop{
         flex-direction: column;
     }
@@ -74,6 +74,8 @@
          margin-bottom: 0;
      }
 }
+
+
 
 
 .menuDept{
@@ -159,6 +161,12 @@
     position: relative;
     top: 2em;
     width: 100%;
+}
+
+@media only screen and (max-width:1740px){
+    .usersVinculated {
+        top: 6em;
+    }
 }
 
 .user{
@@ -277,6 +285,7 @@
     padding: 7px 18px;
     background-color: #69a312;
     color:white;
+    margin-top: 1.2em;
 }
 
 .btnCancel{
@@ -285,13 +294,14 @@
     padding: 7px 18px;
     background-color: #c7a002;
     color:white;
+    margin-top: 1.2em;
 }
 
 /* Modal days */
 
 .modalDays > div{
     width: 350px;
-    height: 210px;
+    max-height: 245px;
     border: 1px solid black;
     margin-bottom: 13em;
     background-color: #2b2b2b;
@@ -404,7 +414,7 @@
 
 .modalAsk > div{
     width: 350px;
-    height: 310px;
+    max-height: 330px;
     border: 1px solid black;
     margin-bottom: 13em;
     background-color: #2b2b2b;
