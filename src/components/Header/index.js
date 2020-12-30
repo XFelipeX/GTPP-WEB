@@ -4,6 +4,9 @@ import CreateTask from "../CreateTask";
 import VisionMenu from "../VisionMenu";
 import ButtonFilter from "../ButtonFilter";
 import InfoUser from '../InfoUser';
+import LoadTasks from '../LoadTasks';
+import OrderTasks from '../OrderTasks';
+
 
 import "./style.css";
 
@@ -16,10 +19,10 @@ function Header() {
         </div>
         <div className="right-area">
           <CreateTask />
-
+          <LoadTasks/>
           <VisionMenu />
+          <OrderTasks/>
           <ButtonFilter />
-
           <ButtonLogoff />
         </div>
       </div>
