@@ -6,11 +6,13 @@ import { getUserInfo } from "../../redux";
 import api from "../../services/api";
 import "./style.css";
 
+
 let InfoUser = () => {
   let dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state);
   const { permissions } = useSelector((state) => state);
   const [showInfo, setShowInfo] = useState(false);
+  const [info,setInfo] = useState([]);
 
   const [photo, setPhoto] = useState(userEmpty);
 
@@ -24,14 +26,18 @@ let InfoUser = () => {
         "CCPP/Employee.php?AUTH=" + AUTH + "&app_id=3&id=" + userId
       );
       // console.log(data)
-      dispatch(getUserInfo(data.data));
+      return data;
     } catch (error) {
       // console.log(error)
+      return [{}];
     }
   }
 
   useEffect(() => {
-    loadUserInfo();
+    loadUserInfo().then(response => {
+      dispatch(getUserInfo(response.data));
+      setInfo(response.data);
+    });
   }, []);
 
   async function loadUserPhoto() {
@@ -47,9 +53,16 @@ let InfoUser = () => {
 
       if (data.photo != null) {
         setPhoto(convertImage(data.photo));
+        
       }
-    } catch (error) {}
+    } catch (error) {}finally{
+      userInfo[0].photo = photo
+      let info = [userInfo[0],userInfo[1]];
+      dispatch(getUserInfo(info));
+    }
   }
+
+  // console.log(userInfo);
 
   function convertImage(src) {
     if (src != null) {
@@ -92,17 +105,17 @@ let InfoUser = () => {
             </div>
             <div>
               <p style={{ fontSize: "20px",marginLeft:".3em" }}>
-                <strong>{userInfo[0].name} </strong>
+                <strong>{info[0].name} </strong>
               </p>
 
               <p>
-                {userInfo[0].company} - {userInfo[0].shop}
+                {info[0].company} - {info[0].shop}
               </p>
               <p>
-                {userInfo[0].departament} - {userInfo[0].sub}
+                {info[0].departament} - {info[0].sub}
               </p>
-
-              {userInfo[1].administrator ? (
+              {info[1] ? (
+                info[1].administrator != null && info[1].administrator ==1 ? (
                 <>
                   <p>
                     <strong>Administrador</strong>
@@ -114,7 +127,10 @@ let InfoUser = () => {
                 </>
               ) : <p>
                   <strong>Usuário comum</strong>
-              </p>}
+              </p>
+              ):  null}
+
+             
             </div>
           </div>
         </div>

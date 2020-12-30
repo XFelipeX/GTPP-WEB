@@ -6,7 +6,7 @@ export const loadTask = async (order,auth) => {
   const AUTH = auth;
 
   try {
-    const { data } = await api.get('GTPP/Task.php', { params: { AUTH: AUTH, col: 1, order: order.order, app_id: 3 } });
+    const { data } = await api.get('GTPP/Task.php', { params: { AUTH: AUTH, col: 1, order: "asc", app_id: 3 } });
     // console.log(data)
     return data;
   } catch (error) {

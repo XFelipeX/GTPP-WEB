@@ -3,10 +3,11 @@ import "./style.css";
 import { useSelector, useDispatch } from "react-redux";
 import TaskState from "../TaskState";
 import TaskPriority from "../TaskPriority";
+import userEmpty from "../../assets/nullphoto.jpeg";
 import TaskDate from "../TaskDate";
 import TaskUsers from "../TaskUsers";
 import TaskModal from "../TaskModal";
-import { taskInfoShow, sendInfoModal } from "../../redux";
+import { taskInfoShow, sendInfoModal,taskInfoOwner } from "../../redux";
 import api from "../../services/api";
 
 const Task = ({ task }) => {
@@ -21,11 +22,41 @@ const Task = ({ task }) => {
   const { permissions } = useSelector((state) => state);
   const { vinculatedUsers } = useSelector((state) => state);
   const [showModal,setShowModal] = useState(false);
+  // const [photoUser,setPhotoUser] = useState(userEmpty);
 
-  useEffect(() => {
-    setShowModal(false);
-  },[])
+  // useEffect(() => {
+  //   setShowModal(false);
+  // },[])
 
+  
+
+  // async function loadUserPhoto() {
+  //   const AUTH = permissions.session;
+  //   const idUser = permissions.id;
+
+  //   try {
+  //     let { data } = await api.get(
+  //       "CCPP/EmployeePhoto.php?AUTH=" + AUTH + "&app_id=3&id=" + idUser
+  //     );
+
+  //     // console.log(data);
+
+  //     if (data.photo != null) {
+  //       setPhoto(convertImage(data.photo));
+        
+  //     }
+  //   } catch (error) {}finally{
+  //     userInfo[0].photo = photo
+  //     let info = [userInfo[0],userInfo[1]];
+  //     dispatch(getUserInfo(info));
+  //   }
+  // }
+
+
+
+  // useEffect(() => {
+  //   loadUserPhoto();
+  // }, []);
 
   const dispatch = useDispatch();
 
@@ -39,14 +70,14 @@ const Task = ({ task }) => {
     userId,
     priority
   ) {
-    let auth = permissions.session;
+    const AUTH = permissions.session;
     // console.log(task)
     try {
       let { data } = await api.get(
-        "GTPP/Task.php?AUTH=" + auth + "&app_id=3&id=" + taskId
+        "GTPP/Task.php?AUTH=" + AUTH + "&app_id=3&id=" + taskId
       );
       // console.log(taskVisible);
-
+        
       dispatch(
         sendInfoModal(
           taskId,
@@ -60,6 +91,7 @@ const Task = ({ task }) => {
         )
       );
       dispatch(taskInfoShow(data.data));
+      loadUserInfo();
     } catch (error) {
       let msg = error.response.data.message;
 
@@ -71,6 +103,31 @@ const Task = ({ task }) => {
 
   let photo = userPhotos.filter((user) => user.user_id == task.user_id);
   let user = vinculatedUsers.filter((user) => user.id == task.user_id);
+
+  async function loadUserInfo() {
+    let AUTH = permissions.session;
+    let userId = task.user_id;
+    try {
+      let { data } = await api.get(
+        "CCPP/Employee.php?AUTH=" + AUTH + "&app_id=3&id=" + userId
+      );
+      // console.log(data)
+      
+      let photoUser = photo[0].photo;
+      let info = data.data;
+      info[0].photo = photoUser;
+    
+   
+      dispatch(taskInfoOwner(info));
+      // console.log(taskVisible)
+    } catch (error) {
+      // console.log(error)
+    }
+  }
+
+  // useEffect(() => {
+  //   loadUserInfo();
+  // }, []);
 
   // console.log(task)
   return (
@@ -102,7 +159,7 @@ const Task = ({ task }) => {
         >
           {task.description}
         </h2>
-        {showModal && taskVisible.info && taskVisible.task ? (
+        {showModal &&taskVisible.info && taskVisible.task ? (
           <TaskModal close={() => setShowModal(false)}/>
         ) : null}
       </div>

@@ -18,7 +18,7 @@ const TaskDate = ({ task }) => {
   function formatDate(props) {
    
     let data = props.split("-");
-    const date = new Date(props);
+    // const date = new Date(props);
     var day = data[2];
     var month = data[1];
     var year = data[0];

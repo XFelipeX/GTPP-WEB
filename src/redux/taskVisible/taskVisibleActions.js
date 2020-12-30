@@ -1,6 +1,7 @@
 import {TASKVISIBLE} from './taskVisibleTypes';
 import {TASKINFO} from './taskVisibleTypes';
 import {SENDINFOMODAL} from './taskVisibleTypes';
+import {TASKOWNER} from './taskVisibleTypes';
 
 export const taskVisibleUpdate = () => {
     return {
@@ -12,6 +13,13 @@ export const taskInfoShow = (task) => {
     return {
         type:TASKINFO,
         task: task
+    }
+}
+
+export const taskInfoOwner = (owner) => {
+    return {
+        type:TASKOWNER,
+        owner: owner
     }
 }
 

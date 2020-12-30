@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "./style.css";
-import { taskVisibleUpdate,updateTask } from "../../redux";
+import { updateTask,taskVisibleUpdate } from "../../redux";
 import { AiOutlineClose } from "react-icons/ai";
 import { BiEdit } from "react-icons/bi";
 import TaskTopicList from "../TaskTopicList";
@@ -27,7 +27,7 @@ let TaskModal = ({ id = "modal",close }) => {
     dispatch(updateTask());
   }
 
-  console.log(taskVisible)
+  // console.log(taskVisible)
   const handleOutsideClick = (e) => {
     // console.log(e.target.id);
     if (e.target.id === id) {
@@ -62,7 +62,10 @@ let TaskModal = ({ id = "modal",close }) => {
           <div>
             <button
               className="modalClose"
-              onClick={() => close()}
+              onClick={() => {
+                dispatch(taskVisibleUpdate())
+      close()
+              }}
             >
               <AiOutlineClose size={35} />
             </button>

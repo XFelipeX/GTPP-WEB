@@ -3,7 +3,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {setCol, setOrder, updateTask, setStateVisi, setDateVisi, setVincVisi, setPriorityVisi, setCompanyVisi,setShopVisi} from '../../redux';
 import './style.css';
 import useClickOutside from '../ClickOutside';
-import {BsFilterLeft} from 'react-icons/bs';
+import {CgViewComfortable} from 'react-icons/cg';
 
 let VisionMenu = () =>{
   const [open, setOpen] = useState(false);
@@ -61,7 +61,7 @@ let VisionMenu = () =>{
 
   return (
     <div ref={domNode} className="visionMenu">
-      <p onClick={() => showMenu()} style={{width:"70px"}}><BsFilterLeft size={70} color="#959595"/></p>
+      <p onClick={() => showMenu()} style={{width:"64px"}}><CgViewComfortable size={64} color="#959595"/></p>
 
       {open ? (
        
@@ -91,7 +91,7 @@ let VisionMenu = () =>{
           <input type="checkbox" id="userVinculated" onChange={e => setVincVisibility(e.target.checked)} checked={visionMenu.vinc}/>
           Usuários vinculados
           </label>
-          <p>Ordenar por:</p>
+          {/* <p>Ordenar por:</p>
           <select onChange={ e => changeCol(e.target.value)}>
             <option value="">Selecione uma opção</option>
             <option value="1">Prioridade</option>
@@ -101,7 +101,7 @@ let VisionMenu = () =>{
             <option value="">Selecione uma opção</option>
             <option value="asc">Ascendente</option>
             <option value="desc">Descendente</option>
-          </select>
+          </select> */}
         </ul>
       ) : null}
     </div>

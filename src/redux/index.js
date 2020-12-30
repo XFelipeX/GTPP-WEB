@@ -27,6 +27,8 @@ export {updateModal} from './modalUpdate/modalUpdateActions';
 export {updateTopic} from './topicUpdate/topicUpdateActions';
 export {sendInfoModal} from './taskVisible/taskVisibleActions';
 export {getUserInfo} from './userInfo/userInfoActions';
-export {loadingScreen} from './loadingScreen/loadingScreenActions';
+// export {loadingScreen} from './loadingScreen/loadingScreenActions';
 export {getUsersPhotos} from './taskUsersPhotos/taskUsersPhotosActions';
+export {taskInfoOwner} from './taskVisible/taskVisibleActions';
+export {getTaskFilter} from './filterTasks/filterTasksActions';
 

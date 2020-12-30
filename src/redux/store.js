@@ -19,8 +19,9 @@ import taskCsdsReducer from "./taskCsds/taskCsdsReducer";
 import modalUpdateReducer from "./modalUpdate/modalUpdateReducer";
 import topicUpdateReducer from "./topicUpdate/topicUpdateReducer";
 import userInfoReducer from "./userInfo/userInfoReducer";
-import loadingScreenReducer from './loadingScreen/loadingScreenReducer';
+// import loadingScreenReducer from './loadingScreen/loadingScreenReducer';
 import taskUsersPhotos from './taskUsersPhotos/taskUsersPhotosReducer';
+import filterTasksReducer from './filterTasks/filterTasksReducer';
 
 const appReducer = combineReducers({
   permissions: userAuthReducer,
@@ -40,7 +41,8 @@ const appReducer = combineReducers({
   modalUpdate: modalUpdateReducer,
   topicUpdate: topicUpdateReducer,
   userInfo: userInfoReducer,
-  loading: loadingScreenReducer,
+  filterTask: filterTasksReducer,
+  // loading: loadingScreenReducer,
   taskUsersPhotos
 });
 

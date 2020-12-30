@@ -18,12 +18,14 @@ import {
   getTask,
   getDepts,
   getShop,
-  getVinculatedUsers
+  getVinculatedUsers,
+  getTaskFilter
 } from "../../redux";
 import Loading from "../Loading";
 
 const TaskTable = () => {
   const { permissions } = useSelector((state) => state);
+  const { filterTask } = useSelector((state) => state);
   const AUTH = permissions.session;
   const { stateUpdate } = useSelector((state) => state);
   const { visionMenu } = useSelector((state) => state);
@@ -53,6 +55,18 @@ const TaskTable = () => {
       }
     });
   }, [stateUpdate]);
+
+  function taskFilter(){
+   let filter =  tasks.filter(task => task.state_id == 1 || task.state_id == 2 || task.state_id == 3 || task.state_id == 4 || task.state_id == 5);
+   dispatch(getTaskFilter(filter)) 
+  
+  }
+
+  useEffect(() => {
+    taskFilter();
+  },[tasks])
+
+
 
   useEffect(() => {
     loadCompanies(AUTH).then((response) => {
@@ -211,10 +225,13 @@ const TaskTable = () => {
     }
   }
 
+  // console.log(filterTask)
+
   return (
     loading==true ? <Loading/> : (
       <ul className="taskList">
-      {tasks ? tasks.map((task) => <Task task={task} key={task.id} />) : null}
+      {/* {tasks ? tasks.map((task) => <Task task={task} key={task.id} />) : null} */}
+      {filterTask ? filterTask.map((task) => <Task task={task} key={task.id} />) : null}
     </ul>
     )
    

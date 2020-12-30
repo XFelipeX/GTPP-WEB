@@ -17,10 +17,11 @@ import api from "../../services/api";
 import "./style.css";
 import useClickOutside from "../ClickOutside";
 import ModalDescription from "../ModalDescription";
-import InfoUserCard from '../InfoUserCard';
+import InfoUserCard from "../InfoUserCard";
 
 const TaskInfo = () => {
   const dispatch = useDispatch();
+  // const { userInfo } = useSelector((state) => state);
   const { taskStates } = useSelector((state) => state);
   const { taskVisible } = useSelector((state) => state);
   const { userPhotos } = useSelector((state) => state);
@@ -45,8 +46,8 @@ const TaskInfo = () => {
   const [fullDescription, setFullDescription] = useState(
     taskVisible.task.full_description
   );
-  const [showInfoUser,setShowInfoUser] = useState(false);
-  const [infoUserId,setInfoUserId] = useState();
+  const [showInfoUser, setShowInfoUser] = useState(false);
+  const [infoUserId, setInfoUserId] = useState();
 
   const [reason, setReason] = useState("");
   // const [vinculatedUsers, setVinculatedUsers] = useState([]);
@@ -89,9 +90,11 @@ const TaskInfo = () => {
       }
 
       if (data.data.csds != null) {
-        loadShopsCompany(data.data.csds[0].company_id,AUTH).then((response) => {
-          setShops(response.data);
-        });
+        loadShopsCompany(data.data.csds[0].company_id, AUTH).then(
+          (response) => {
+            setShops(response.data);
+          }
+        );
         loadDeptsCompany(
           data.data.csds[0].company_id,
           data.data.csds[0].shop_id,
@@ -103,7 +106,7 @@ const TaskInfo = () => {
         setCompany(data.data.csds[0].company_id);
         setShop(data.data.csds[0].shop_id);
         // return true;
-      } 
+      }
     }
 
     loadTaskVisible();
@@ -111,14 +114,14 @@ const TaskInfo = () => {
 
   //formatando datas
   const dateInitial = formatDate(
-    taskVisible.info ? taskVisible.info.initial_date : ""
+    taskVisible.info ? taskVisible.info.initial_date : "00-00-0000"
   );
   const dateFinal = formatDate(
-    taskVisible.info ? taskVisible.info.final_date : ""
+    taskVisible.info ? taskVisible.info.final_date : "00-00-0000"
   );
 
   function upFullDescription(taskId, description) {
-    updateFullDescription(taskId, description,AUTH).then(() => {
+    updateFullDescription(taskId, description, AUTH).then(() => {
       setFullDescription(description);
     });
     setShowFullDesc(false);
@@ -156,7 +159,7 @@ const TaskInfo = () => {
         setDepts(false);
         setShowDept(false);
         setCompany(company);
-        loadShopsCompany(company,AUTH).then((response) => {
+        loadShopsCompany(company, AUTH).then((response) => {
           setShops(response.data);
         });
       }
@@ -172,9 +175,10 @@ const TaskInfo = () => {
   // }, []);
 
   useEffect(() => {
-    loadDeptsCompany(company, shop, taskVisible.info.task_id,AUTH).then(
+    loadDeptsCompany(company, shop, taskVisible.info.task_id, AUTH).then(
       (response) => {
         setDepts(response);
+        // dispatch(updateTask());
       }
     );
   }, [shop, modalUpdate]);
@@ -200,7 +204,9 @@ const TaskInfo = () => {
         if (taskcsds != null) {
           // console.log(taskcsds);
 
-          let csds = taskcsds.filter((csds) => csds.company_id !== companyId || csds.shop_id !== shopId);
+          let csds = taskcsds.filter(
+            (csds) => csds.company_id !== companyId || csds.shop_id !== shopId
+          );
 
           if (csds.length >= 1) {
             // console.log(csds);
@@ -214,11 +220,9 @@ const TaskInfo = () => {
 
             dispatch(updateModal());
           }
-
-      
         }
 
-        updateCheckDept(taskId, deptId, shopId, companyId,AUTH)
+        updateCheckDept(taskId, deptId, shopId, companyId, AUTH)
           .then((response) => {
             if (response == null) {
               setShowDept(false);
@@ -235,6 +239,7 @@ const TaskInfo = () => {
       }
     }
   }
+  // console.log(userInfo)
 
   let domNodeDept = useClickOutside(() => {
     setShowDept(false);
@@ -248,7 +253,7 @@ const TaskInfo = () => {
       } else if (reason === "") {
         alert("o motivo é obrigatório!");
       } else {
-        updateStateTask(taskVisible.info.task_id, reason,null,AUTH)
+        updateStateTask(taskVisible.info.task_id, reason, null, AUTH)
           .then((response) => (taskVisible.info.state_id = response[0].id))
           .catch((error) => {});
         dispatch(updateTask());
@@ -260,7 +265,7 @@ const TaskInfo = () => {
       if (days == null) {
         setShowDayModal(true);
       } else {
-        updateStateTask(taskVisible.info.task_id, reason, days,AUTH)
+        updateStateTask(taskVisible.info.task_id, reason, days, AUTH)
           .then(
             (response) => (
               // console.log(response.id),
@@ -281,7 +286,7 @@ const TaskInfo = () => {
         setShowConfirmAction(true);
         return;
       } else if (confirm == true) {
-        updateStateTask(taskVisible.info.task_id,null,null,AUTH)
+        updateStateTask(taskVisible.info.task_id, null, null, AUTH)
           .then((response) => (taskVisible.info.state_id = response[0].id))
           .then((response) => {
             dispatch(updateTask());
@@ -309,7 +314,7 @@ const TaskInfo = () => {
     }
 
     // console.log('aqui')
-    cancelStateTask(taskId, reason,AUTH)
+    cancelStateTask(taskId, reason, AUTH)
       .then((response) => (taskVisible.info.state_id = response.id))
       .catch((error) => {
         // console.log(error);
@@ -319,7 +324,6 @@ const TaskInfo = () => {
     setShowModalAsk(false);
   }
 
- 
   // console.log(taskVisible)
 
   //contador button estados
@@ -346,7 +350,9 @@ const TaskInfo = () => {
             <li>
               <button
                 className="btnConfirm"
-                onClick={(e) => cancelTask(taskVisible.info.task_id, reason,AUTH)}
+                onClick={(e) =>
+                  cancelTask(taskVisible.info.task_id, reason, AUTH)
+                }
               >
                 Confirmar
               </button>
@@ -563,11 +569,9 @@ const TaskInfo = () => {
               <option value="-1">Selecionar Companhia</option>
 
               {taskCompanies.map((comp) => (
-                <>
-                  <option key={comp.id} value={comp.id}>
-                    {comp.description}
-                  </option>
-                </>
+                <option key={comp.id} value={comp.id}>
+                  {comp.description}
+                </option>
               ))}
             </select>
           </div>
@@ -582,11 +586,9 @@ const TaskInfo = () => {
 
               {shops
                 ? shops.map((shop) => (
-                    <>
-                      <option key={shop.id} value={shop.id}>
-                        {shop.description}
-                      </option>
-                    </>
+                    <option key={shop.id} value={shop.id}>
+                      {shop.description}
+                    </option>
                   ))
                 : null}
             </select>
@@ -600,24 +602,23 @@ const TaskInfo = () => {
 
               {showDept ? (
                 <ul className="menuDept">
-                  {depts.length>0
+                  {depts.length > 0
                     ? depts.map((dept) => (
                         <li key={dept.id}>
-                          <>
-                            <label htmlFor="">{dept.description}</label>
-                            <input
-                              type="checkbox"
-                              checked={dept.check}
-                              onChange={(e) => {
-                                changeCheckDept(
-                                  taskVisible.info.task_id,
-                                  dept.id,
-                                  shop,
-                                  company
-                                );
-                              }}
-                            />
-                          </>
+                          <label htmlFor="">{dept.description}</label>
+                          <input
+                            type="checkbox"
+                            checked={dept.check}
+                            onChange={(e) => {
+                              changeCheckDept(
+                                taskVisible.info.task_id,
+                                dept.id,
+                                shop,
+                                company
+                              );
+                              dispatch(updateTask());
+                            }}
+                          />
                         </li>
                       ))
                     : null}
@@ -630,6 +631,20 @@ const TaskInfo = () => {
 
       <div className="usersVinculated">
         <div className="user">
+          <div className="userControl">
+            {taskVisible.owner ? (
+              <img
+                src={taskVisible.owner[0].photo}
+                width="35"
+                height="35"
+                alt={taskVisible.owner[0].name}
+                title={taskVisible.owner[0].name}
+                onClick={() => (
+                  setShowInfoUser(true), setInfoUserId(taskVisible.owner[0].id)
+                )}
+              />
+            ) : null}
+          </div>
           {users.map((user) => (
             <React.Fragment key={user.user_id}>
               {userPhotos.map((userPhoto) => (
@@ -642,7 +657,9 @@ const TaskInfo = () => {
                         height="35"
                         alt={user.name}
                         title={user.name}
-                        onClick={() => (setShowInfoUser(true), setInfoUserId(user.user_id))}
+                        onClick={() => (
+                          setShowInfoUser(true), setInfoUserId(user.user_id)
+                        )}
                       />
                     </div>
                   ) : null}
@@ -652,8 +669,8 @@ const TaskInfo = () => {
           ))}
         </div>
 
-        {showInfoUser ==true ? (
-          <InfoUserCard id={infoUserId} close={() => setShowInfoUser(false)}/>
+        {showInfoUser == true ? (
+          <InfoUserCard id={infoUserId} close={() => setShowInfoUser(false)} />
         ) : null}
         {/* <div className="addUser">
                 <div>

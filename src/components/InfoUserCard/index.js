@@ -65,7 +65,7 @@ let InfoUserCard = ({ id, close }) => {
                 {userInfo[0].departament} - {userInfo[0].sub}
               </p>
 
-              {userInfo[1].administrator ? (
+              {userInfo[1].administrator != null && userInfo[1].administrator ==1? (
                 <p>
                   <strong>Administrador</strong>
                 </p>
