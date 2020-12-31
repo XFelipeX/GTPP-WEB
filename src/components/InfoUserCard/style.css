@@ -23,11 +23,12 @@
 
 .user-img-card-task{
     height: 100%;
+    width: 140px;
 }
 
 .user-img-card-task img{
     height: 100%;
-    max-width: 150px;
+    width: 140px;
 }
 
 .user-info-content-task p input{ 

@@ -18,23 +18,36 @@
     background-color: #343434;
 }
 
+.topic div{
+    max-width: 400px;
+}
+
+.orderTopic{
+    /* margin-left: 12px; */
+}
+
 .taskTopicTop button{
     background-color: transparent;
 }
 
 .topic .topicLeft input{
-    margin-right: 1em;
+    /* margin-right: 1em; */
 }
 
 .topic .topicLeft{
     display: flex;
     align-items: center;
-    /* max-width: 50px; */
-    justify-content: left;
+    width: 110px;
+    justify-content: space-between;
+    /* justify-items: center; */
+}
+
+.topic .topicLeft a{
+    width: 25%;
 }
 
 .topic .topicLeft a:first-child{
-    margin-right: 1em;
+    /* margin-right: 1em; */
 }
 
 /* Modal histórico da tarefa */
@@ -188,6 +201,10 @@
     margin: 0 1em 0 0;
 }
 
+.taskTopicTop h1::selection{
+background-color: transparent;
+}
+
 .addTopic{
     display: flex;
     justify-content: center;
@@ -222,3 +239,52 @@
         padding: 1em .5em;
     }
 }
+
+.orderModal{
+    /* float: right; */
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    z-index: 25;
+    width: 22%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.orderModal > .orderArea{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 250px;
+    width: auto;
+    margin-bottom: 12em;
+    margin-right: 8em;
+    z-index: 50;
+}
+
+.orderModal .orderArea > div{
+    background-color: #00a2ff;
+    padding: .7em;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+@media screen and (max-height:700px){
+    .orderModal > .orderArea{
+        margin-bottom: 0;
+       
+    }
+}
+
+@media screen and (max-width:1200px){
+    .orderModal > .orderArea{
+        margin-right: 2em;
+       
+    }
+}
+
