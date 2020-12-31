@@ -19,6 +19,7 @@ let ConfirmAction = (props) => {
                         props.action();
                       }
                     }
+                    style={{marginTop:"0"}}
                   >
                     Confirmar
                   </button>
@@ -27,6 +28,7 @@ let ConfirmAction = (props) => {
                     onClick={() =>
                       props.cancelAction()
                     }
+                    style={{marginTop:"0"}}
                   >
                     Cancelar
                   </button>

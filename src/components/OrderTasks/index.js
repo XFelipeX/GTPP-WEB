@@ -10,15 +10,24 @@ let OrderTasks = () => {
   const dispatch = useDispatch();
   const [count, setCount] = useState(0);
   const { filterTask } = useSelector((state) => state);
+  const { orderTask } = useSelector((state) => state);
+  const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
-    
-    orderTask();
+    orderTasks();
   }, [count]);
 
-  function orderTask() {
+  useEffect(() => {
+    // console.log(count)
 
-    if(count==0){
+    setTimeout(() => {
+      orderTasks();
+    }, 1000);
+  }, [orderTask]);
+
+  function orderTasks() {
+    // console.log(showAlert);
+    if (count == 0) {
       return;
     }
 
@@ -33,14 +42,21 @@ let OrderTasks = () => {
     let finalFilter = [];
 
     if (count === 1) {
-      alert("Ordenado por prioridade");
+      if (showAlert === true) {
+        alert("Ordenado por prioridade");
+        setShowAlert(false);
+      }
       filterDo = filterTask.filter((task) => task.priority == 0);
       filterDoing = filterTask.filter((task) => task.priority == 1);
       filterAnalyze = filterTask.filter((task) => task.priority == 2);
 
       finalFilter = [...filterDo, ...filterDoing, ...filterAnalyze];
     } else if (count === 2) {
-      alert("Ordenado por estado");
+      if (showAlert === true) {
+        alert("Ordenado por estado");
+        setShowAlert(false);
+      }
+
       filterDo = filterTask.filter((task) => task.state_id == 1);
       filterDoing = filterTask.filter((task) => task.state_id == 2);
       filterAnalyze = filterTask.filter((task) => task.state_id == 3);
@@ -59,20 +75,28 @@ let OrderTasks = () => {
         ...filterCanceled,
       ];
     } else if (count === 3) {
-      alert("Ordenado por descrição");
+      if (showAlert === true) {
+        alert("Ordenado por descrição");
+        setShowAlert(false);
+      }
+
       // console.log('chegou')
       finalFilter = [...filterTask];
       finalFilter.sort(function (a, b) {
         return a.description.localeCompare(b.description);
       });
     } else if (count === 4) {
-      alert("Ordenado por vencimento");
+      if (showAlert === true) {
+        alert("Ordenado por vencimento");
+        setShowAlert(false);
+      }
+
       finalFilter = [...filterTask];
       finalFilter.sort(function (a, b) {
         return a.final_date.localeCompare(b.final_date);
       });
 
-      if(count==4){
+      if (count == 4) {
         setCount(0);
       }
     }
@@ -85,7 +109,13 @@ let OrderTasks = () => {
 
   return (
     <div className="load-tasks-area">
-      <button className="button-refresh" onClick={() => setCount(count + 1)}>
+      <button
+        className="button-refresh"
+        onClick={() => {
+          setCount(count + 1);
+          setShowAlert(true);
+        }}
+      >
         <BsFilterLeft size={75} style={{ color: "#959595" }} />
       </button>
     </div>

@@ -58,20 +58,29 @@ const ButtonFilter = () => {
     setDept("-1");
     setDepts([]);
     setShops([]);
-    setStateFilter({
-      fazer: true,
-      fazendo: true,
-      analise: true,
-      parado: true,
-      bloqueado: true,
-      feito: false,
-      cancelado: false,
-    });
+    // setStateFilter({
+    //   fazer: true,
+    //   fazendo: true,
+    //   analise: true,
+    //   parado: true,
+    //   bloqueado: true,
+    //   feito: false,
+    //   cancelado: false,
+    // });
   });
+
+  // const [filter,setFilter] = useState([]);
+
+  useEffect(() => {
+    taskFilter();
+  },[tasks])
 
   // console.log(tasks);
 
+ 
+
   function taskFilter() {
+    // console.log(tasks)
     let filterDo = [];
     let filterDoing = [];
     let filterAnalyze = [];
@@ -149,6 +158,7 @@ const ButtonFilter = () => {
       ...filterDone,
       ...filterCanceled,
     ];
+    // setFilter([...finalFilter]);
     dispatch(getTaskFilter(finalFilter));
   }
 

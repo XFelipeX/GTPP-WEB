@@ -49,7 +49,7 @@ const TaskTable = () => {
       } else {
         // setTasks(response.data);
         try {
-          // console.log(response)
+          // console.log(response.data)
           dispatch(getTask(response.data));
         } catch (error) {}
       }
@@ -63,6 +63,8 @@ const TaskTable = () => {
   }
 
   useEffect(() => {
+    // console.log(filterTask.length)
+    if(filterTask.length==0)
     taskFilter();
   },[tasks])
 
@@ -208,7 +210,7 @@ const TaskTable = () => {
 
   setTimeout(() => {
     setLoading(false)
-  },1000)
+  },1000);
 
   useEffect(() => {
     dispatch(setPhotos(takePhotos));

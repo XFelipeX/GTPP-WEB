@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FaTrash } from "react-icons/fa";
+import { FaElementor, FaTrash } from "react-icons/fa";
 import { BiCommentAdd } from "react-icons/bi";
 import { AiOutlineClose } from "react-icons/ai";
 import { AiOutlineClockCircle, AiOutlineEdit } from "react-icons/ai";
+import { FaArrowUp } from "react-icons/fa";
+import { FaArrowDown } from "react-icons/fa";
+import { BsCheckAll } from "react-icons/bs";
+import { GoListUnordered } from "react-icons/go";
 import api from "../../services/api";
 import {
   changeItemChecked,
@@ -11,6 +15,7 @@ import {
   deleteItem,
   updateTopicDescription,
   takeHistoricTask,
+  nextOrPreviousTopic,
 } from "./functions";
 import { updateModal, updateTopic } from "../../redux";
 import "./style.css";
@@ -25,10 +30,11 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   const [taskItem, setTaskItem] = useState([{}]);
   const [showEdit, setShowEdit] = useState(false);
   const [showHistoric, setShowHistoric] = useState(false);
-
   const [editDescription, setEditDescription] = useState();
   const [idItem, setIdItem] = useState();
   const [taskHistoric, setTaskHistoric] = useState([]);
+  const [showOrder, setShowOrder] = useState(false);
+  const [orderItem, setOrderItem] = useState(false);
   const dispatch = useDispatch();
 
   // const[loadItems,setLoadItems] = useState(false);
@@ -80,14 +86,13 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   useEffect(() => {
     loadTaskItems().then((response) => {
       // console.log(response)
-      if(response.error==false){
+      if (response.error == false) {
         setTaskItem(response.data);
-      }else {
+      } else {
         setTaskItem([{}]);
       }
-     
     });
-  }, [topicUpdate]);
+  }, [topicUpdate, modalUpdate]);
 
   useEffect(() => {
     handleClick();
@@ -113,8 +118,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
 
               setTimeout(() => {
                 setShowBottom(!showBottom);
-              },500)
-             
+              }, 500);
             }
           })
           .finally();
@@ -144,21 +148,16 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
     } else {
       deleteItem(taskId, itemId, AUTH)
         .then((response) => {
-          
           if (response != null) {
             taskVisible.info.percent = response.percent;
             taskVisible.info.state_id = response.state_id;
 
-              dispatch(updateModal());
-    dispatch(updateTopic());
-          
-            
+            dispatch(updateModal());
+            dispatch(updateTopic());
           }
         })
         .catch((error) => {});
     }
-
-    
   }
 
   function updateTopicItem(itemId, description, taskId) {
@@ -181,12 +180,28 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
     }
   }
 
-  // let domNode = useClickOutside(() =>{
-  //   // console.log('oi')
-  //   setShowHistoric(false);
-  // })
+  function changeOrderTopic(taskId, nextOrPrevious, itemId) {
+    nextOrPreviousTopic(taskId, AUTH, nextOrPrevious, itemId).then(() =>
+      dispatch(updateModal())
+    );
 
-  // const [loadHistoric, setLoadHistoric] = useState(false);
+
+    // console.log(document.getElementById(itemId).getBoundingClientRect().top);
+
+    let element = document.getElementById("topicList");
+    
+    let distance = document.getElementById(itemId);
+
+    if(distance.offsetTop>(element.offsetTop*2)-100){
+      element.scrollTop = distance.offsetTop-280;
+    }
+      
+      // console.log(distance.offsetTop)
+      // console.log(element.offsetTop)
+      // handleClick()
+      
+   
+  }
 
   const handleClick = () => {
     if (ref.current)
@@ -200,6 +215,40 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
 
   return (
     <div className="taskTopicList">
+      {showOrder === true ? (
+        <div className="orderModal">
+          <div className="orderArea">
+            <div
+              className="orderUp"
+              onClick={() => {
+                changeOrderTopic(
+                  taskVisible.info.task_id,
+                  "previous",
+                  orderItem
+                );
+              }}
+            >
+              <FaArrowUp size={40} color="white" />
+            </div>
+
+            <div className="orderDone" onClick={() => {
+              setShowOrder(false);
+              setOrderItem(null);
+            }}>
+              <BsCheckAll size={40} color="white" />
+            </div>
+
+            <div
+              className="orderDown"
+              onClick={() => {
+                changeOrderTopic(taskVisible.info.task_id, "next", orderItem);
+              }}
+            >
+              <FaArrowDown size={40} color="white" />
+            </div>
+          </div>
+        </div>
+      ) : null}
       <div onClick={() => {}} className="taskTopicTop">
         <h1>Itens da tarefa em {taskVisible.info.percent}%</h1>
         <button
@@ -265,7 +314,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
             </div>
             <div className="descriptionTopic">
               <textarea
-                spellcheck="false"
+                spellCheck="false"
                 rows="5"
                 value={editDescription}
                 onChange={(e) => setEditDescription(e.target.value)}
@@ -282,24 +331,25 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                 <React.Fragment key={item.id}>
                   {/* {console.log(item)} */}
 
-                  <div className="topic" ref={ref}>
+                  <div className="topic" ref={ref} id={item.id}>
                     {/* {console.log(item.check)} */}
-                   
+
                     <div className="topicLeft">
-                    <a>
-                    {item.order}
-                    </a>
-                      <input
-                        type="checkbox"
-                        onChange={(e) => {
-                          changeInputCheck(
-                            item.check,
-                            taskVisible.info.task_id,
-                            item.id
-                          );
-                        }}
-                        checked={item.check}
-                      />
+                      <a style={orderItem == item.id ? {backgroundColor:"#4da6ff", borderRadius:"10px"} : null}>{item.order}</a>
+                      <a>
+                        <input
+                          type="checkbox"
+                          onChange={(e) => {
+                            changeInputCheck(
+                              item.check,
+                              taskVisible.info.task_id,
+                              item.id
+                            );
+                          }}
+                          checked={item.check}
+                        />
+                      </a>
+
                       <a
                         href=""
                         onClick={(e) => {
@@ -310,6 +360,22 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                         }}
                       >
                         <AiOutlineEdit
+                          className="topicEdit"
+                          size={20}
+                          color="#dddd"
+                        />
+                      </a>
+
+                      <a
+                        className="orderTopic"
+                        href=""
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setShowOrder(!showOrder);
+                          setOrderItem(item.id);
+                        }}
+                      >
+                        <GoListUnordered
                           className="topicEdit"
                           size={20}
                           color="#dddd"

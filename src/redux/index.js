@@ -31,4 +31,5 @@ export {getUserInfo} from './userInfo/userInfoActions';
 export {getUsersPhotos} from './taskUsersPhotos/taskUsersPhotosActions';
 export {taskInfoOwner} from './taskVisible/taskVisibleActions';
 export {getTaskFilter} from './filterTasks/filterTasksActions';
+export {orderTasks} from './orderTasks/orderTasksActions';
 

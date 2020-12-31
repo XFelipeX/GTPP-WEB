@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import ConfirmAction from "../ConfirmAction";
 import { BiEdit } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
-import { updateTask, updateModal } from "../../redux";
+import { updateTask, updateModal, orderTasks } from "../../redux";
 import {
   updateFullDescription,
   formatDate,
@@ -81,9 +81,11 @@ const TaskInfo = () => {
       if (data.data.csds == null) {
         // console.log('aqui')
         setTaskcsds([]);
-        setDepts([]);
+        setDepts(null);
+        // console.log(depts)
         setShops([]);
         setCompany(false);
+        setShop(false)
         setShowDept(false);
       } else {
         setTaskcsds(data.data.csds);
@@ -219,6 +221,7 @@ const TaskInfo = () => {
             );
 
             dispatch(updateModal());
+            
           }
         }
 
@@ -236,6 +239,8 @@ const TaskInfo = () => {
       } catch (error) {
         console.log(error);
         console.log("Erro ao selecionar departamento!");
+      } finally{
+        dispatch(orderTasks());
       }
     }
   }
@@ -600,9 +605,9 @@ const TaskInfo = () => {
                 Departamentos
               </p>
 
-              {showDept ? (
+              {showDept && shop && company? (
                 <ul className="menuDept">
-                  {depts.length > 0
+                  {depts !==null
                     ? depts.map((dept) => (
                         <li key={dept.id}>
                           <label htmlFor="">{dept.description}</label>

@@ -22,6 +22,7 @@ import userInfoReducer from "./userInfo/userInfoReducer";
 // import loadingScreenReducer from './loadingScreen/loadingScreenReducer';
 import taskUsersPhotos from './taskUsersPhotos/taskUsersPhotosReducer';
 import filterTasksReducer from './filterTasks/filterTasksReducer';
+import orderTasksReducer from './orderTasks/orderTasksReducer';
 
 const appReducer = combineReducers({
   permissions: userAuthReducer,
@@ -43,7 +44,8 @@ const appReducer = combineReducers({
   userInfo: userInfoReducer,
   filterTask: filterTasksReducer,
   // loading: loadingScreenReducer,
-  taskUsersPhotos
+  taskUsersPhotos,
+  orderTask : orderTasksReducer
 });
 
 const rootReducer = (state, action) => {

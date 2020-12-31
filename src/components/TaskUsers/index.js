@@ -6,9 +6,15 @@ import api from "../../services/api";
 import userEmpty from "../../assets/nullphoto.jpeg";
 
 import userImg from "../../assets/user@2x.png";
-import { getUsersPhotos, getVinculatedUsers, updateTask } from "../../redux";
+import {
+  getUsersPhotos,
+  getVinculatedUsers,
+  orderTasks,
+  updateTask,
+} from "../../redux";
 
 import useClickOutside from "../ClickOutside";
+import Loading from "../Loading";
 
 let TaskUsers = ({ task }) => {
   const { permissions } = useSelector((state) => state);
@@ -16,6 +22,7 @@ let TaskUsers = ({ task }) => {
   const { userPhotos } = useSelector((state) => state);
   const { stateUpdate } = useSelector((state) => state);
   const { taskUsersPhotos } = useSelector((state) => state);
+  const [loading, setLoading] = useState(false);
   const [takePhotos, setTakePhotos] = useState([]);
   // const [vinculatedUsers, setVinculatedUsers] = useState([]);
   const { vinculatedUsers } = useSelector((state) => state);
@@ -80,8 +87,10 @@ let TaskUsers = ({ task }) => {
 
   const [filterUser, setFilterUser] = useState(null);
 
+  const [user, setUser] = useState("");
+
   function searchUser(e) {
-    let userName = e.target.value.toLowerCase();
+    let userName = e.toLowerCase();
     if (userName != "") {
       setFilterUser(
         allUsers.filter((user) => user.name.toLowerCase().includes(userName))
@@ -90,6 +99,10 @@ let TaskUsers = ({ task }) => {
       setFilterUser(null);
     }
   }
+
+  useEffect(() => {
+    searchUser(user);
+  }, [user]);
 
   // const [allUsers]
 
@@ -171,6 +184,11 @@ let TaskUsers = ({ task }) => {
       });
 
       dispatch(updateTask());
+      dispatch(orderTasks());
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+      }, 1200);
     } catch (error) {
       // console.log(error)
       let msg = "";
@@ -194,8 +212,9 @@ let TaskUsers = ({ task }) => {
           alert("Autorização negada!");
         }
       }
-    }finally{
+    } finally {
       setFilterUser(null);
+      setUser("");
     }
   }
 
@@ -256,6 +275,7 @@ let TaskUsers = ({ task }) => {
 
   return (
     <div className="containerUsers">
+      {loading == true ? <Loading /> : null}
       <div ref={domNode} className="vinculatedUsers">
         <div onClick={() => setOpen(!open)}>
           {/* <p>{vinculatedUsers.length}</p> */}
@@ -313,7 +333,11 @@ let TaskUsers = ({ task }) => {
           <>
             <div className="search-user">
               <label>Pesquisar</label>
-              <input type="text" onChange={(e) => searchUser(e)} />
+              <input
+                type="text"
+                value={user}
+                onChange={(e) => setUser(e.target.value)}
+              />
             </div>
             <ul>
               {filterUser != null
