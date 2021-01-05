@@ -22,6 +22,7 @@ import InfoUserCard from "../InfoUserCard";
 const TaskInfo = () => {
   const dispatch = useDispatch();
   // const { userInfo } = useSelector((state) => state);
+  const { tasks } = useSelector((state) => state);
   const { taskStates } = useSelector((state) => state);
   const { taskVisible } = useSelector((state) => state);
   const { userPhotos } = useSelector((state) => state);
@@ -125,9 +126,15 @@ const TaskInfo = () => {
   function upFullDescription(taskId, description) {
     updateFullDescription(taskId, description, AUTH).then(() => {
       setFullDescription(description);
+      tasks.map(task => {
+        if(task.id===taskVisible.info.task_id){
+          task.full_description = description;
+  
+        }
+      })
     });
     setShowFullDesc(false);
-    dispatch(updateTask());
+    // dispatch(updateTask());
   }
 
   async function loadVinculateUsers() {
@@ -537,7 +544,11 @@ const TaskInfo = () => {
         <div className="row">
           <div className="col taskDescription">
             <div className="descriptionArea">
-              <h1>Descrição Completa:</h1>
+              <h1>Descrição Completa:   <BiEdit
+                size="25"
+                onClick={() => setShowFullDesc(!showFullDesc)}
+                className="btnEdit"
+              /></h1>
               <textarea
                 placeholder="Esta tarefa tem como objetivo..."
                 spellCheck="false"
@@ -545,11 +556,7 @@ const TaskInfo = () => {
                 value={fullDescription}
                 readOnly
               ></textarea>
-              <BiEdit
-                size="25"
-                onClick={() => setShowFullDesc(!showFullDesc)}
-                className="btnEdit"
-              />
+            
             </div>
 
             {showFullDesc ? (

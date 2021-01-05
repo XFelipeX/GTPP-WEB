@@ -1,7 +1,7 @@
 .taskList{
   width:95%;
   margin: 10px auto;
-  height:820px;
+  height:87.5vh;
   overflow-y:auto;
   border-radius:5px;  
 }

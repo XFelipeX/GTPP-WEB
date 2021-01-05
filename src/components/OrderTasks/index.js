@@ -80,7 +80,7 @@ let OrderTasks = () => {
         setShowAlert(false);
       }
 
-      // console.log('chegou')
+      // console.log(filterTask);
       finalFilter = [...filterTask];
       finalFilter.sort(function (a, b) {
         return a.description.localeCompare(b.description);

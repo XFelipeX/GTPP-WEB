@@ -94,6 +94,13 @@ const TaskPriority = ({ task }) => {
       if (msg.includes("Network Error")) {
         alert("Autorização Negada!");
       }
+
+      msg = error.response.data.message;
+      if (msg.includes("Only the task creator or administrator can do this")) {
+        alert("Somente o criador da tarefa ou administrador pode fazer isto!");
+      }
+
+      setOpen(false);
     }
   };
 
@@ -101,11 +108,22 @@ const TaskPriority = ({ task }) => {
     setOpen(false);
   });
 
-  return (
-    loading == true ? <Loading /> : (
+  return loading == true ? (
+    <Loading />
+  ) : (
     <div ref={domNode} className="containerPriority" value={task.priority}>
-      
-      <div onClick={() => setOpen(!open)} title={task.priority === 0 ? "Prioridade Baixa" : task.priority === 1 ? "Prioridade Média" : task.priority === 2 ? "Prioridade Alta" : null}>
+      <div
+        onClick={() => setOpen(!open)}
+        title={
+          task.priority === 0
+            ? "Prioridade Baixa"
+            : task.priority === 1
+            ? "Prioridade Média"
+            : task.priority === 2
+            ? "Prioridade Alta"
+            : null
+        }
+      >
         <img
           src={
             task.priority === 0
@@ -115,13 +133,12 @@ const TaskPriority = ({ task }) => {
               : highPriority
           }
           alt="prioridade"
-          
         />
       </div>
 
       {open ? (
         <ul className="options">
-          <li onClick={() => updatePriority("0")} >
+          <li onClick={() => updatePriority("0")}>
             <div>
               <img src={lowPriority} alt="prioridade" />
             </div>
@@ -142,7 +159,6 @@ const TaskPriority = ({ task }) => {
         </ul>
       ) : null}
     </div>
-    )
   );
 };
 

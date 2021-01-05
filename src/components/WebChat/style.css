@@ -1,0 +1,75 @@
+.chat {
+  position: relative;
+  animation: animate 1s ease;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  background-color: #2b2b2b;
+}
+
+.chat > div {
+}
+
+.headerChat {
+  text-align: center;
+  background-color: #343434;
+  padding: 10px 0;
+  border-radius: 10px 10px 0 0;
+}
+
+.mainChat {
+  height: 80%;
+}
+
+.footerChat {
+  width: 100%;
+  height: 20%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #343434;
+  border-radius: 0 0 10px 10px;
+}
+
+.footerChat > div:first-child {
+  width: 65%;
+  height: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+.footerChat > div:nth-child(2) {
+  width: 30%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.footerChat div input {
+  width: 100%;
+  margin-left: 7%;
+  font-size: 16px;
+}
+
+.footerChat div button {
+  background-color: #4da6ff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15%;
+  height: 20px;
+  width: 90%;
+  padding: 3.2px;
+}
+@keyframes animate {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 25px, 0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}

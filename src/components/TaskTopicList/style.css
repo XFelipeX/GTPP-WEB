@@ -1,290 +1,339 @@
 /* aréa do checklist dos tópicos da tarefa */
-.taskTopicList{
-    width: 55%;
-    height: 100%;
-    background-color: #2b2b2b;
-    border-radius: 0 0 17px 0;
-    overflow: auto;
+.taskTopicList {
+  width: 55%;
+  height: 100%;
+  background-color: #2b2b2b;
+  border-radius: 0 0 17px 0;
+  overflow: auto;
 }
 
-.topic{
-    padding: 5px;
-    margin: 0 auto;
-    width: 95%;
-    color: white;
-    border-bottom: 2px solid #3b6895;
-    display: flex;
-    justify-content: space-between;
-    background-color: #343434;
+.topic {
+  padding: 5px;
+  margin: 0 auto;
+  width: 95%;
+  color: white;
+  border-bottom: 2px solid #3b6895;
+  display: flex;
+  justify-content: space-between;
+  background-color: #343434;
 }
 
-.topic div{
-    max-width: 400px;
+
+.topic > div:nth-child(2) {
+  width: 70%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.orderTopic{
-    /* margin-left: 12px; */
+.orderTopic {
+  /* margin-left: 12px; */
 }
 
-.taskTopicTop button{
-    background-color: transparent;
+.taskTopicTop button {
+  background-color: transparent;
 }
 
-.topic .topicLeft input{
-    /* margin-right: 1em; */
+.topic .topicLeft input {
+  /* margin-right: 1em; */
 }
 
-.topic .topicLeft{
-    display: flex;
-    align-items: center;
-    width: 110px;
-    justify-content: space-between;
-    /* justify-items: center; */
+.topic .topicLeft {
+  display: flex;
+  align-items: center;
+  width: 20%;
+  justify-content: space-between;
+  /* justify-items: center; */
 }
 
-.topic .topicLeft a{
-    width: 25%;
+.topic .topicLeft a {
+  width: 25%;
 }
 
-.topic .topicLeft a:first-child{
-    /* margin-right: 1em; */
+.topic .topicLeft a:first-child {
+  /* margin-right: 1em; */
+}
+
+/* .topicDescription label{
+  max-width:250px ;
+} */
+
+.topicRight {
+  width: 10%;
+  display: flex;
+  justify-content: flex-end;
 }
 
 /* Modal histórico da tarefa */
-.modalHistoric{
-    height: 99vh;
-    width: 100%;
-    position:absolute;
-    left: 0;
-    top: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color:white;
-    
+.modalHistoric {
+  height: 99vh;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
 }
 
-.modalHistoric > div{
-    width: 350px;
-    height: 200px;
-    border: 1px solid black;
-    margin-bottom: 13em;
-    background-color: #2b2b2b;
-    border-radius: 10px;
-
+.modalHistoric > div {
+  width: 350px;
+  height: 200px;
+  border: 1px solid black;
+  margin-bottom: 13em;
+  background-color: #2b2b2b;
+  border-radius: 10px;
 }
 
-.modalHistoricContent{
-    
+.modalHistoricContent {
 }
 
-.modalHistoric button{
-    background-color: transparent;
-    color:red;
+.modalHistoric button {
+  background-color: transparent;
+  color: red;
 }
 
-.historicItems{
-    padding: 5px;
-    margin-bottom: 1em;
+.historicItems {
+  padding: 5px;
+  margin-bottom: 1em;
 }
 
-.historicItems ul{
-    padding: 8px;
-    margin: 0 auto;
-    width: 90%;
-    max-height: 300px;
-    color: white;
-    border-bottom: 2px solid #3b6895;
-    display: flex;
-    justify-content: space-between;
-    background-color: #353535;
+.historicItems ul {
+  padding: 8px;
+  margin: 0 auto;
+  width: 90%;
+  max-height: 300px;
+  color: white;
+  border-bottom: 2px solid #3b6895;
+  display: flex;
+  justify-content: space-between;
+  background-color: #353535;
 }
 
-.historicItems ul li{
-    display: block;
-    width: 100%;
-    flex: wrap;
-    margin: 0 1em;
-    overflow: auto;
-    
+.historicItems ul li {
+  display: block;
+  width: 100%;
+  flex: wrap;
+  margin: 0 1em;
+  overflow: auto;
 }
 
-.listHistoric{
-    overflow: auto;
-    height: 150px;
+.listHistoric {
+  overflow: auto;
+  height: 150px;
 }
 
-.modalHistoric .btnCloseHistoric{
-    float: right;
-    position: relative;
-    right: .9em;
-}   
+.modalHistoric .btnCloseHistoric {
+  float: right;
+  position: relative;
+  right: 0.9em;
+}
 
 /* Modal editar descrição do tópico */
-.modalEdit{
-    height: 99vh;
-    width: 100%;
-    position:absolute;
-    left: 0;
-    top: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 15;
+.modalEdit {
+  height: 99vh;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 15;
 }
 
-.modalEdit > div{
-    width: 350px;
-    height: 200px;
-    border: 1px solid black;
-    margin-bottom: 13em;
-    background-color: #2b2b2b;
-    border-radius: 10px;
+.modalEdit > div {
+  width: 350px;
+  height: 200px;
+  border: 1px solid black;
+  margin-bottom: 13em;
+  background-color: #2b2b2b;
+  border-radius: 10px;
 }
 
-.modalEdit button:last-child{
-
-    margin: .4em;
-    padding:4px 20px;
+.modalEdit button:last-child {
+  margin: 0.4em;
+  padding: 4px 20px;
 }
 
-.modalEdit button:first-child{
-    background-color: transparent;
-    color:red;
+.modalEdit button:first-child {
+  background-color: transparent;
+  color: red;
 }
 
-.modalEdit textarea{
-    display: inline-block;
-    clear: both;
+.modalEdit textarea {
+  display: inline-block;
+  clear: both;
 }
 
-.modalEdit .btnEditTopic{
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row-reverse;
+.modalEdit .btnEditTopic {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row-reverse;
 }
 
-.modalEdit .descriptionTopic{
-    height: 80%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
+.modalEdit .descriptionTopic {
+  height: 80%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 }
 
-.modalEdit .descriptionTopic textarea{
-    background-color: #dddd;
-    width: 100%;
-    height: 100%;
-    padding: 15px;
-    font-size: 16px;
-    border-radius: 5px;
+.modalEdit .descriptionTopic textarea {
+  background-color: #dddd;
+  width: 100%;
+  height: 100%;
+  padding: 15px;
+  font-size: 16px;
+  border-radius: 5px;
 }
 
 /* Adicionar tópico */
 
-.taskTopicTop{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 auto;
-    padding: 10px;
+.taskTopicTop {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  padding: 10px;
 }
 
-#topicList{
-    height: 260px;
-    overflow: auto;
+#topicList {
+  height: 500px;
+  overflow: auto;
 }
 
-.taskTopicTop h1{
-    color: white;
-    margin: 0 1em 0 0;
+.taskTopicTop h1 {
+  color: white;
+  margin: 0 1em 0 0;
 }
 
-.taskTopicTop h1::selection{
-background-color: transparent;
+.taskTopicTop h1::selection {
+  background-color: transparent;
 }
 
-.addTopic{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 1em 0;
+.addTopic {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1em 0;
 }
 
-
-.addTopic label{
-    text-shadow: 2px 2px black;
-    color: white;
-    margin: 0 1em 0 0;
+.addTopic label {
+  text-shadow: 2px 2px black;
+  color: white;
+  margin: 0 1em 0 0;
 }
 
-.addTopic input{
-    font-size: 16px;
-    width: 300px;
-    color: white;
-    padding: 5px;
-    background-color: #4b4b4b;
+.addTopic input {
+  font-size: 16px;
+  width: 300px;
+  color: white;
+  padding: 5px;
+  background-color: #4b4b4b;
 }
 
-.addTopic button{
-    background-color: transparent;
+.addTopic button {
+  background-color: transparent;
 
-    margin-left: 1em;
-    padding: 2px;
+  margin-left: 1em;
+  padding: 2px;
 }
 
-@media only screen and (max-width: 1300px){
-    .addTopic{
-        padding: 1em .5em;
-    }
+@media only screen and (max-width: 1300px) {
+  .addTopic {
+    padding: 1em 0.5em;
+  }
 }
 
-.orderModal{
-    /* float: right; */
-    bottom: 0;
-    right: 0;
-    position: absolute;
-    z-index: 25;
-    width: 22%;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.orderModal {
+  /* float: right; */
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: 25;
+  width: 22%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.orderModal > .orderArea{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 250px;
-    width: auto;
-    margin-bottom: 12em;
-    margin-right: 8em;
-    z-index: 50;
+.orderModal > .orderArea {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 250px;
+  width: auto;
+  margin-bottom: 12em;
+  margin-right: 8em;
+  z-index: 50;
 }
 
-.orderModal .orderArea > div{
-    background-color: #00a2ff;
-    padding: .7em;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
+.orderModal .orderArea > div {
+  background-color: #00a2ff;
+  padding: 0.7em;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 }
 
-@media screen and (max-height:700px){
-    .orderModal > .orderArea{
-        margin-bottom: 0;
-       
-    }
+@media screen and (max-height: 700px) {
+  .orderModal > .orderArea {
+    margin-bottom: 0;
+  }
 }
 
-@media screen and (max-width:1200px){
-    .orderModal > .orderArea{
-        margin-right: 2em;
-       
-    }
+@media screen and (max-width: 1200px) {
+  .orderModal > .orderArea {
+    margin-right: 2em;
+  }
 }
 
+/* yes or no topic*/
+.topicOptions {
+  display: flex;
+  align-items: center;
+}
+
+.yesOption,
+.noOption {
+  display: flex;
+  align-items: center;
+  margin-right: 1em;
+}
+
+.yesOption input,
+.noOption input {
+  margin-right: 5px;
+}
+
+.defineQuestion{
+  display: flex;
+  align-items: center;
+  justify-content:space-between;
+  color: white;
+  width: 170px;
+  border-bottom: 2px solid #3b6895;
+}
+
+/* input[type="checkbox"] {
+  background-color: black;
+  border: 2px solid black;
+  color: black;
+  all: unset;
+  border: 2px solid black;
+  width: 15px;
+  height: 15px;
+  display: inline-block;
+} */
+
+
+
+
+  
+  

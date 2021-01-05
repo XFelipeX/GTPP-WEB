@@ -113,3 +113,18 @@ export const nextOrPreviousTopic = async (taskId,auth,nextOrPrevious,itemId) => 
     return [{}];
   }
 }
+
+export const changeYesNoTopic = async (taskId,yesOrNo,itemId,auth) => {
+  const AUTH = auth;
+  try {
+    const { data } = await api.put(
+      "GTPP/TaskItem.php?AUTH=" + AUTH + "&app_id=3",{
+         task_id: taskId, id: itemId, yes_no: yesOrNo
+      }
+    );
+    // console.log(data);
+    return data.data;
+  } catch (error) {
+    return [{}];
+  }
+}

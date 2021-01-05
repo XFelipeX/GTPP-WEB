@@ -67,6 +67,8 @@ let CreateTask = () => {
 
           if(msg.includes("Authorization denied")){
             alert("Autorização negada!")
+          }else{
+            alert(msg);
           }
           }
         })();

@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { updateTask } from "../../redux";
+import { seeAdmin, updateTask } from "../../redux";
 import { VscRefresh } from "react-icons/vsc";
 import "./style.css";
 
@@ -11,6 +11,7 @@ let LoadTasks = () => {
     const element = document.getElementById("refresh-icon");
     element.classList.add("loading");
     dispatch(updateTask());
+    dispatch(seeAdmin());
     setTimeout(() => element.classList.remove("loading"), 1000);
   }
 

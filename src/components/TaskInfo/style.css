@@ -107,6 +107,7 @@
     margin-top: 2em;
     display: flex;
     z-index: 5;
+    height: 250px;
 }
 
 .taskDescription h1{
@@ -151,21 +152,18 @@
     background-color:#00a2ff ;
 }
 
-.btnEdit{
-    cursor: pointer;
-    margin-left: .5em;
-}
+
 
 /* Área de usuários vinculados */
 .usersVinculated{
     position: relative;
-    top: 2em;
+    top: 15em;
     width: 100%;
 }
 
 @media only screen and (max-width:1740px){
     .usersVinculated {
-        top: 6em;
+        top: 17em;
     }
 }
 

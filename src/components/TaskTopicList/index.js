@@ -8,6 +8,7 @@ import { FaArrowUp } from "react-icons/fa";
 import { FaArrowDown } from "react-icons/fa";
 import { BsCheckAll } from "react-icons/bs";
 import { GoListUnordered } from "react-icons/go";
+import ConfirmAction from "../ConfirmAction";
 import api from "../../services/api";
 import {
   changeItemChecked,
@@ -16,13 +17,15 @@ import {
   updateTopicDescription,
   takeHistoricTask,
   nextOrPreviousTopic,
+  changeYesNoTopic,
 } from "./functions";
-import { updateModal, updateTopic } from "../../redux";
+import { getTaskFilter, updateModal, updateTask, updateTopic } from "../../redux";
 import "./style.css";
 
 const TaskTopicList = ({ id = "modalEdit" }) => {
   const { topicUpdate } = useSelector((state) => state);
   const { taskVisible } = useSelector((state) => state);
+  const { tasks } = useSelector((state) => state);
   const { permissions } = useSelector((state) => state);
   const AUTH = permissions.session;
   const { modalUpdate } = useSelector((state) => state);
@@ -35,6 +38,9 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   const [taskHistoric, setTaskHistoric] = useState([]);
   const [showOrder, setShowOrder] = useState(false);
   const [orderItem, setOrderItem] = useState(false);
+  const [itemEdit, setItemEdit] = useState();
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  let itemDelete = {};
   const dispatch = useDispatch();
 
   // const[loadItems,setLoadItems] = useState(false);
@@ -73,7 +79,17 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
       if (response != null) {
         taskVisible.info.percent = response.percent;
         taskVisible.info.state_id = response.state_id;
+
+        let changes = [...tasks];
+
+        changes = changes.map(task => {
+          if(task.id===taskVisible.info.task_id){
+            task.percent = response.percent;
+            task.state_id = response.state_id;
+          }
+        })
         dispatch(updateTopic());
+        // dispatch(getTaskFilter([...changes]));
       }
     });
     // e.target.setAttribute("checked",check);
@@ -137,8 +153,8 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
     // handleClick()
   }
 
-  function deleteItemTopic(e, taskId, itemId) {
-    e.preventDefault();
+  function deleteItemTopic(taskId, itemId) {
+    // e.preventDefault();
     if (taskVisible.info.state_id == 5 || taskVisible.info.state_id == 4) {
       alert("A tarefa foi bloqueada!");
     } else if (taskVisible.info.state_id == 6) {
@@ -185,22 +201,50 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
       dispatch(updateModal())
     );
 
-
     // console.log(document.getElementById(itemId).getBoundingClientRect().top);
 
     let element = document.getElementById("topicList");
-    
+
     let distance = document.getElementById(itemId);
 
-    if(distance.offsetTop>(element.offsetTop*2)-100){
-      element.scrollTop = distance.offsetTop-280;
+    if (distance.offsetTop > element.offsetTop * 2 - 100) {
+      element.scrollTop = distance.offsetTop - 280;
     }
-      
-      // console.log(distance.offsetTop)
-      // console.log(element.offsetTop)
-      // handleClick()
-      
-   
+
+    // console.log(distance.offsetTop)
+    // console.log(element.offsetTop)
+    // handleClick()
+  }
+
+  function setYesNoOption() {
+    let change = itemEdit.yes_no === 0 ? -1 : 0;
+
+    changeYesNoTopic(taskVisible.info.task_id, change, itemEdit.id, AUTH).then(
+      (response) => {
+        if (response != null) {
+          taskVisible.info.percent = response.percent;
+          taskVisible.info.state_id = response.state_id;
+
+          dispatch(updateModal());
+          dispatch(updateTopic());
+          itemEdit.yes_no = change;
+        }
+      }
+    );
+  }
+
+  function setYesNo(taskId, yesOrNo, idItem, auth) {
+    let change = yesOrNo;
+
+    changeYesNoTopic(taskId, change, idItem, auth).then((response) => {
+      if (response != null) {
+        taskVisible.info.percent = response.percent;
+        taskVisible.info.state_id = response.state_id;
+
+        dispatch(updateModal());
+        dispatch(updateTopic());
+      }
+    });
   }
 
   const handleClick = () => {
@@ -231,10 +275,13 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
               <FaArrowUp size={40} color="white" />
             </div>
 
-            <div className="orderDone" onClick={() => {
-              setShowOrder(false);
-              setOrderItem(null);
-            }}>
+            <div
+              className="orderDone"
+              onClick={() => {
+                setShowOrder(false);
+                setOrderItem(null);
+              }}
+            >
               <BsCheckAll size={40} color="white" />
             </div>
 
@@ -298,6 +345,16 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
               <button type="button" onClick={() => setShowEdit(false)}>
                 <AiOutlineClose size={30} />
               </button>
+              <div className="defineQuestion">
+                <input
+                  type="checkbox"
+                  checked={itemEdit.yes_no !== 0 ? true : false}
+                  onChange={() => {
+                    setYesNoOption(itemEdit);
+                  }}
+                />
+                <label>Definir como questão</label>
+              </div>
               <button
                 type="button"
                 style={{ backgroundColor: "#69a312", color: "white" }}
@@ -333,80 +390,229 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
 
                   <div className="topic" ref={ref} id={item.id}>
                     {/* {console.log(item.check)} */}
+                    {item.yes_no !== 0 ? (
+                      <div className="topicLeft">
+                        <a
+                          style={
+                            orderItem == item.id
+                              ? {
+                                  backgroundColor: "#4da6ff",
+                                  borderRadius: "10px",
+                                  padding: "2px",
+                                }
+                              : null
+                          }
+                        >
+                          {item.order}
+                        </a>
 
-                    <div className="topicLeft">
-                      <a style={orderItem == item.id ? {backgroundColor:"#4da6ff", borderRadius:"10px"} : null}>{item.order}</a>
-                      <a>
-                        <input
-                          type="checkbox"
-                          onChange={(e) => {
-                            changeInputCheck(
-                              item.check,
-                              taskVisible.info.task_id,
-                              item.id
-                            );
+                        <a></a>
+
+                        <a
+                          href=""
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setShowEdit(!showEdit);
+                            setEditDescription(item.description);
+                            setIdItem(item.id);
+                            setItemEdit(item);
                           }}
-                          checked={item.check}
-                        />
-                      </a>
+                        >
+                          <AiOutlineEdit
+                            className="topicEdit"
+                            size={20}
+                            color="#dddd"
+                          />
+                        </a>
 
-                      <a
-                        href=""
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setShowEdit(!showEdit);
-                          setEditDescription(item.description);
-                          setIdItem(item.id);
-                        }}
-                      >
-                        <AiOutlineEdit
-                          className="topicEdit"
-                          size={20}
-                          color="#dddd"
-                        />
-                      </a>
-
-                      <a
-                        className="orderTopic"
-                        href=""
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setShowOrder(!showOrder);
-                          setOrderItem(item.id);
-                        }}
-                      >
-                        <GoListUnordered
-                          className="topicEdit"
-                          size={20}
-                          color="#dddd"
-                        />
-                      </a>
-                    </div>
-
-                    <div>
-                      {/* <input type="checkbox"  onChange={() => {changeChecked(taskVisible.id,item.id,item.check)}} checked={item.check}/> */}
-                      <label htmlFor="">{item.description}</label>
-                    </div>
-
-                    <div className="topicRight">
-                      <a
-                        href=""
-                        onClick={(e) =>
-                          taskVisible.info.user_id === permissions.id ||
-                          permissions.administrator === 1
-                            ? deleteItemTopic(
-                                e,
+                        <a
+                          className="orderTopic"
+                          href=""
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setShowOrder(true);
+                            setOrderItem(item.id);
+                          }}
+                        >
+                          <GoListUnordered
+                            className="topicEdit"
+                            size={20}
+                            color="#dddd"
+                          />
+                        </a>
+                      </div>
+                    ) : (
+                      <div className="topicLeft">
+                        <a
+                          style={
+                            orderItem == item.id
+                              ? {
+                                  backgroundColor: "#4da6ff",
+                                  borderRadius: "10px",
+                                  padding: "2px",
+                                }
+                              : null
+                          }
+                        >
+                          {item.order}
+                        </a>
+                        <a>
+                          <input
+                            className="tick"
+                            type="checkbox"
+                            onChange={(e) => {
+                              changeInputCheck(
+                                item.check,
                                 taskVisible.info.task_id,
                                 item.id
-                              )
-                            : (e.preventDefault(),
-                              alert(
-                                "Somente o criador da tarefa ou administrador pode fazer isto!"
-                              ))
+                              );
+                            }}
+                            checked={item.check}
+                          />
+                        </a>
+
+                        <a
+                          href=""
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setShowEdit(!showEdit);
+                            setEditDescription(item.description);
+                            setIdItem(item.id);
+                            setItemEdit(item);
+                          }}
+                        >
+                          <AiOutlineEdit
+                            className="topicEdit"
+                            size={20}
+                            color="#dddd"
+                          />
+                        </a>
+
+                        <a
+                          className="orderTopic"
+                          href=""
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setShowOrder(true);
+                            setOrderItem(item.id);
+                          }}
+                        >
+                          <GoListUnordered
+                            className="topicEdit"
+                            size={20}
+                            color="#dddd"
+                          />
+                        </a>
+                      </div>
+                    )}
+
+                    <div
+                      className="topicDescription"
+                      style={
+                        item.yes_no === -1 ||
+                        item.yes_no === 1 ||
+                        item.yes_no === 2
+                          ? { paddingRight: 90 }
+                          : null
+                      }
+                    >
+                      {/* <input type="checkbox"  onChange={() => {changeChecked(taskVisible.id,item.id,item.check)}} checked={item.check}/> */}
+                      <label
+                        style={
+                          item.yes_no === -1 ||
+                          item.yes_no === 1 ||
+                          item.yes_no === 2
+                            ? { maxWidth: 250 }
+                            : null
                         }
+                        htmlFor=""
                       >
-                        <FaTrash color="white" />
-                      </a>
+                        {item.description}
+                      </label>
+                    </div>
+
+                    <div
+                      className="topicRight"
+                      style={item.yes_no === 0 ? { width: "auto" } : null}
+                    >
+                      {item.yes_no === -1 ||
+                      item.yes_no === 1 ||
+                      item.yes_no === 2 ? (
+                        <div className="topicOptions">
+                          <a style={{ display: "flex" }}>
+                            <div className="yesOption">
+                              <input
+                                id="yes"
+                                type="checkbox"
+                                checked={item.yes_no === 1}
+                                onChange={() => {
+                                  let change = item.yes_no !== 1 ? 1 : -1;
+                                  setYesNo(
+                                    taskVisible.info.task_id,
+                                    change,
+                                    item.id,
+                                    AUTH
+                                  );
+                                }}
+                              />
+                              <label htmlFor="yes" className="tick">
+                                Sim
+                              </label>
+                            </div>
+                            <div className="noOption">
+                              <input
+                                type="checkbox"
+                                checked={item.yes_no === 2}
+                                onChange={() => {
+                                  let change = item.yes_no !== 2 ? 2 : -1;
+                                  setYesNo(
+                                    taskVisible.info.task_id,
+                                    change,
+                                    item.id,
+                                    AUTH
+                                  );
+                                }}
+                              />
+                              <label className="check-box" className="tick">
+                                Não
+                              </label>
+                            </div>
+                          </a>
+                          <a
+                            href=""
+                            onClick={(e) =>
+                              taskVisible.info.user_id === permissions.id ||
+                              permissions.administrator === 1
+                                ? (e.preventDefault(),
+                                  setIdItem(item.id),
+                                  setShowConfirmDelete(true))
+                                : (e.preventDefault(),
+                                  alert(
+                                    "Somente o criador da tarefa ou administrador pode fazer isto!"
+                                  ))
+                            }
+                          >
+                            <FaTrash color="white" />
+                          </a>
+                        </div>
+                      ) : (
+                        <a
+                          href=""
+                          onClick={(e) =>
+                            taskVisible.info.user_id === permissions.id ||
+                            permissions.administrator === 1
+                              ? (e.preventDefault(),
+                                setIdItem(item.id),
+                                setShowConfirmDelete(true))
+                              : (e.preventDefault(),
+                                alert(
+                                  "Somente o criador da tarefa ou administrador pode fazer isto!"
+                                ))
+                          }
+                        >
+                          <FaTrash color="white" />
+                        </a>
+                      )}
                     </div>
                   </div>
                 </React.Fragment>
@@ -434,6 +640,18 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
           <BiCommentAdd size="27" color="white" />
         </button>
       </div>
+
+      {showConfirmDelete === true ? (
+        <ConfirmAction
+          confirm={() => {}}
+          question="Tem certeza que deseja excluir este item"
+          action={() => {
+            deleteItemTopic(taskVisible.info.task_id, idItem);
+            setShowConfirmDelete(false)
+          }}
+          cancelAction={() => setShowConfirmDelete(false)}
+        />
+      ) : null}
     </div>
   );
 };
