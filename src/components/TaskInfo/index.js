@@ -1,9 +1,21 @@
 import React, { useState, useEffect } from "react";
-// import { AiOutlineUserAdd } from "react-icons/ai";
 import ConfirmAction from "../ConfirmAction";
 import { BiEdit } from "react-icons/bi";
 import { useDispatch, useSelector } from "react-redux";
-import { updateTask, updateModal, orderTasks } from "../../redux";
+import ModalCancel from "../ModalCancel";
+import {
+  updateTask,
+  updateModal,
+  orderTasks,
+  updateStateAdmin,
+  setDoVisi,
+  setDoingVisi,
+  setAnalyzeVisi,
+  setStoppedVisi,
+  setBlockedVisi,
+  setDoneVisi,
+  setCanceledVisi,
+} from "../../redux";
 import {
   updateFullDescription,
   formatDate,
@@ -12,6 +24,7 @@ import {
   loadDeptsCompany,
   updateStateTask,
   cancelStateTask,
+  showNotification,
 } from "./functions";
 import api from "../../services/api";
 import "./style.css";
@@ -21,46 +34,33 @@ import InfoUserCard from "../InfoUserCard";
 
 const TaskInfo = () => {
   const dispatch = useDispatch();
-  // const { userInfo } = useSelector((state) => state);
+  const { seeAdminSet } = useSelector((state) => state);
   const { tasks } = useSelector((state) => state);
   const { taskStates } = useSelector((state) => state);
   const { taskVisible } = useSelector((state) => state);
   const { userPhotos } = useSelector((state) => state);
   const { taskCompanies } = useSelector((state) => state);
   const { modalUpdate } = useSelector((state) => state);
-  // const {permissions} = useSelector(state => state);
-  // const {vinculatedUsers} = useSelector(state => state);
-
+  const { webSocket } = useSelector((state) => state);
   const [shops, setShops] = useState([]);
   const [depts, setDepts] = useState([]);
   const [company, setCompany] = useState(false);
   const [shop, setShop] = useState({});
-
   const [taskcsds, setTaskcsds] = useState([]);
   const [showReasonModal, setShowReasonModal] = useState(false);
   const [showDayModal, setShowDayModal] = useState(false);
-
   const [days, setDays] = useState(1);
-
-  // console.log(taskVisible)
-
   const [fullDescription, setFullDescription] = useState(
     taskVisible.task.full_description
   );
   const [showInfoUser, setShowInfoUser] = useState(false);
   const [infoUserId, setInfoUserId] = useState();
-
   const [reason, setReason] = useState("");
-  // const [vinculatedUsers, setVinculatedUsers] = useState([]);
   const { vinculatedUsers } = useSelector((state) => state);
   const [showFullDesc, setShowFullDesc] = useState(false);
-
   const [showDept, setShowDept] = useState(false);
-  const { stateUpdate } = useSelector((state) => state);
   const [users, setUsers] = useState([]);
-
-  // console.log(taskVisible)
-
+  const { filterTask } = useSelector((state) => state);
   const [showModalAsk, setShowModalAsk] = useState(false);
 
   const { permissions } = useSelector((state) => state);
@@ -68,7 +68,6 @@ const TaskInfo = () => {
 
   useEffect(() => {
     async function loadTaskVisible() {
-      // let AUTH = sessionStorage.getItem("token");
       let { data } = await api.get(
         "GTPP/Task.php?AUTH=" +
           AUTH +
@@ -76,17 +75,12 @@ const TaskInfo = () => {
           taskVisible.info.task_id
       );
 
-      // console.log(taskVisible)
-      // console.log(data);
-
       if (data.data.csds == null) {
-        // console.log('aqui')
         setTaskcsds([]);
         setDepts(null);
-        // console.log(depts)
         setShops([]);
         setCompany(false);
-        setShop(false)
+        setShop(false);
         setShowDept(false);
       } else {
         setTaskcsds(data.data.csds);
@@ -108,14 +102,13 @@ const TaskInfo = () => {
         });
         setCompany(data.data.csds[0].company_id);
         setShop(data.data.csds[0].shop_id);
-        // return true;
       }
     }
 
     loadTaskVisible();
   }, [modalUpdate]);
 
-  //formatando datas
+  //dates task
   const dateInitial = formatDate(
     taskVisible.info ? taskVisible.info.initial_date : "00-00-0000"
   );
@@ -124,47 +117,85 @@ const TaskInfo = () => {
   );
 
   function upFullDescription(taskId, description) {
-    updateFullDescription(taskId, description, AUTH).then(() => {
-      setFullDescription(description);
-      tasks.map(task => {
-        if(task.id===taskVisible.info.task_id){
+    updateFullDescription(taskId, description, AUTH).then((response) => {
+      setFullDescription(taskVisible.task.full_description);
+      // console.log(response);
+      if (
+        response.includes("Only the task creator or administrator can do this")
+      ) {
+        showNotification(
+          "Aviso",
+          "Somente o criador da tarefa ou administrador pode fazer isto",
+          "warning"
+        );
+      } else if (response.includes("The full description cannot be empty")) {
+        showNotification(
+          "Aviso",
+          "A descrição completa não pode estar vazia",
+          "warning"
+        );
+      } else if (response.includes("Task with this state cannot be modified")) {
+        showNotification(
+          "Aviso",
+          "Tarefa neste estado não pode ser modificada",
+          "warning"
+        );
+      } else if (response.includes("No data to Update")) {
+        showNotification(
+          "Aviso",
+          "Sem dados para atualizar, modifique a descrição",
+          "warning"
+        );
+      } else if (
+        response.includes(
+          "(id, full_description || (description, priority)) is broken"
+        )
+      ) {
+        showNotification(
+          "Aviso",
+          "Preencha o campo de descrição para atualizar",
+          "warning"
+        );
+      } else {
+        showNotification(
+          "Sucesso",
+          "Descrição completa atualizada com sucesso",
+          "success"
+        );
+        SendInfo("A descrição completa da tarefa foi atualizada");
+        setFullDescription(description);
+        taskVisible.task.full_description = description;
+      }
+
+      tasks.map((task) => {
+        if (task.id === taskVisible.info.task_id) {
           task.full_description = description;
-  
         }
-      })
+      });
     });
     setShowFullDesc(false);
-    // dispatch(updateTask());
-  }
-
-  async function loadVinculateUsers() {
-    const { data } = await api.get("GTPP/Task_User.php", {
-      params: {
-        AUTH: AUTH,
-        task_id: taskVisible.info.task_id,
-        list_user: 0,
-        app_id: 3,
-      },
-    });
-    // console.log(data);
-    try {
-      // dispatch(getVinculatedUsers(data.data));
-      setUsers(data.data);
-    } catch (error) {}
-
-    // console.log(users)
-    // console.log(task.id)
   }
 
   useEffect(() => {
+    async function loadVinculateUsers() {
+      const { data } = await api.get("GTPP/Task_User.php", {
+        params: {
+          AUTH: AUTH,
+          task_id: taskVisible.info.task_id,
+          list_user: 0,
+          app_id: 3,
+        },
+      });
+      try {
+        setUsers(data.data);
+      } catch (error) {}
+    }
     loadVinculateUsers();
   }, []);
 
   useEffect(() => {
-    // console.log(company)
     function loadShops() {
       if (company != "-1") {
-        // dispatch(getDepts([]));
         setDepts(false);
         setShowDept(false);
         setCompany(company);
@@ -177,98 +208,84 @@ const TaskInfo = () => {
     loadShops();
   }, [company]);
 
-  // useEffect(() => {
-  //   loadShopsCompany(company).then((response) => {
-  //     setShops(response.data);
-  //   });
-  // }, []);
-
   useEffect(() => {
     loadDeptsCompany(company, shop, taskVisible.info.task_id, AUTH).then(
       (response) => {
         setDepts(response);
-        // dispatch(updateTask());
       }
     );
   }, [shop, modalUpdate]);
 
-  // function loadCsds(){
-  //   for (let i = 0; i < taskcsds.length; i++) {
-  //     changeCheckDept(
-  //       taskVisible.info.task_id,
-  //       taskcsds[i].depart_id,
-  //       taskcsds[i].shop_id,
-  //       taskcsds[i].company_id
-  //     );
-  //   }
-  // }
-
-  // console.log(taskVisible)
-
   function changeCheckDept(taskId, deptId, shopId, companyId) {
     if (shopId == "-1" || companyId == "-1") {
-      alert("Selecione companhia e loja!");
+      showNotification("Aviso", "Selecione companhia e loja", "warning");
     } else {
       try {
-        if (taskcsds != null) {
-          // console.log(taskcsds);
+        // if (taskcsds != null) {
+        //   let csds = taskcsds.filter(
+        //     (csds) => csds.company_id !== companyId || csds.shop_id !== shopId
+        //   );
 
-          let csds = taskcsds.filter(
-            (csds) => csds.company_id !== companyId || csds.shop_id !== shopId
-          );
+        //   if (csds.length >= 1) {
+        //     updateCheckDept(
+        //       taskId,
+        //       csds[0].depart_id,
+        //       csds[0].shop_id,
+        //       csds[0].company_id,
+        //       AUTH
+        //     );
 
-          if (csds.length >= 1) {
-            // console.log(csds);
-            updateCheckDept(
-              taskId,
-              csds[0].depart_id,
-              csds[0].shop_id,
-              csds[0].company_id,
-              AUTH
-            );
-
-            dispatch(updateModal());
-            
-          }
-        }
+        //     dispatch(updateModal());
+        //   }
+        // }
 
         updateCheckDept(taskId, deptId, shopId, companyId, AUTH)
           .then((response) => {
             if (response == null) {
               setShowDept(false);
               setDepts([]);
-              // loadCsds();
             }
-
-            // setShop(shop);
           })
-          .then(() => dispatch(updateModal()));
+          .then(() => {
+            dispatch(updateModal());
+            if (seeAdminSet === true) {
+              dispatch(updateStateAdmin());
+            } else {
+              dispatch(updateTask());
+            }
+          });
       } catch (error) {
-        console.log(error);
-        console.log("Erro ao selecionar departamento!");
-      } finally{
+        showNotification("Erro", String(error), "danger");
+      } finally {
         dispatch(orderTasks());
       }
     }
   }
-  // console.log(userInfo)
 
   let domNodeDept = useClickOutside(() => {
     setShowDept(false);
   });
 
   function updateState(stateId, reason, days) {
-    // console.log("estado atual é o "+taskVisible);
     if (taskVisible.info.state_id == 1 || taskVisible.info.state_id == 2) {
       if (reason == null) {
         setShowReasonModal(true);
       } else if (reason === "") {
-        alert("o motivo é obrigatório!");
+        showNotification("Aviso", "motivo é obrigatório", "warning");
       } else {
         updateStateTask(taskVisible.info.task_id, reason, null, AUTH)
-          .then((response) => (taskVisible.info.state_id = response[0].id))
+          .then(
+            (response) => (
+              (taskVisible.info.state_id = response[0].id),
+              verifyState(response[0].id)
+            )
+          )
           .catch((error) => {});
-        dispatch(updateTask());
+        if (seeAdminSet === true) {
+          dispatch(updateStateAdmin());
+        } else {
+          dispatch(updateTask());
+        }
         dispatch(updateModal());
         setShowReasonModal(false);
         setReason("");
@@ -282,13 +299,18 @@ const TaskInfo = () => {
             (response) => (
               // console.log(response.id),
               (taskVisible.info.state_id = response.id),
-              (taskVisible.info.final_date = response.final_date)
+              (taskVisible.info.final_date = response.final_date),
+              verifyState(response.id)
             )
           )
           .catch((error) => {
             // console.log(error.message);
           });
-        dispatch(updateTask());
+        if (seeAdminSet === true) {
+          dispatch(updateStateAdmin());
+        } else {
+          dispatch(updateTask());
+        }
         dispatch(updateModal());
         setShowDayModal(false);
         setDays("");
@@ -299,41 +321,78 @@ const TaskInfo = () => {
         return;
       } else if (confirm == true) {
         updateStateTask(taskVisible.info.task_id, null, null, AUTH)
-          .then((response) => (taskVisible.info.state_id = response[0].id))
-          .then((response) => {
-            dispatch(updateTask());
+          .then(
+            (response) => (
+              (taskVisible.info.state_id = response[0].id),
+              verifyState(response[0].id)
+            )
+          )
+          .then(() => {
+            if (seeAdminSet === true) {
+              dispatch(updateStateAdmin());
+            } else {
+              dispatch(updateTask());
+            }
             dispatch(updateModal());
-            setShowConfirmAction(false);
             setShowConfirmAction(false);
           })
           .catch((error) => {
-            console.log(error);
+            alert(error);
           });
 
         return;
       }
-      // updateStateTask(taskVisible.info.task_id).then(response => taskVisible.info.state_id = response.id);
-      // dispatch(updateTask());
-      // dispatch(updateModal());
+    }
+  }
+
+  function verifyState(state) {
+    if (state == 1 && filterTask.do === false) {
+      dispatch(setDoVisi(true));
+    }
+    if (state == 2 && filterTask.doing === false) {
+      dispatch(setDoingVisi(true));
+    }
+    if (state == 3 && filterTask.analyze === false) {
+      dispatch(setAnalyzeVisi(true));
+    }
+    if (state == 4 && filterTask.stopped === false) {
+      dispatch(setStoppedVisi(true));
+    }
+    if (state == 5 && filterTask.blocked === false) {
+      dispatch(setBlockedVisi(true));
+    }
+    if (state == 6 && filterTask.done === false) {
+      dispatch(setDoneVisi(true));
+    }
+    if (state == 7 && filterTask.canceled === false) {
+      dispatch(setCanceledVisi(true));
     }
   }
 
   function cancelTask(taskId, reason) {
-    // console.log("estado atual é o "+stateId);
     if (reason === "") {
-      alert("o motivo é obrigatório!");
+      showNotification("Aviso", "O motivo é obrigatório", "warning");
       return;
     }
 
-    // console.log('aqui')
     cancelStateTask(taskId, reason, AUTH)
-      .then((response) => (taskVisible.info.state_id = response.id))
+      .then((response) => {
+        if (seeAdminSet === true) {
+          dispatch(updateStateAdmin());
+        } else {
+          dispatch(updateTask());
+        }
+
+        // dispatch(updateModal());
+        setShowModalAsk(false);
+
+        taskVisible.info.state_id = response.id;
+
+        verifyState(response.id);
+      })
       .catch((error) => {
         // console.log(error);
       });
-    dispatch(updateTask());
-    dispatch(updateModal());
-    setShowModalAsk(false);
   }
 
   // console.log(taskVisible)
@@ -344,54 +403,59 @@ const TaskInfo = () => {
   const [showConfirmAction, setShowConfirmAction] = useState(false);
   const [confirm, setConfirm] = useState(false);
 
-  let ModalCancel = (props) => {
-    const [reason, setReason] = useState("");
-    return (
-      <div className="modalAsk">
-        <div>
-          <ul className="menuAsk">
-            <li>
-              <h3>{props.ask}, tem certeza?</h3>
-              <h2>*Informe o motivo:</h2>
-              <textarea
-                spellCheck="false"
-                rows="5"
-                onChange={(e) => setReason(e.target.value)}
-              ></textarea>
-            </li>
-            <li>
-              <button
-                className="btnConfirm"
-                onClick={(e) =>
-                  cancelTask(taskVisible.info.task_id, reason, AUTH)
-                }
-              >
-                Confirmar
-              </button>
-              <button
-                className="btnCancel"
-                onClick={() => setShowModalAsk(false)}
-              >
-                Cancelar
-              </button>
-            </li>
-          </ul>
-        </div>
-      </div>
-    );
-  };
-
   if (users.length > 0) {
     users.map((user) => {
       let result = vinculatedUsers.filter((users) => users.id == user.user_id);
-
       user.name = result[0].user;
-      // console.log(user.name)
     });
   }
 
-  // console.log(vinculatedUsers);
-  // console.log(taskVisible)
+  useEffect(() => {
+    if (webSocket.users !== undefined) {
+      users.map((user) => {
+        webSocket.users.forEach((item, index) => {
+          if (user.user_id == item) {
+            // console.log(user);
+            user.status = true;
+          }
+        });
+      });
+    }
+  },[webSocket])
+
+ 
+
+  function SendInfo(msg) {
+    // alert("teste")
+    if (msg !== "" && webSocket.websocketState === "connected") {
+      try {
+        let jsonString = {
+          task_id: taskVisible.info.task_id,
+          message: {description:msg,task_id:taskVisible.info.task_id},
+          date_time: null,
+          user_id: Number(permissions.id),
+          type: 3,
+        };
+        webSocket.websocket.send(JSON.stringify(jsonString));
+
+        // console.log(jsonString);
+      } catch (error) {
+        alert(error);
+      }
+    }
+  }
+
+  function verifyStatus(userId){
+    // webSocket.users && webSocket.users.map((id) => user.user_id == id && return "online")
+
+    const filter = webSocket.users.filter(id => id == userId);
+
+    if(filter[0]){
+      return "online";
+    }else{
+      return "";
+    }
+  }
 
   return (
     <div className="taskInfo">
@@ -427,7 +491,7 @@ const TaskInfo = () => {
                 </h3>
                 <h2>*Informe o motivo:</h2>
                 <textarea
-                  spellcheck="false"
+                  spellCheck="false"
                   rows="5"
                   onChange={(e) => setReason(e.target.value)}
                 ></textarea>
@@ -493,9 +557,25 @@ const TaskInfo = () => {
 
       {showModalAsk ? (
         taskVisible.info.state_id != 7 ? (
-          <ModalCancel ask="Cancelando a tarefa" />
+          <ModalCancel
+            ask="Cancelando a tarefa"
+            reason={reason}
+            setReason={(e) => setReason(e)}
+            cancelTask={() =>
+              cancelTask(taskVisible.info.task_id, reason, AUTH)
+            }
+            close={() => setShowModalAsk(false)}
+          />
         ) : (
-          <ModalCancel ask="Retomando a tarefa" />
+          <ModalCancel
+            ask="Retomando a tarefa"
+            reason={reason}
+            setReason={(e) => setReason(e)}
+            cancelTask={() =>
+              cancelTask(taskVisible.info.task_id, reason, AUTH)
+            }
+            close={() => setShowModalAsk(false)}
+          />
         )
       ) : null}
 
@@ -544,11 +624,14 @@ const TaskInfo = () => {
         <div className="row">
           <div className="col taskDescription">
             <div className="descriptionArea">
-              <h1>Descrição Completa:   <BiEdit
-                size="25"
-                onClick={() => setShowFullDesc(!showFullDesc)}
-                className="btnEdit"
-              /></h1>
+              <h1>
+                Descrição Completa:{" "}
+                <BiEdit
+                  size="25"
+                  onClick={() => setShowFullDesc(!showFullDesc)}
+                  className="btnEdit"
+                />
+              </h1>
               <textarea
                 placeholder="Esta tarefa tem como objetivo..."
                 spellCheck="false"
@@ -556,11 +639,11 @@ const TaskInfo = () => {
                 value={fullDescription}
                 readOnly
               ></textarea>
-            
             </div>
 
             {showFullDesc ? (
               <ModalDescription
+                showDelete={false}
                 description={fullDescription}
                 setShowDesc={(info) => setShowFullDesc(info)}
                 updateDesc={(info) =>
@@ -612,9 +695,9 @@ const TaskInfo = () => {
                 Departamentos
               </p>
 
-              {showDept && shop && company? (
+              {showDept && shop && company ? (
                 <ul className="menuDept">
-                  {depts !==null
+                  {depts !== null
                     ? depts.map((dept) => (
                         <li key={dept.id}>
                           <label htmlFor="">{dept.description}</label>
@@ -646,6 +729,7 @@ const TaskInfo = () => {
           <div className="userControl">
             {taskVisible.owner ? (
               <img
+                className={verifyStatus(taskVisible.owner[0].id)}
                 src={taskVisible.owner[0].photo}
                 width="35"
                 height="35"
@@ -663,7 +747,9 @@ const TaskInfo = () => {
                 <React.Fragment key={userPhoto.user_id}>
                   {user.user_id == userPhoto.user_id ? (
                     <div className="userControl">
+                      {/* {webSocket.users.map(id => id==user.user_id ? <span className="status" ></span> : "")} */}
                       <img
+                        className={verifyStatus(user.user_id)}
                         src={userPhoto.photo}
                         width="35"
                         height="35"
