@@ -55,9 +55,15 @@
     width: 350px;
     height: 150px;
     border: 1px solid black;
-    margin-bottom: 13em;
+    margin-bottom: 1em;
     background-color: #2b2b2b;
     border-radius: 10px;
     overflow: hidden;
+}
+
+@media only screen and (max-width:1366px){
+    .modalConfirm > div{
+        margin-bottom: -4em;
+    }
 }
 
