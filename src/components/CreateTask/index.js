@@ -1,12 +1,30 @@
-import React, { useState,useEffect } from "react";
-import { useSelector,useDispatch } from "react-redux";
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import "./style.css";
-import lowPriority from '../../assets/Path1.png';
-import medPriority from '../../assets/Path2.png';
-import highPriority from '../../assets/Arrows.png';
-import { updateTask } from "../../redux";
-import useClickOutside from '../ClickOutside';
+import lowPriority from "../../assets/Path1.png";
+import medPriority from "../../assets/Path2.png";
+import highPriority from "../../assets/Arrows.png";
+import { updateStateAdmin, updateTask } from "../../redux";
+import useClickOutside from "../ClickOutside";
 import { BiCommentAdd } from "react-icons/bi";
+import { store } from "react-notifications-component";
+import api from "../../services/api";
+
+function showNotification(title, message, type) {
+  store.addNotification({
+    title: title,
+    message: message,
+    type: type,
+    container: "top-center",
+    insert: "top",
+    animationIn: ["animate__animated animate__fadeIn"],
+    animationOut: ["animate__animated animate__fadeOut"],
+    dismiss: {
+      duration: 2000,
+    },
+    width: 400,
+  });
+}
 
 let CreateTask = () => {
   const dispatch = useDispatch();
@@ -14,7 +32,9 @@ let CreateTask = () => {
   const [dateInitial, setDateInitial] = useState("");
   const [dateFinal, setDateFinal] = useState("");
   const [priority, setPriority] = useState("");
-  const {permissions} = useSelector(state => state);
+  const [description, setDescription] = useState("");
+  const { permissions } = useSelector((state) => state);
+  const { seeAdminSet } = useSelector((state) => state);
 
   const [open, setOpen] = useState(false);
   const [showPriority, setShowPriority] = useState(false);
@@ -25,66 +45,150 @@ let CreateTask = () => {
     setOpen(!open);
   }
 
-  let domNode = useClickOutside(() =>{
-    setOpen(false)
-  })
+  let domNode = useClickOutside(() => {
+    setOpen(false);
+    setShowPriority(false);
+    clear();
+  });
+
+  function clear() {
+    setPriority("");
+    setDateFinal("");
+    setDateInitial("");
+    setDescription("");
+  }
 
   async function createTask() {
-    let description = document.getElementById("taskDescription").value;
+    // let description = document.getElementById("taskDescription").value;
 
-    if (description != '' && dateFinal != '' && dateInitial != '') {
+    if (
+      description !== "" &&
+      dateFinal !== "" &&
+      dateInitial !== "" &&
+      priority !== ""
+    ) {
       try {
-        let data = {};
+        // let data = {};
 
-        (async () => {
-          data = await fetch(
+        const {data} = await api
+          .post(
             "http://192.168.0.99:71/GLOBAL/Controller/GTPP/Task.php?AUTH=" +
               auth +
               "&mobile=1&app_id=3",
             {
-              method: "post",
-              body: JSON.stringify({
-                description: description,
-                priority: priority,
-                initial_date: `${dateInitial}`,
-                final_date: `${dateFinal}`,
-              }),
+              description: description,
+              priority: priority,
+              initial_date: dateInitial,
+              final_date: dateFinal,
             }
           )
-            .then((response) => {
-              return response.json();
-            })
-            .then((r) => {
-              setOpen(false);
-              dispatch(updateTask());
-              return r;
-            })
 
-            console.log(data)
-            
-          if(data.error==true){
-            let msg = data.message;
+        // console.log(data);
 
-          if(msg.includes("Authorization denied")){
-            alert("Autorização negada!")
-          }else{
-            alert(msg);
+        if (data.error === true) {
+          let msg = data.message;
+
+          if (msg.includes("Authorization denied")) {
+            showNotification("Erro", "Autorização negada", "danger");
+          } else if (
+            msg.includes("The final_date may not be less than the current date")
+          ) {
+            showNotification(
+              "Erro",
+              "A data final não pode ser menor que a data atual",
+              "danger"
+            );
+          } else {
+            showNotification("Erro", msg, "danger");
           }
+        } else {
+          setOpen(false);
+          if (seeAdminSet === true) {
+            dispatch(updateStateAdmin());
+          } else {
+            dispatch(updateTask());
           }
-        })();
+          showNotification("Sucesso", "Nova tarefa foi adicionada", "success");
+
+          clear();
+        }
       } catch (error) {
-       
-        // console.log(error1.message);
+        console.log(error.message);
       }
+    } else {
+      showNotification("Aviso", "Preencha todos os campos", "warning");
     }
   }
 
-  let changePriority = (e) =>{
-    let select = document.getElementById('selectOption');
+  // async function createTask() {
+  //   // let description = document.getElementById("taskDescription").value;
+
+  //   if (
+  //     description !== "" &&
+  //     dateFinal !== "" &&
+  //     dateInitial !== "" &&
+  //     priority !== ""
+  //   ) {
+  //     try {
+  //       let data = {};
+
+  //       (async () => {
+  //         data = await fetch(
+  //           "http://192.168.0.99:71/GLOBAL/Controller/GTPP/Task.php?AUTH=" +
+  //             auth +
+  //             "&mobile=1&app_id=3",
+  //           {
+  //             method: "post",
+  //             body: JSON.stringify({
+  //               description: description,
+  //               priority: priority,
+  //               initial_date: `${dateInitial}`,
+  //               final_date: `${dateFinal}`,
+  //             }),
+  //           }
+  //         )
+  //           .then((response) => {
+  //             return response.json();
+  //           })
+
+  //         console.log(data)
+
+  //         if (data.error === true) {
+  //           let msg = data.message;
+
+  //           if (msg.includes("Authorization denied")) {
+  //             showNotification('Erro','Autorização negada','danger');
+  //           } else if (
+  //             msg.includes(
+  //               "The final_date may not be less than the current date"
+  //             )
+  //           ) {
+  //             showNotification('Erro','A data final não pode ser menor que a data atual','danger');
+  //           } else {
+  //             showNotification('Erro' ,msg,'danger');
+  //           }
+  //         } else {
+  //           setOpen(false);
+  //           dispatch(updateTask());
+  //           showNotification('Sucesso','Nova tarefa foi adicionada','success');
+
+  //           clear();
+  //         }
+  //       })();
+  //     } catch (error) {
+  //       // console.log(error1.message);
+  //     }
+  //   } else {
+  //     showNotification('Aviso','Preencha todos os campos','warning');
+  //   }
+  // }
+
+  let changePriority = (e) => {
+    let select = document.getElementById("selectOption");
 
     let selectValue = select.value;
     let selectText = select.innerHTML;
-    
+
     let aux;
 
     aux = e.target.value;
@@ -97,17 +201,19 @@ let CreateTask = () => {
 
     setShowPriority(false);
     setPriority(select.value);
-
-  }
+  };
 
   return (
     <div ref={domNode} className="create-task-area">
-      <ul onClick={() => showMenu()}><BiCommentAdd size={50} color="#959595"/></ul>
+      <ul onClick={() => showMenu()}>
+        <BiCommentAdd size={50} color="#959595" />
+      </ul>
 
       {open ? (
         <li className="menuCreateTask">
           <label htmlFor="">Tarefa:</label>
           <input
+            onChange={(e) => setDescription(e.target.value)}
             type="text"
             id="taskDescription"
             placeholder="Nome da tarefa"
@@ -130,18 +236,29 @@ let CreateTask = () => {
           />
           <label htmlFor="">Prioridade</label>
           <ul className="menuPriority">
-            <li value="" onClick={() => setShowPriority(!showPriority)} id="selectOption">Selecione a prioridade</li>
+            <li
+              value=""
+              onClick={() => setShowPriority(!showPriority)}
+              id="selectOption"
+            >
+              Selecione a prioridade
+            </li>
             {showPriority ? (
               <>
-              <li value="0" onClick={(e) => changePriority(e)}><img src={lowPriority} />Baixa</li>
-            <li value="1" onClick={(e) => changePriority(e)}><img src={medPriority} />Média</li>
-            <li value="2" onClick={(e) => changePriority(e)}><img src={highPriority} />Alta</li>
+                <li value="0" onClick={(e) => changePriority(e)}>
+                  <img src={lowPriority} />
+                  Baixa
+                </li>
+                <li value="1" onClick={(e) => changePriority(e)}>
+                  <img src={medPriority} />
+                  Média
+                </li>
+                <li value="2" onClick={(e) => changePriority(e)}>
+                  <img src={highPriority} />
+                  Alta
+                </li>
               </>
-            )
-             : null
-            
-            }
-            
+            ) : null}
           </ul>
           <button type="button" onClick={createTask}>
             Criar
