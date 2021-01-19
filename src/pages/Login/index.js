@@ -2,21 +2,33 @@ import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 // import {getTask, taskInfoShow} from '../../redux';
-import { logIn, logOff } from "../../redux/userAuth/userAuthActions";
+import { logIn } from "../../redux/userAuth/userAuthActions";
 import "./style.css";
 import img from "../../assets/art.png";
 import logo from "../../assets/logo.png";
 import api from "../../services/api";
+import { store } from "react-notifications-component";
+
+function showNotification(title, message, type) {
+  store.addNotification({
+    title: title,
+    message: message,
+    type: type,
+    container: "top-center",
+    insert: "top",
+    animationIn: ["animate__animated animate__fadeIn"],
+    animationOut: ["animate__animated animate__fadeOut"],
+    dismiss: {
+      duration: 2000,
+    },
+    width: 400,
+  });
+}
 
 const Login = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const [access, setAccess] = useState(false);
-  // const {taskVisible} = useSelector(state => state);
-  useEffect(() => {
-    dispatch(logOff());
-    // dispatch(getTask([{}]));
-  }, []);
 
   // console.log(taskVisible)
 
@@ -54,11 +66,25 @@ const Login = () => {
                   "This user does not have access to this application"
                 )
               ) {
-                alert("Este usuário não tem acesso a esta aplicação!");
+                showNotification(
+                  "Aviso",
+                  "Este usuário não tem acesso a esta aplicação",
+                  "warning"
+                );
               } else if (msg.includes("User or password error")) {
-                alert("Usuário e/ou senha incorreto(s)");
+                showNotification(
+                  "Aviso",
+                  "Usuário e/ou senha incorreto(s)",
+                  "warning"
+                );
               } else if (msg.includes("(user, password, app_id) is broken")) {
-                alert("Preencha todos os campos");
+                showNotification(
+                  "Aviso",
+                  "Preencha todos os campos",
+                  "warning"
+                );
+              } else {
+                showNotification("Aviso", msg, "warning");
               }
             } else {
               sessionStorage.setItem("token", data.data.session);
@@ -68,17 +94,18 @@ const Login = () => {
               // setPermissions(data.data);
               history.push("/main");
             }
-          } catch (error) {}
+          } catch (error) {
+            showNotification("erro", error.message, "danger");
+          }
         })();
       } catch (error) {
-        console.log(error);
-        alert("usuário e/ou senha incorreto(s)");
+        showNotification("erro", error.message, "danger");
       }
     }
   }
 
   async function verifyVersion() {
-    const version = 0.82;
+    const version = 1.0;
 
     try {
       let { data } = await api.get("CCPP/AppVersion.php?id=3");
@@ -89,17 +116,19 @@ const Login = () => {
         if (versionApp == version) {
           setAccess(true);
         } else {
-          alert(
+          showNotification(
+            "Aviso",
             "Aplicação desatualizada, a versão necessária é " +
               versionApp +
               ", a versão atual é " +
-              version
+              version,
+            "warning"
           );
           setAccess(false);
         }
       }
     } catch (error) {
-      console.log(error);
+      showNotification("erro", error.message, "danger");
       return false;
     }
   }
@@ -120,7 +149,13 @@ const Login = () => {
         <input type="password" id="password" />
         <button onClick={() => UserLogin()}>Entrar</button>
       </form>
-      <span className="version">Task - App version 0.82 Created by Felipe</span>
+      <div className="version">
+        <span>GTPP - App Web - Version 1.0 </span>
+        <span> Created by:</span>
+        <span>Front-End - Felipe</span>
+        <span>Back-End - Kyo</span>
+      </div>
+
       <div className="divisor" />
       <div className="artSection">
         <img src={img} alt="" />
