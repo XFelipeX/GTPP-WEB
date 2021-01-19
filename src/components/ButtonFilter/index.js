@@ -4,7 +4,9 @@ import { loadShopsCompany, loadDeptsCompany } from "./functions";
 import "./style.css";
 import { AiTwotoneFilter } from "react-icons/ai";
 import useClickOutside from "../ClickOutside";
-import { getTaskFilter } from "../../redux";
+import { getTaskFilter, setAnalyzeVisi, setBlockedVisi, setCanceledVisi, setDoingVisi, setDoneVisi, setDoVisi, setStoppedVisi } from "../../redux";
+
+
 
 const ButtonFilter = () => {
   const dispatch = useDispatch();
@@ -16,15 +18,7 @@ const ButtonFilter = () => {
   const [dept, setDept] = useState(-1);
   const [depts, setDepts] = useState([]);
   const [shops, setShops] = useState([]);
-  const [stateFilter, setStateFilter] = useState({
-    fazer: true,
-    fazendo: true,
-    analise: true,
-    parado: true,
-    bloqueado: true,
-    feito: false,
-    cancelado: false,
-  });
+  const {filterTask} = useSelector(state => state)
   const { permissions } = useSelector((state) => state);
   const AUTH = permissions.session;
 
@@ -72,15 +66,15 @@ const ButtonFilter = () => {
   // const [filter,setFilter] = useState([]);
 
   useEffect(() => {
-    taskFilter();
+    taskFilterAction();
   },[tasks])
 
   // console.log(tasks);
 
  
 
-  function taskFilter() {
-    // console.log(tasks)
+  function taskFilterAction() {
+    // console.log(filterTask)
     let filterDo = [];
     let filterDoing = [];
     let filterAnalyze = [];
@@ -91,25 +85,25 @@ const ButtonFilter = () => {
 
     if (company == "-1" || shop == "-1" || dept == "-1") {
       filterDo = tasks.filter((task) =>
-        stateFilter.fazer ? task.state_id == 1 : null
+      filterTask.do ? task.state_id == 1 : null
       );
       filterDoing = tasks.filter((task) =>
-        stateFilter.fazendo ? task.state_id == 2 : null
+      filterTask.doing ? task.state_id == 2 : null
       );
       filterAnalyze = tasks.filter((task) =>
-        stateFilter.analise ? task.state_id == 3 : null
+      filterTask.analyze ? task.state_id == 3 : null
       );
       filterStopped = tasks.filter((task) =>
-        stateFilter.parado ? task.state_id == 4 : null
+      filterTask.stopped ? task.state_id == 4 : null
       );
       filterBlocked = tasks.filter((task) =>
-        stateFilter.bloqueado ? task.state_id == 5 : null
+      filterTask.blocked ? task.state_id == 5 : null
       );
       filterDone = tasks.filter((task) =>
-        stateFilter.feito ? task.state_id == 6 : null
+      filterTask.done ? task.state_id == 6 : null
       );
       filterCanceled = tasks.filter((task) =>
-        stateFilter.cancelado ? task.state_id == 7 : null
+      filterTask.canceled ? task.state_id == 7 : null
       );
     } else {
       let filterCsds = [];
@@ -126,25 +120,25 @@ const ButtonFilter = () => {
 
       if (tasksFilter.length > 0) {
         filterDo = tasksFilter.filter((task) =>
-          stateFilter.fazer ? task.state_id == 1 : null
+        filterTask.do ? task.state_id == 1 : null
         );
         filterDoing = tasksFilter.filter((task) =>
-          stateFilter.fazendo ? task.state_id == 2 : null
+        filterTask.doing ? task.state_id == 2 : null
         );
         filterAnalyze = tasksFilter.filter((task) =>
-          stateFilter.analise ? task.state_id == 3 : null
+        filterTask.analyze ? task.state_id == 3 : null
         );
         filterStopped = tasksFilter.filter((task) =>
-          stateFilter.parado ? task.state_id == 4 : null
+        filterTask.stopped ? task.state_id == 4 : null
         );
         filterBlocked = tasksFilter.filter((task) =>
-          stateFilter.bloqueado ? task.state_id == 5 : null
+        filterTask.blocked ? task.state_id == 5 : null
         );
         filterDone = tasksFilter.filter((task) =>
-          stateFilter.feito ? task.state_id == 6 : null
+        filterTask.done ? task.state_id == 6 : null
         );
         filterCanceled = tasksFilter.filter((task) =>
-          stateFilter.cancelado ? task.state_id == 7 : null
+        filterTask.canceled ? task.state_id == 7 : null
         );
       }
     }
@@ -160,6 +154,28 @@ const ButtonFilter = () => {
     ];
     // setFilter([...finalFilter]);
     dispatch(getTaskFilter(finalFilter));
+  }
+
+  const setDoVisibility = (value) => {
+    dispatch(setDoVisi(value))
+  }
+  const setDoingVisibility = (value) => {
+    dispatch(setDoingVisi(value))
+  }
+  const setAnalyzeVisibility = (value) => {
+    dispatch(setAnalyzeVisi(value))
+  }
+  const setStoppedVisibility = (value) => {
+    dispatch(setStoppedVisi(value))
+  }
+  const setBlockedVisibility = (value) => {
+    dispatch(setBlockedVisi(value))
+  }
+  const setDoneVisibility = (value) => {
+    dispatch(setDoneVisi(value))
+  }
+  const setCanceledVisibility = (value) => {
+    dispatch(setCanceledVisi(value))
   }
 
   // console.log(depts)
@@ -228,12 +244,9 @@ const ButtonFilter = () => {
             <li>
               <input
                 type="checkbox"
-                checked={stateFilter.fazer}
+                checked={filterTask.do}
                 onChange={() => {
-                  setStateFilter((prev) => ({
-                    ...prev,
-                    fazer: !prev.fazer,
-                  }));
+                 setDoVisibility(!filterTask.do)
                 }}
               />
               <label> Fazer</label>
@@ -241,12 +254,9 @@ const ButtonFilter = () => {
             <li>
               <input
                 type="checkbox"
-                checked={stateFilter.fazendo}
+                checked={filterTask.doing}
                 onChange={() => {
-                  setStateFilter((prev) => ({
-                    ...prev,
-                    fazendo: !prev.fazendo,
-                  }));
+                  setDoingVisibility(!filterTask.doing)
                 }}
               />
               <label> Fazendo</label>
@@ -254,12 +264,9 @@ const ButtonFilter = () => {
             <li>
               <input
                 type="checkbox"
-                checked={stateFilter.analise}
+                checked={filterTask.analyze}
                 onChange={() => {
-                  setStateFilter((prev) => ({
-                    ...prev,
-                    analise: !prev.analise,
-                  }));
+                  setAnalyzeVisibility(!filterTask.analyze)
                 }}
               />
               <label> Análise</label>
@@ -267,12 +274,9 @@ const ButtonFilter = () => {
             <li>
               <input
                 type="checkbox"
-                checked={stateFilter.parado}
+                checked={filterTask.stopped}
                 onChange={() => {
-                  setStateFilter((prev) => ({
-                    ...prev,
-                    parado: !prev.parado,
-                  }));
+                  setStoppedVisibility(!filterTask.stopped)
                 }}
               />
               <label> Parado</label>
@@ -280,12 +284,9 @@ const ButtonFilter = () => {
             <li>
               <input
                 type="checkbox"
-                checked={stateFilter.bloqueado}
+                checked={filterTask.blocked}
                 onChange={() => {
-                  setStateFilter((prev) => ({
-                    ...prev,
-                    bloqueado: !prev.bloqueado,
-                  }));
+                  setBlockedVisibility(!filterTask.blocked)
                 }}
               />
               <label> Bloqueado</label>
@@ -293,12 +294,9 @@ const ButtonFilter = () => {
             <li>
               <input
                 type="checkbox"
-                checked={stateFilter.feito}
+                checked={filterTask.done}
                 onChange={() => {
-                  setStateFilter((prev) => ({
-                    ...prev,
-                    feito: !prev.feito,
-                  }));
+                  setDoneVisibility(!filterTask.done)
                 }}
               />
               <label> Feito</label>
@@ -306,19 +304,19 @@ const ButtonFilter = () => {
             <li>
               <input
                 type="checkbox"
-                checked={stateFilter.cancelado}
+                checked={filterTask.canceled}
                 onChange={() => {
-                  setStateFilter((prev) => ({
-                    ...prev,
-                    cancelado: !prev.cancelado,
-                  }));
+                  setCanceledVisibility(!filterTask.canceled)
                 }}
               />
               <label> Cancelado</label>
             </li>
           </ul>
 
-          <button type="button" onClick={() => taskFilter()}>
+          <button type="button" onClick={() => {
+            taskFilterAction();
+            setShowModal(false);
+          }}>
             Ok
           </button>
         </div>
