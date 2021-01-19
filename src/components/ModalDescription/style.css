@@ -65,17 +65,32 @@
     width: 350px;
     max-height: 600px;
     border: 1px solid black;
-    margin-top: 20em;
+    margin-top: 21.5em;
     background-color: #2b2b2b;
     border-radius: 10px;
 }
 
-.modalDescription > div:last-child{
+@media only screen and (max-width:1366px){
+    .modalDescription > div:first-child{
+        margin-top: 16em;
+    }
+}
+
+.modalDescription > div{
     width: 350px;
     max-height: 600px;
     border-top: 1px solid black;
     border-left: 1px solid black;
     border-right: 1px solid black;
+    margin-top: 20em;
+    background-color: #2b2b2b;
+    border-radius: 10px;
+}
+
+.modalDescription > div:nth-child(2){
+    width: 350px;
+    height: 130px;
+    border: 1px solid black;
     margin-top: 20em;
     background-color: #2b2b2b;
     border-radius: 10px;
@@ -151,8 +166,8 @@
     background-color: #c7a002;
 }
 
-@media only screen and (max-width: 1400px){
-    /* .descriptionArea textarea{
-        width: 240px;
-    } */
+@media only screen and (max-width: 1366px){
+    .taskDescription{
+        height:  120px;
+    }
 }

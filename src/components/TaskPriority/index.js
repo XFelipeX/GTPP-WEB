@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { orderTasks, updateTask } from "../../redux";
+import { getTaskFilter, orderTasks, updateTask } from "../../redux";
+import { store } from "react-notifications-component";
 import "./style.css";
 import lowPriority from "../../assets/Path1.png";
 import medPriority from "../../assets/Path2.png";
@@ -8,97 +9,144 @@ import highPriority from "../../assets/Arrows.png";
 import api from "../../services/api";
 import useClickOutside from "../ClickOutside";
 import Loading from "../Loading";
+import { showNotification } from "../TaskModal/functions";
 
 // import useClickOutside from '../Button/index';
 
 const TaskPriority = ({ task }) => {
   const { permissions } = useSelector((state) => state);
+  const { filterTask } = useSelector((state) => state);
+  const { webSocket } = useSelector((state) => state);
   const [loading, setLoading] = useState(false);
   const AUTH = permissions.session;
   const dispatch = useDispatch();
 
   const [open, setOpen] = useState(false);
 
-  //  function updatePriority(id) {
-  //       // const auth = sessionStorage.getItem('token');
-  //       try {
-  //         let data = {};
-  //         (async () => {
-  //           data = await fetch(
-  //             "http://192.168.0.99:71/GLOBAL/Controller/GTPP/Task.php?AUTH=" +
-  //               AUTH +
-  //               "&app_id=3",
-  //             {
-  //               method: "put",
-  //               body: JSON.stringify({
-  //                  id:task.id,
-  //                  description: task.description,
-  //                  priority:id
-  //               }),
-  //             }
-  //           )
-  //             .then((response) => {
-  //               return response.json();
-  //             })
-  //             .then((r) => {
-  //               setOpen(false);
-  //               dispatch(updateTask());
-  //               return r;
-  //             })
-  //             .catch((err) => {
-  //               console.log(err);
-  //             });
+  function SendInfo(msg,update) {
+    // alert(update)
+    if (msg !== "" && webSocket.websocketState === "connected") {
+      try {
+        let jsonString = {
+          task_id: task.id,
+          message: {description:msg,task_id:task.id,update:update==0?-1:update},
+          date_time: null,
+          user_id: Number(permissions.id),
+          type: 4,
+        };
+        webSocket.websocket.send(JSON.stringify(jsonString));
 
-  //             console.log(data)
-  //             let msg = data.message;
+        // console.log(jsonString);
+      } catch (error) {
+        alert(error);
+      }
+    }
+  }
 
-  //         if(msg.includes("Only the task creator or administrator can do this")){
-  //           alert("Somente o criador da tarefa ou administrador pode fazer isto!")
-  //         }
-
-  //         })();
-
-  //         // console.log(data)
-  //       } catch (error) {
-
-  //         // console.log(error);
-  //       }
-
-  //   }
 
   const updatePriority = async (id) => {
-    // console.log(id, "entrei")
-
     try {
-      const data = await api
+      const {data} = await api
         .put(`GTPP/Task.php?AUTH=${AUTH}&app_id=3`, {
           id: task.id,
           description: task.description,
           priority: id,
         })
         .then((response) => {
-          dispatch(updateTask());
-          dispatch(orderTasks());
           setLoading(true);
           setTimeout(() => {
             setLoading(false);
           }, 1200);
           setOpen(false);
+
+          filterTask.filter.map((taskChange) => {
+            if (taskChange.id === task.id) {
+              taskChange.priority = id;
+            }
+          });
+
+          dispatch(orderTasks());
           return response;
         });
+
+        // console.log(data);
+
+        if(data.error===true){
+          showNotification('Erro',data.message,'danger');
+        }else{
+          SendInfo("A prioridade da tarefa foi alterada",id)
+          store.addNotification({
+            title: "Sucesso",
+            message: "A prioridade foi alterada",
+            type: "success",
+            container: "top-center",
+            insert: "top",
+            animationIn: ["animate__animated animate__fadeIn"],
+            animationOut: ["animate__animated animate__fadeOut"],
+            dismiss: {
+              duration: 2000,
+            },
+            width: 400,
+          });
+        }
+
+     
 
       // console.log(data);
     } catch (error) {
       let msg = error.message;
 
+      showNotification('Erro',error.message,'danger');
+
       if (msg.includes("Network Error")) {
-        alert("Autorização Negada!");
+        store.addNotification({
+          title: "Aviso",
+          message: "Autorização Negada",
+          type: "warning",
+          container: "top-center",
+          insert: "top",
+          animationIn: ["animate__animated animate__fadeIn"],
+          animationOut: ["animate__animated animate__fadeOut"],
+          dismiss: {
+            duration: 2000,
+          },
+          width: 400,
+        });
       }
 
       msg = error.response.data.message;
       if (msg.includes("Only the task creator or administrator can do this")) {
-        alert("Somente o criador da tarefa ou administrador pode fazer isto!");
+        store.addNotification({
+          title: "Aviso",
+          message:
+            "Somente o criador da tarefa ou administrador pode fazer isto",
+          type: "warning",
+          container: "top-center",
+          insert: "top",
+          animationIn: ["animate__animated animate__fadeIn"],
+          animationOut: ["animate__animated animate__fadeOut"],
+          dismiss: {
+            duration: 2000,
+          },
+          width: 400,
+        });
+      } else if (msg.includes("Task with this state cannot be modified")) {
+        store.addNotification({
+          title: "Aviso",
+          message: "Tarefa neste estado não pode ser modificada",
+          type: "warning",
+          container: "top-center",
+          insert: "top",
+          animationIn: ["animate__animated animate__fadeIn"],
+          animationOut: ["animate__animated animate__fadeOut"],
+          dismiss: {
+            duration: 2000,
+          },
+          width: 400,
+        });
       }
+
+      
 
       setOpen(false);
     }
@@ -111,7 +159,7 @@ const TaskPriority = ({ task }) => {
   return loading == true ? (
     <Loading />
   ) : (
-    <div ref={domNode} className="containerPriority" value={task.priority}>
+    <div ref={domNode} className="containerPriority" value={task.priority} style={task.focus===true ? {backgroundColor:"black",borderRadius:50+'%'} : {}}>
       <div
         onClick={() => setOpen(!open)}
         title={
@@ -138,7 +186,7 @@ const TaskPriority = ({ task }) => {
 
       {open ? (
         <ul className="options">
-          <li onClick={() => updatePriority("0")}>
+          <li onClick={() => updatePriority(0)}>
             <div>
               <img src={lowPriority} alt="prioridade" />
             </div>

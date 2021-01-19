@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-// import { useSelector } from "react-redux";
-// import { updateTask } from '../../redux';
-// import api from '../../services/api';
 import "./style.css";
-
-// import useClickOutside from '../Button/index'
-
 const TaskDate = ({ task }) => {
   // console.log(task);
 
@@ -62,15 +56,6 @@ const TaskDate = ({ task }) => {
       <div onClick={() => setOpen(!open)} className="dataShow">
         <h2>{final_date}</h2>
       </div>
-      {/* {open ? (
-         <div className="addDate">
-        <div>
-          <input placeholder="Adicionar dias" type="number" id = {'date' + task.id} />
-          <button onClick={() => updateDate()}>Atualizar</button>
-        </div>
-      </div>) : null
-
-      } */}
     </div>
   );
 };

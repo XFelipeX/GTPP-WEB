@@ -33,4 +33,22 @@ export {taskInfoOwner} from './taskVisible/taskVisibleActions';
 export {getTaskFilter} from './filterTasks/filterTasksActions';
 export {orderTasks} from './orderTasks/orderTasksActions';
 export {seeAdmin} from './seeAdmin/seeAdminActions';
+export {getWebSocketState} from './webSocket/webSocketActions';
+export {getWebSocketMessage} from './webSocket/webSocketActions';
+export {getWebSocket} from './webSocket/webSocketActions';
+export {updateStateAdmin} from './adminStateUpdate/adminStateUpdateActions'
+export {getWebSocketHistoric} from './webSocket/webSocketActions';
+export {
+  setDoVisi,
+  setDoingVisi,
+  setAnalyzeVisi,
+  setStoppedVisi,
+  setBlockedVisi,
+  setCanceledVisi,
+  setDoneVisi,
+} from "./filterTasks/filterTasksActions";
+export {getUsersOnline} from './webSocket/webSocketActions';
+export {addUsersOnline} from './webSocket/webSocketActions';
+export {getWarning} from './warning/warningActions';
+export {change} from './warning/warningActions';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Switch,  Route, Redirect,BrowserRouter} from "react-router-dom";
+import {Switch,  Route, Redirect,BrowserRouter,HashRouter} from "react-router-dom";
 
 import Login from './pages/Login'
 import Main from './pages/Main'
@@ -28,12 +28,12 @@ const PrivateRoute = ({component:Component,...rest}) => (
 
 const routes = () => {
   return (
-    <BrowserRouter basename='GLOBAL/View/Task'>
+    <HashRouter>
       <Switch>
         <Route exact path="/" component={Login} />
         <PrivateRoute path="/main" component={Main} />
       </Switch>
-      </BrowserRouter>
+      </HashRouter>
   );
 }
 

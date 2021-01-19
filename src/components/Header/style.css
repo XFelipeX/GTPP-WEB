@@ -7,7 +7,7 @@
     margin: 0 auto;
 }
 
-.create-task{
+.left-area{
     width: 50%;
     display: flex;
     justify-content: space-between;

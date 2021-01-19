@@ -23,10 +23,10 @@ export const taskInfoOwner = (owner) => {
     }
 }
 
-export const sendInfoModal = (taskId,percent,description,initial_date,final_date,state_id,user_id,priority) => {
+export const sendInfoModal = (taskId,percent,description,initial_date,final_date,state_id,user_id,priority,notifications,warning) => {
     return {
         type:SENDINFOMODAL,
-        info: {task_id:taskId,percent:percent,description:description,initial_date:initial_date,final_date:final_date,state_id:state_id,user_id:user_id,priority:priority}
+        info: {task_id:taskId,percent:percent,description:description,initial_date:initial_date,final_date:final_date,state_id:state_id,user_id:user_id,priority:priority,notifications:notifications,warning:warning}
     }
 }   
 

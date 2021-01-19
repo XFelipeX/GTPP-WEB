@@ -26,6 +26,11 @@
   align-items: center;
 }
 
+.topicDescription label{
+  line-height: 1.4;
+  padding: .3em;
+}
+
 .orderTopic {
   /* margin-left: 12px; */
 }
@@ -46,6 +51,17 @@
   /* justify-items: center; */
 }
 
+@media only screen and (max-width:1366px){
+  .topic .topicLeft {
+    width: 23%;
+  }
+
+
+.topic > div:nth-child(2) {
+  width: 67%;
+}
+}
+
 .topic .topicLeft a {
   width: 25%;
 }
@@ -62,6 +78,7 @@
   width: 10%;
   display: flex;
   justify-content: flex-end;
+  align-items: center;
 }
 
 /* Modal histórico da tarefa */
@@ -79,15 +96,19 @@
 
 .modalHistoric > div {
   width: 350px;
-  height: 200px;
+  height: 400px;
   border: 1px solid black;
-  margin-bottom: 13em;
+  margin-bottom: 1em;
   background-color: #2b2b2b;
   border-radius: 10px;
 }
 
-.modalHistoricContent {
+@media only screen and (max-width:1366px){
+  .modalHistoric > div {
+    margin-bottom:-4em;
+  }
 }
+
 
 .modalHistoric button {
   background-color: transparent;
@@ -121,7 +142,7 @@
 
 .listHistoric {
   overflow: auto;
-  height: 150px;
+  height: 325px;
 }
 
 .modalHistoric .btnCloseHistoric {
@@ -147,9 +168,15 @@
   width: 350px;
   height: 200px;
   border: 1px solid black;
-  margin-bottom: 13em;
+  margin-bottom: 3em;
   background-color: #2b2b2b;
   border-radius: 10px;
+}
+
+@media only screen and (max-width:1366px){
+  .modalEdit > div {
+    margin-bottom: -3em;
+  }
 }
 
 .modalEdit button:last-child {
@@ -205,6 +232,12 @@
   overflow: auto;
 }
 
+@media only screen and (max-width:1366px){
+  #topicList{
+    height: 370px;
+  }
+}
+
 .taskTopicTop h1 {
   color: white;
   margin: 0 1em 0 0;
@@ -233,6 +266,7 @@
   color: white;
   padding: 5px;
   background-color: #4b4b4b;
+  border-radius: 25px;
 }
 
 .addTopic button {

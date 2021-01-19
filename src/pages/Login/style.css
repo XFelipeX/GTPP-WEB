@@ -86,9 +86,17 @@
 }
 
 .version{
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   position: absolute;
     right: 1em;
     bottom: 1em;
     color: white;
     font-size: 14px;
+}
+
+.version span{
+  padding: 3px;
 }

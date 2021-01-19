@@ -20,10 +20,13 @@ import modalUpdateReducer from "./modalUpdate/modalUpdateReducer";
 import topicUpdateReducer from "./topicUpdate/topicUpdateReducer";
 import userInfoReducer from "./userInfo/userInfoReducer";
 // import loadingScreenReducer from './loadingScreen/loadingScreenReducer';
-import taskUsersPhotos from './taskUsersPhotos/taskUsersPhotosReducer';
-import filterTasksReducer from './filterTasks/filterTasksReducer';
-import orderTasksReducer from './orderTasks/orderTasksReducer';
-import seeAdminReducer from './seeAdmin/seeAdminReducer';
+import taskUsersPhotos from "./taskUsersPhotos/taskUsersPhotosReducer";
+import filterTasksReducer from "./filterTasks/filterTasksReducer";
+import orderTasksReducer from "./orderTasks/orderTasksReducer";
+import seeAdminReducer from "./seeAdmin/seeAdminReducer";
+import webSocketReducer from "./webSocket/webSocketReducer";
+import stateAdminReducer from './adminStateUpdate/adminStateUpdateReducer';
+import warningReducer from './warning/warningReducer';
 
 const appReducer = combineReducers({
   permissions: userAuthReducer,
@@ -46,24 +49,27 @@ const appReducer = combineReducers({
   filterTask: filterTasksReducer,
   // loading: loadingScreenReducer,
   taskUsersPhotos,
-  orderTask : orderTasksReducer,
-  seeAdminSet : seeAdminReducer
+  orderTask: orderTasksReducer,
+  seeAdminSet: seeAdminReducer,
+  webSocket: webSocketReducer,
+  stateAdmin:stateAdminReducer,
+  warning:warningReducer
 });
 
 const rootReducer = (state, action) => {
-  if (action.type === 'LOGOFF') {
-    state = undefined
+  if (action.type === "LOGOFF") {
+    state = undefined;
   }
 
-  return appReducer(state, action)
-}
+  return appReducer(state, action);
+};
 
 const persistConfig = {
   key: "primary",
   storage,
 };
 
-const persistedReducer = persistReducer(persistConfig,rootReducer);
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = createStore(
   persistedReducer,

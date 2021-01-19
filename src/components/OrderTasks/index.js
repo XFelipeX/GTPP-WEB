@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 // import { updateTask } from "../../redux";
 import { BsFilterLeft } from "react-icons/bs";
 import { getTaskFilter, updateTask } from "../../redux";
+import { store } from "react-notifications-component";
 import "./style.css";
 
 let OrderTasks = () => {
@@ -43,27 +44,51 @@ let OrderTasks = () => {
 
     if (count === 1) {
       if (showAlert === true) {
-        alert("Ordenado por prioridade");
+        store.addNotification({
+          title: "Sucesso",
+          message: "Ordenado por prioridade",
+          type: "success",
+          container: "top-center",
+          insert: "top",
+          animationIn: ["animate__animated animate__fadeIn"],
+          animationOut: ["animate__animated animate__fadeOut"],
+          dismiss: {
+            duration: 2000,
+          },
+          width: 400,
+        });
         setShowAlert(false);
       }
-      filterDo = filterTask.filter((task) => task.priority == 0);
-      filterDoing = filterTask.filter((task) => task.priority == 1);
-      filterAnalyze = filterTask.filter((task) => task.priority == 2);
+      filterDo = filterTask.filter.filter((task) => task.priority == 0);
+      filterDoing = filterTask.filter.filter((task) => task.priority == 1);
+      filterAnalyze = filterTask.filter.filter((task) => task.priority == 2);
 
       finalFilter = [...filterDo, ...filterDoing, ...filterAnalyze];
     } else if (count === 2) {
       if (showAlert === true) {
-        alert("Ordenado por estado");
+        store.addNotification({
+          title: "Sucesso",
+          message: "Ordenado por estado",
+          type: "success",
+          container: "top-center",
+          insert: "top",
+          animationIn: ["animate__animated animate__fadeIn"],
+          animationOut: ["animate__animated animate__fadeOut"],
+          dismiss: {
+            duration: 2000,
+          },
+          width: 400,
+        });
         setShowAlert(false);
       }
 
-      filterDo = filterTask.filter((task) => task.state_id == 1);
-      filterDoing = filterTask.filter((task) => task.state_id == 2);
-      filterAnalyze = filterTask.filter((task) => task.state_id == 3);
-      filterStopped = filterTask.filter((task) => task.state_id == 4);
-      filterBlocked = filterTask.filter((task) => task.state_id == 5);
-      filterDone = filterTask.filter((task) => task.state_id == 6);
-      filterCanceled = filterTask.filter((task) => task.state_id == 7);
+      filterDo = filterTask.filter.filter((task) => task.state_id == 1);
+      filterDoing = filterTask.filter.filter((task) => task.state_id == 2);
+      filterAnalyze = filterTask.filter.filter((task) => task.state_id == 3);
+      filterStopped = filterTask.filter.filter((task) => task.state_id == 4);
+      filterBlocked = filterTask.filter.filter((task) => task.state_id == 5);
+      filterDone = filterTask.filter.filter((task) => task.state_id == 6);
+      filterCanceled = filterTask.filter.filter((task) => task.state_id == 7);
 
       finalFilter = [
         ...filterDo,
@@ -76,22 +101,46 @@ let OrderTasks = () => {
       ];
     } else if (count === 3) {
       if (showAlert === true) {
-        alert("Ordenado por descrição");
+        store.addNotification({
+          title: "Sucesso",
+          message: "Ordenado por descrição",
+          type: "success",
+          container: "top-center",
+          insert: "top",
+          animationIn: ["animate__animated animate__fadeIn"],
+          animationOut: ["animate__animated animate__fadeOut"],
+          dismiss: {
+            duration: 2000,
+          },
+          width: 400,
+        });
         setShowAlert(false);
       }
 
       // console.log(filterTask);
-      finalFilter = [...filterTask];
+      finalFilter = [...filterTask.filter];
       finalFilter.sort(function (a, b) {
         return a.description.localeCompare(b.description);
       });
     } else if (count === 4) {
       if (showAlert === true) {
-        alert("Ordenado por vencimento");
+        store.addNotification({
+          title: "Sucesso",
+          message: "Ordenado por vencimento",
+          type: "success",
+          container: "top-center",
+          insert: "top",
+          animationIn: ["animate__animated animate__fadeIn"],
+          animationOut: ["animate__animated animate__fadeOut"],
+          dismiss: {
+            duration: 2000,
+          },
+          width: 400,
+        });
         setShowAlert(false);
       }
 
-      finalFilter = [...filterTask];
+      finalFilter = [...filterTask.filter];
       finalFilter.sort(function (a, b) {
         return a.final_date.localeCompare(b.final_date);
       });
