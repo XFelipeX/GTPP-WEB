@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateModal, updateTask } from "../../redux";
+import { getTaskFilter, taskVisibleUpdate, updateModal, updateTask } from "../../redux";
 import api from "../../services/api";
 import "./style.css";
 // import ConfirmAction from "../ConfirmAction";
@@ -9,6 +9,7 @@ let ModalDescription = (props) => {
   const dispatch = useDispatch();
   const { permissions } = useSelector((state) => state);
   const { taskVisible } = useSelector((state) => state);
+  const { filterTask } = useSelector((state) => state);
   const [showConfirmDeleteTask, setShowConfirmDeleteTask] = useState(false);
   const [fullDescription, setFullDescription] = useState(props.description);
   const [fullDescBack, setFullDescBack] = useState(fullDescription);
@@ -28,6 +29,10 @@ let ModalDescription = (props) => {
         return null;
       }
 
+      // const filter = filterTask.filter(task => task.id !==taskId);
+      // dispatch(getTaskFilter(filter));
+      dispatch(taskVisibleUpdate());
+
       return data.data
     } catch (error) {
       console.log(error);
@@ -37,7 +42,7 @@ let ModalDescription = (props) => {
 
   return (
     <div className="modalDescription">
-      <div>
+      <div id="menuDescription">
         <ul className="menuDescription">
           <li>
             <h2>{props.question}</h2>
@@ -82,14 +87,17 @@ let ModalDescription = (props) => {
               Cancelar
             </button>
           </li>
-          {taskVisible.info.user_id === permissions.id ||
-          permissions.administrator === 1 ? (
+          {(taskVisible.info.user_id === permissions.id ||
+          permissions.administrator === 1) && props.showDelete===true ? (
             <li>
               <button
                 className="btnDeleteTask"
-                onClick={() => setShowConfirmDeleteTask(true)}
+                onClick={() => {
+                  document.getElementById('menuDescription').style.display = 'none';
+                  setShowConfirmDeleteTask(true)
+                }}
               >
-                Deletar Tarefa
+                Apagar
               </button>
             </li>
           ) : (
@@ -109,7 +117,9 @@ let ModalDescription = (props) => {
                   }
                 })
               }}>Confirmar</button>
-              <button type="button" onClick={() => setShowConfirmDeleteTask(false)}>Cancelar</button>
+              <button type="button" onClick={() => {
+                props.setShowDesc(false);
+                setShowConfirmDeleteTask(false)}}>Cancelar</button>
             </div>
           </div>
         ) : null}
