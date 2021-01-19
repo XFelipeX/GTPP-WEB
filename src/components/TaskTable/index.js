@@ -9,7 +9,7 @@ import {
   loadTaskStates,
   loadCompanies,
   loadShop,
-  loadDept
+  loadDept,
 } from "./functions";
 import {
   getStates,
@@ -23,9 +23,11 @@ import {
 } from "../../redux";
 import Loading from "../Loading";
 
-const TaskTable = () => {
+const TaskTable = (props) => {
   const { permissions } = useSelector((state) => state);
   const { filterTask } = useSelector((state) => state);
+  const { stateAdmin } = useSelector((state) => state);
+  const { seeAdminSet } = useSelector((state) => state);
   const AUTH = permissions.session;
   const { stateUpdate } = useSelector((state) => state);
   const { visionMenu } = useSelector((state) => state);
@@ -42,7 +44,7 @@ const TaskTable = () => {
   useEffect(() => {
     loadTask(visionMenu, AUTH).then((response) => {
       if (response.error === true) {
-        alert("error");
+        // alert(response.error);
       } else {
         // setTasks(response.data);
         try {
@@ -53,18 +55,29 @@ const TaskTable = () => {
     });
   }, [stateUpdate]);
 
-  // const [connection,setConnection] = useState();
-
-
-
   useEffect(() => {
-    // setConnection();
-    // console.log(connection);
-  },[])
+    async function loadAllTasks() {
+      const AUTH = permissions.session;
 
+      try {
+        const { data } = await api.get(
+          "GTPP/Task.php?AUTH=" + AUTH + "&app_id=3&administrator=1"
+        );
 
- 
+        if (data.error === true) {
+          return null;
+        }
 
+        return data.data;
+      } catch (error) {
+        return null;
+      }
+    }
+    if (seeAdminSet === true) {
+     
+      loadAllTasks().then((response) => dispatch(getTask(response)));
+    }
+  }, [stateAdmin]);
 
   function taskFilter() {
     let filter = tasks.filter(
@@ -75,13 +88,33 @@ const TaskTable = () => {
         task.state_id == 4 ||
         task.state_id == 5
     );
+
+    // console.log(filter)
     dispatch(getTaskFilter(filter));
   }
 
   useEffect(() => {
+    tasks.map(
+      (task) =>
+        (task.notifications = [
+          { type: "messages", amount: 0, message: "" },
+          { type: "priority", amount: 0, message: "" },
+          { type: "state", amount: 0, message: "" },
+          { type: "description", amount: 0, message: "" },
+          { type: "itens", amount: 0, message: "" },
+          { type: "users", amount: 0, message: "" },
+          { amount: 0 },
+        ],
+        task.warning = { expire: 0, due_date: 0, initial: 0 })
+        
+        
+    );
     // console.log(filterTask.length)
-    if (filterTask.length == 0) taskFilter();
+    if (filterTask.filter.length == 0) {
+      taskFilter();
+    }
   }, [tasks]);
+
 
   useEffect(() => {
     loadCompanies(AUTH).then((response) => {
@@ -132,8 +165,6 @@ const TaskTable = () => {
       }
     });
   }, []);
-
-  
 
   async function loadVinculateUsers() {
     // const AUTH = permissions.session;
@@ -221,15 +252,17 @@ const TaskTable = () => {
     }
   }
 
-  // console.log(filterTask)
+  // console.log(filterTask);
 
   return loading == true ? (
     <Loading />
   ) : (
     <ul className="taskList">
       {/* {tasks ? tasks.map((task) => <Task task={task} key={task.id} />) : null} */}
-      {filterTask
-        ? filterTask.map((task) => <Task task={task} key={task.id} />)
+      {filterTask.filter
+        ? filterTask.filter.map((task) => (
+            <Task websocket={props} task={task} key={task.id} />
+          ))
         : null}
     </ul>
   );

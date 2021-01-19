@@ -1,5 +1,23 @@
 import api from "../../services/api";
+import { store } from "react-notifications-component";
 // import Task from '../Task';
+
+
+export function showNotification(title, message, type) {
+  store.addNotification({
+    title: title,
+    message: message,
+    type: type,
+    container: "top-center",
+    insert: "top",
+    animationIn: ["animate__animated animate__fadeIn"],
+    animationOut: ["animate__animated animate__fadeOut"],
+    dismiss: {
+      duration: 2000,
+    },
+    width: 400,
+  });
+}
 
 export const loadTask = async (order, auth) => {
   const AUTH = auth;
@@ -8,7 +26,20 @@ export const loadTask = async (order, auth) => {
     const { data } = await api.get("GTPP/Task.php", {
       params: { AUTH: AUTH, col: 1, order: "asc", app_id: 3 },
     });
-    // console.log(data)
+
+    if(data.error===true){
+      let msg = data.message;
+
+      if(msg.includes('No data')){
+        showNotification('Aviso','Você ainda não possui tarefas','warning');
+      }else if(msg.includes('Authorization denied')){
+        showNotification('Erro','Autorização negada','danger');
+      }
+      
+      else{
+        showNotification('Erro',msg,'danger');
+      }
+    }
     return data;
   } catch (error) {
     return [{}];
@@ -21,7 +52,19 @@ export const loadTaskStates = async (auth) => {
     const { data } = await api.get("GTPP/TaskState.php", {
       params: { AUTH: AUTH, app_id: 3 },
     });
-    // console.log(data)
+    if(data.error===true){
+      let msg = data.message;
+
+      if(msg.includes('No data')){
+        showNotification('Aviso','Você ainda não possui tarefas','warning');
+      }else if(msg.includes('Authorization denied')){
+        showNotification('Erro','Autorização negada','danger');
+      }
+      
+      else{
+        showNotification('Erro',msg,'danger');
+      }
+    }
     return data;
   } catch (error) {
     return [{}];
@@ -38,6 +81,20 @@ export const loadUserImages = async (id, auth) => {
       "http://192.168.0.99:71/GLOBAL/Controller/CCPP/EmployeePhoto.php",
       { params: { AUTH: AUTH, id: id, app_id: 3 } }
     );
+
+    if(data.error===true){
+      let msg = data.message;
+
+      if(msg.includes('No data')){
+        showNotification('Aviso','Você ainda não possui tarefas','warning');
+      }else if(msg.includes('Authorization denied')){
+        showNotification('Erro','Autorização negada','danger');
+      }
+      
+      else{
+        showNotification('Erro',msg,'danger');
+      }
+    }
     return data;
   } catch (error) {
     console.log(error);
@@ -62,7 +119,19 @@ export const loadCompanies = async (auth) => {
     const { data } = await api.get("CCPP/Company.php", {
       params: { AUTH: AUTH, app_id: 3 },
     });
-    //console.log(data);
+    if(data.error===true){
+      let msg = data.message;
+
+      if(msg.includes('No data')){
+        showNotification('Aviso','Você ainda não possui tarefas','warning');
+      }else if(msg.includes('Authorization denied')){
+        showNotification('Erro','Autorização negada','danger');
+      }
+      
+      else{
+        showNotification('Erro',msg,'danger');
+      }
+    };
     return data;
   } catch (error) {
     return [{}];
@@ -76,7 +145,19 @@ export const loadShop = async (auth) => {
     const { data } = await api.get("CCPP/Shop.php", {
       params: { AUTH: AUTH, app_id: 3 },
     });
-    // console.log(data);
+    if(data.error===true){
+      let msg = data.message;
+
+      if(msg.includes('No data')){
+        showNotification('Aviso','Você ainda não possui tarefas','warning');
+      }else if(msg.includes('Authorization denied')){
+        showNotification('Erro','Autorização negada','danger');
+      }
+      
+      else{
+        showNotification('Erro',msg,'danger');
+      }
+    }
     return data;
   } catch (error) {
     return [{}];
@@ -90,97 +171,22 @@ export const loadDept = async (auth) => {
     const { data } = await api.get("CCPP/Department.php", {
       params: { AUTH: AUTH, app_id: 3 },
     });
-    // console.log(data);
+    if(data.error===true){
+      let msg = data.message;
+
+      if(msg.includes('No data')){
+        showNotification('Aviso','Você ainda não possui tarefas','warning');
+      }else if(msg.includes('Authorization denied')){
+        showNotification('Erro','Autorização negada','danger');
+      }
+      
+      else{
+        showNotification('Erro',msg,'danger');
+      }
+    }
     return data;
   } catch (error) {
     return [{}];
   }
 };
 
-// export function Connect(auth) {
-//   let connection;
-//   let ws;
-//   let isConnected = false;
-//   let time_out;
-
-//   function Ping() {
-//     if (!isConnected) {
-//       return;
-//     }
-//     ws.send("__ping__");
-//     time_out = setTimeout(function () {
-//       // connection.innerText = "Sem conexão";
-//       // connection.style.color = "red";
-//       // status.style.background = "red";
-//     }, 5000);
-//   }
-
-//   //Pong para cancel o TimeOut que estava aguardando no Ping
-//   function Pong() {
-//     clearTimeout(time_out);
-//   }
-//   try {
-//     ws = new WebSocket("ws://192.168.0.99:3333");
-//     //ws = new WebSocket('ws://187.35.128.157:3333');
-
-//     ws.onopen = function () {
-//       // connection.innerText = "Connectado";
-//       // connection.style.color = "green";
-//       // status.style.background = "green";
-
-//       //Autenticar o usuário
-//       // console.log('conexão aberta')
-//       connection = "conexão aberta";
-//       let jsonString = {
-//         auth: auth,
-//         app_id: 3,
-//       };
-//       ws.send(JSON.stringify(jsonString));
-
-//       //Enviar um ping para o servidor a cada 10 segundos
-//       setInterval(Ping, 10000);
-//       isConnected = true;
-//     };
-
-//     ws.onerror = function (ev) {
-//       // connection.innerText = "Erro: " + ev.data;
-//       // connection.style.color = "yellow";
-//       // status.style.background = "yellow";
-//       // console.log('error')
-//       connection = "erro de conexão";
-//     };
-
-//     ws.onclose = function () {
-//       // connection.innerText = "Desconectado";
-//       // connection.style.color = "red";
-
-//       // status.style.background = "red";
-
-//       // console.log('conexão fechada')
-//       connection = "conexão fechada";
-
-//       //Tentar reconectar o WebSocket a cada 1 segundo
-//       setTimeout(function () {
-//         Connect();
-//       }, 1000);
-//       // isConnected = false;
-//     };
-
-//     ws.onmessage = function (ev) {
-//       //Ao receber o pong do servidor, cancela o TimeOut
-//       if (ev.data.toString() === "__pong__") {
-//         Pong();
-//         return;
-//       }
-//       let response = JSON.parse(ev.data);
-
-//       //Ao receber mensagem que não seja pong
-//       // SetMessage(response);
-//     };
-
-    
-//   } catch (error) {
-//     // connection.innerText = error;
-    
-//   }
-// }
