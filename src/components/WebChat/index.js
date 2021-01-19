@@ -1,8 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "./style.css";
+import { AiOutlineClose } from "react-icons/ai";
+import { IoMdSend } from "react-icons/io";
+import { getWebSocketState, getWebSocketHistoric } from "../../redux";
+import { getMessage } from "./functions";
 
-function WebChat() {
+function WebChat({ close }) {
   useEffect(() => {
     let chat = document.getElementById("chat");
     chat.classList.add("chat");
@@ -10,227 +14,201 @@ function WebChat() {
 
   const { taskVisible } = useSelector((state) => state);
   const { permissions } = useSelector((state) => state);
+  const dispatch = useDispatch();
+  const { webSocket } = useSelector((state) => state);
+  const [msg, setMsg] = useState("");
+  const [messages, setMessages] = useState([]);
+  // const {permissions} = useSelector(state => state);
+  const AUTH = permissions.session;
 
-  //Para mostrar as mensagens recebidas
-//   const output = document.querySelector("output");
+  // console.log(websocket.websocket);
+  // console.log(webSocket)
 
-//   //Constantes que devem ser obtidas pelo login
-//   const task_id = taskVisible.info.task_id;
-//   const user_id = permissions.id;
-//   const auth = permissions.session;
+  useEffect(() => {
+    const mainChat = document.getElementById("mainChat");
+    setTimeout(() => {
+      setMessages(webSocket.historic);
+      mainChat.scrollTop = 100000000;
+    }, 500);
+  }, [messages]);
+  // useEffect(() => {
+  //   getMessage(AUTH,250)
+  // },[])
 
-//   const text_box_message = document.getElementById("message");
-//   const button_send = document.getElementById("send");
+  function formatDate(dateFormat) {
+    // date of database
+    let info = dateFormat.split(" ");
+    let date = info[0].split("-");
+    let hour = info[1];
+    date = date[2] + "/" + date[1] + "/" + date[0];
 
-//   //Display de conexão
-//   const connection = document.getElementById("connection");
-//   console.log(connection)
-//   const status = document.getElementById("status");
-// //   connection.style.color = "yellow";
-//   status.style.background = "yellow";
-//   let isConnected = false;
+    //verify if today is same day of database
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, "0");
+    var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+    var yyyy = today.getFullYear();
+    today = dd + "/" + mm + "/" + yyyy;
 
-//   const ip = document.getElementById("ip");
-//   ip.innerText = "External";
+    if (date === today) {
+      return hour;
+    } else {
+      return date;
+    }
+  }
 
-//   //Para instanciar o WebSocket
-//   let ws;
-//   //TimeOut para verificar se a conexão está OK
-//   let time_out;
+  function SetMessage(response) {
+    const taskId = response.task_id;
 
-//   //Envio da mensagem por 'enter' ou pelo botão de enviar
-//   text_box_message.addEventListener("keypress", (e) => {
-//     if (e.key === "Enter") {
-//       if (Verify()) {
-//         SendMessage();
-//       }
-//     }
-//   });
-//   button_send.onclick = function () {
-//     if (Verify()) {
-//       SendMessage();
-//     }
-//   };
+    if (taskId != taskVisible.info.task_id) {
+      return;
+    }
 
-//   //Para criar todas as dependencias do WebSocket e conectar
-//   function Connect() {
-//     try {
-//       ws = new WebSocket("ws://192.168.0.99:3333");
-//       //ws = new WebSocket('ws://187.35.128.157:3333');
+    const output = document.getElementById("mainChat");
+    // console.log(response);
+    let error = response.error;
+    if (error) {
+      dispatch(getWebSocketState("error"));
+      return;
+    }
 
-//       ws.onopen = function () {
-//         connection.innerText = "Connectado";
-//         connection.style.color = "green";
-//         status.style.background = "green";
+    let uid = response.user_id;
+    let user = response.user_name;
+    let message = response.message.description;
+    let nowResponse = response.date_time;
 
-//         //Autenticar o usuário
-//         let jsonString = {
-//           auth: auth,
-//           app_id: 1,
-//         };
-//         ws.send(JSON.stringify(jsonString));
+    const box = document.createElement("div");
+    const author = document.createElement("span");
+    const messageArea = document.createElement("span");
+    const dateArea = document.createElement("h1");
 
-//         //Enviar um ping para o servidor a cada 10 segundos
-//         setInterval(Ping, 10000);
-//         isConnected = true;
-//       };
+    dateArea.textContent = formatDate(nowResponse);
 
-//       ws.onerror = function (ev) {
-//         connection.innerText = "Erro: " + ev.data;
-//         connection.style.color = "yellow";
+    //Para mostrar a mensagem do usuário que enviou marcando em azul
+    if (uid == permissions.id) {
+      author.textContent = "Eu";
+      author.setAttribute("class", "authorRight");
+      messageArea.textContent = message;
+      dateArea.setAttribute("class", "dateTextRight");
+      messageArea.setAttribute("class", "textRight");
+      box.setAttribute("class", "boxRight");
+    }
+    //Para mostrar as mensagens de outro usuários
+    else {
+      author.textContent = user;
+      author.setAttribute("class", "authorLeft");
+      messageArea.textContent = message;
+      dateArea.setAttribute("class", "dateTextLeft");
+      messageArea.setAttribute("class", "textLeft");
+      box.setAttribute("class", "boxLeft");
+    }
 
-//         status.style.background = "yellow";
-//       };
+    box.append(author);
+    box.append(messageArea);
+    box.append(dateArea);
+    output.append(box);
+    output.scrollTop = 100000000;
+  }
 
-//       ws.onclose = function () {
-//         connection.innerText = "Desconectado";
-//         connection.style.color = "red";
+  function SendMessage(msg) {
+    if (msg !== "" && webSocket.websocketState === "connected") {
+      try {
+        let jsonString = {
+          task_id: taskVisible.info.task_id,
+          message: msg,
+          date_time: null,
+          user_id: permissions.id,
+          type: 1,
+        };
+        webSocket.websocket.send(JSON.stringify(jsonString));
 
-//         status.style.background = "red";
+        // console.log(jsonString);
 
-//         //Tentar reconectar o WebSocket a cada 1 segundo
-//         setTimeout(function () {
-//           Connect();
-//         }, 1000);
-//         isConnected = false;
-//       };
+        setMsg("");
+      } catch (error) {
+        alert(error);
+      }
+    }
+  }
 
-//       ws.onmessage = function (ev) {
-//         //Ao receber o pong do servidor, cancela o TimeOut
-//         if (ev.data.toString() === "__pong__") {
-//           Pong();
-//           return;
-//         }
-//         let response = JSON.parse(ev.data);
+  useEffect(() => {
+    // console.log(webSocket)
+    if (webSocket.message !== "" && webSocket.message && webSocket.message.type===1) {
+      SetMessage(webSocket.message);
+    }
+  }, [webSocket.message]);
 
-//         //Ao receber mensagem que não seja pong
-//         SetMessage(response);
-//       };
-//     } catch (error) {
-//       connection.innerText = error;
-//     }
-//   }
-//   Connect();
-
-//   //Formatar JSON e enviar mensagem
-//   function SendMessage() {
-//     try {
-//       let jsonString = {
-//         task_id: task_id.value,
-//         message: text_box_message.value,
-//         date_time: null,
-//       };
-//       ws.send(JSON.stringify(jsonString));
-
-//       text_box_message.value = "";
-//     } catch (error) {
-//       alert(error);
-//     }
-//   }
-
-//   //Verificar campos obrigatórios
-//   function Verify() {
-//     if (task_id.value === "") {
-//       alert("Insira o ID da tarefa");
-//       return false;
-//     }
-//     if (text_box_message.value === "") {
-//       alert("Insira uma mensagem");
-//       return false;
-//     }
-//     return true;
-//   }
-
-//   //Inserir no output as mensagens recebidas
-//   function SetMessage(response) {
-//     let error = response.error;
-//     if (error) {
-//       connection.innerText = response.message;
-//       connection.style.color = "yellow";
-
-//       status.style.background = "yellow";
-//       return;
-//     }
-//     connection.innerText = "Conectado";
-//     connection.style.color = "green";
-
-//     status.style.background = "green";
-
-//     let uid = response.user_id;
-//     let user = response.user_name;
-//     let message = response.message;
-//     let date = response.date_time;
-
-//     const div1 = document.createElement("div");
-//     const div2 = document.createElement("div");
-//     const div3 = document.createElement("div");
-
-//     div1.style.color = "#ffffff";
-//     div2.style.color = "#ffffff";
-//     div2.textContent = date;
-
-//     //Para mostrar a mensagem do usuário que enviou marcando em azul
-//     if (user_id === uid) {
-//       div1.textContent = "Eu : " + message;
-//       div1.style.backgroundColor = "#0c71e0";
-//       div2.style.backgroundColor = "#0c71e0";
-//     }
-//     //Para mostrar as mensagens de outro usuários
-//     else {
-//       div1.textContent = user + ": " + message;
-//       div1.style.backgroundColor = "#333333";
-//       div2.style.backgroundColor = "#333333";
-//     }
-
-//     div3.textContent = "space here";
-//     div3.style.color = "#111111";
-
-//     output.append(div1);
-//     output.append(div2);
-//     output.append(div3);
-//   }
-
-//   //Ping do TimeOut que aguarda 5 segundos antes de mostrar a falta de conexão
-//   function Ping() {
-//     if (!isConnected) {
-//       return;
-//     }
-//     ws.send("__ping__");
-//     time_out = setTimeout(function () {
-//       connection.innerText = "Sem conexão";
-//       connection.style.color = "red";
-
-//       status.style.background = "red";
-//     }, 5000);
-//   }
-
-//   //Pong para cancel o TimeOut que estava aguardando no Ping
-//   function Pong() {
-//     clearTimeout(time_out);
-//   }
+  useEffect(() => {
+    if (webSocket.historic) {
+      webSocket.historic.map((historic) => {
+        historic.task_id = taskVisible.info.task_id;
+      });
+    }
+  }, [webSocket.historic]);
 
   return (
     <div id="chat">
-     {/* <label id="connection"></label> */}
+      {/* <label id="connection"></label> */}
       <div className="headerChat">
-        {" "}
-        {/* <canvas
-          id="status"
-          width="20"
-          height="20"
-          style="border:1px solid"
-        ></canvas> */}
-       
+        <div
+          className="status"
+          style={
+            webSocket.websocketState === "connected"
+              ? { backgroundColor: "green" }
+              : webSocket.websocketState === "error"
+              ? { backgroundColor: "red" }
+              : webSocket.websocketState === "tryload"
+              ? { backgroundColor: " yellow" }
+              : null
+          }
+        ></div>
+        <div
+          onClick={() => {
+            close();
+            setTimeout(() => {
+              document.getElementById("openChat").style.display = "block";
+            }, 100);
+            dispatch(getWebSocketHistoric([]));
+          }}
+        >
+          <AiOutlineClose size={25} color="red" />
+        </div>
       </div>
-      <div className="mainChat">
-        <output></output>
+      <div className="mainChat" id="mainChat" onLoad={() => {}}>
+        {messages &&
+          messages.map((message) =>
+            message.user_id === permissions.id ? (
+              <div className="boxRight" key={message.id}>
+                <span className="authorRight">Eu</span>
+                <h1 className="textRight">{message.description}</h1>
+                <span className="dateTextRight">
+                  {formatDate(message.date_time)}
+                </span>
+              </div>
+            ) : (
+              <div className="boxLeft" key={message.id}>
+                <span className="authorLeft">{message.user_name}</span>
+                <h1 className="textLeft">{message.description}</h1>
+                <span className="dateTextLeft">
+                  {formatDate(message.date_time)}
+                </span>
+              </div>
+            )
+          )}
       </div>
       <div className="footerChat">
         <div>
-          <input type="text" />
-        </div>
-        <div>
-          <button type="button">Enviar</button>
+          <input
+            autoFocus
+            type="text"
+            id="msg"
+            placeholder="Escreva sua mensagem"
+            value={msg}
+            onKeyPress={(e) => (e.key === "Enter" ? SendMessage(msg) : null)}
+            onChange={(e) => setMsg(e.target.value)}
+          />
+          <button type="button" onClick={() => SendMessage(msg)}>
+            <IoMdSend size={50} color="#ccc" />
+          </button>
         </div>
       </div>
     </div>
