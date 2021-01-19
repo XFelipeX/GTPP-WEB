@@ -4,20 +4,32 @@ import { logOff } from '../../redux/userAuth/userAuthActions';
 import {useHistory} from 'react-router-dom';
 import {BiExit} from 'react-icons/bi';
 import ConfirmAction from '../ConfirmAction';
+import {useSelector} from 'react-redux';
 
 import './style.css'
 // import { rgba } from "polished";
 
 const ButtonLogoff = () => {
   const [showConfirmAction,setShowConfirmAction] = useState();
+  const {webSocket} = useSelector(state => state);
   const history = useHistory();
   let dispatch = useDispatch();
 
+  // console.log(webSocket.websocket);
+
   function UserLogoff() {
     sessionStorage.removeItem('token');
+ 
+      // console.log("conexão destruida")
+      webSocket.websocket.close();
+
     dispatch(logOff());
     history.push("/");
   }
+
+  // useEffect(() => {
+
+  // },[webSocket])
 
   return (
     <div>
