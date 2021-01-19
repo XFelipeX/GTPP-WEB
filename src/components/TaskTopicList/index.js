@@ -18,14 +18,21 @@ import {
   takeHistoricTask,
   nextOrPreviousTopic,
   changeYesNoTopic,
+  showNotification,
 } from "./functions";
-import { getTaskFilter, updateModal, updateTask, updateTopic } from "../../redux";
+import {
+  getTaskFilter,
+  updateModal,
+  updateTask,
+  updateTopic,
+} from "../../redux";
 import "./style.css";
 
 const TaskTopicList = ({ id = "modalEdit" }) => {
   const { topicUpdate } = useSelector((state) => state);
   const { taskVisible } = useSelector((state) => state);
   const { tasks } = useSelector((state) => state);
+  const { webSocket } = useSelector((state) => state);
   const { permissions } = useSelector((state) => state);
   const AUTH = permissions.session;
   const { modalUpdate } = useSelector((state) => state);
@@ -40,25 +47,12 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   const [orderItem, setOrderItem] = useState(false);
   const [itemEdit, setItemEdit] = useState();
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
-  let itemDelete = {};
+  // let itemDelete = {};
   const dispatch = useDispatch();
 
   // const[loadItems,setLoadItems] = useState(false);
 
-  async function loadTaskItems() {
-    // const AUTH = sessionStorage.getItem("token");
-    try {
-      const { data } = await api.get("GTPP/TaskItem.php", {
-        params: { AUTH: AUTH, app_id: 3, task_id: taskVisible.info.task_id },
-      });
-      // console.log(data)
-
-      return data;
-    } catch (error) {
-      // console.log(error);
-      return [{}];
-    }
-  }
+ 
 
   // useEffect(() => {
   //   setTaskItem(taskVisible.task_item);
@@ -77,17 +71,22 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
 
     changeItemChecked(taskId, itemId, check, AUTH).then((response) => {
       if (response != null) {
+        if(e===true){
+          SendInfo("Um item foi desmarcado");
+        }else{
+          SendInfo("Um item foi marcado");
+        }
         taskVisible.info.percent = response.percent;
         taskVisible.info.state_id = response.state_id;
 
         let changes = [...tasks];
 
-        changes = changes.map(task => {
-          if(task.id===taskVisible.info.task_id){
+        changes = changes.map((task) => {
+          if (task.id === taskVisible.info.task_id) {
             task.percent = response.percent;
             task.state_id = response.state_id;
           }
-        })
+        });
         dispatch(updateTopic());
         // dispatch(getTaskFilter([...changes]));
       }
@@ -100,6 +99,21 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   const [showBottom, setShowBottom] = useState(false);
 
   useEffect(() => {
+    async function loadTaskItems() {
+      // const AUTH = sessionStorage.getItem("token");
+      try {
+        const { data } = await api.get("GTPP/TaskItem.php", {
+          params: { AUTH: AUTH, app_id: 3, task_id: taskVisible.info.task_id },
+        });
+        // console.log(data)
+  
+        return data;
+      } catch (error) {
+        // console.log(error);
+        return [{}];
+      }
+    }
+
     loadTaskItems().then((response) => {
       // console.log(response)
       if (response.error == false) {
@@ -111,33 +125,73 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   }, [topicUpdate, modalUpdate]);
 
   useEffect(() => {
+    const handleClick = () => {
+      if (ref.current)
+        ref.current.scrollIntoView(true, {
+          behavior: "smooth",
+          block: "end",
+        });
+    };
     handleClick();
   }, [showBottom]);
 
+  function SendInfo(msg) {
+    // alert("fsdf")
+    if (msg !== "" && webSocket.websocketState === "connected") {
+      try {
+        let jsonString = {
+          task_id: taskVisible.info.task_id,
+          message: {description:msg,task_id:taskVisible.info.task_id},
+          date_time: null,
+          user_id: Number(permissions.id),
+          type: 2,
+        };
+        webSocket.websocket.send(JSON.stringify(jsonString));
+
+        // console.log(jsonString);
+
+      } catch (error) {
+        alert(error);
+      }
+    }
+  }
+
   function addNewItem(taskId, description) {
     if (taskVisible.info.state_id == 5 || taskVisible.info.state_id == 4) {
-      alert("A tarefa foi bloqueada!");
+      showNotification(
+        "Aviso",
+        "Tarefa neste estado não pode ser modificada",
+        "warning"
+      );
       setNewItem("");
     } else if (taskVisible.state_id == 6) {
-      alert(
-        "Tarefa finalizada! clique no estado atual da tarefa para ativar novamente."
+      showNotification(
+        "Aviso",
+        "Tarefa finalizada! clique no estado atual da tarefa para ativar novamente",
+        "warning"
       );
     } else {
       if (description !== "") {
+       
         addItem(taskId, description, AUTH)
           .then((response) => {
+            // console.log(response);
             if (response != null) {
+              SendInfo("Novo item adicionado");
               taskVisible.info.percent = response.percent;
               taskVisible.info.state_id = response.state_id;
               dispatch(updateTopic());
               dispatch(updateModal());
+              
 
               setTimeout(() => {
                 setShowBottom(!showBottom);
               }, 500);
+
+              
             }
           })
-          .finally();
+         ;
         setNewItem("");
       }
     }
@@ -156,15 +210,22 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   function deleteItemTopic(taskId, itemId) {
     // e.preventDefault();
     if (taskVisible.info.state_id == 5 || taskVisible.info.state_id == 4) {
-      alert("A tarefa foi bloqueada!");
+      showNotification(
+        "Aviso",
+        "Tarefa neste estado não pode ser modificada",
+        "warning"
+      );
     } else if (taskVisible.info.state_id == 6) {
-      alert(
-        "Tarefa finalizada! clique no estado atual da tarefa para ativar novamente."
+      showNotification(
+        "Aviso",
+        "Tarefa finalizada! clique no estado atual da tarefa para ativar novamente",
+        "warning"
       );
     } else {
       deleteItem(taskId, itemId, AUTH)
         .then((response) => {
           if (response != null) {
+            SendInfo("Um item foi removido");
             taskVisible.info.percent = response.percent;
             taskVisible.info.state_id = response.state_id;
 
@@ -178,15 +239,22 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
 
   function updateTopicItem(itemId, description, taskId) {
     if (taskVisible.info.state_id == 5 || taskVisible.info.state_id == 4) {
-      alert("A tarefa foi bloqueada!");
+      showNotification(
+        "Aviso",
+        "Tarefa neste estado não pode ser modificada",
+        "warning"
+      );
     } else if (taskVisible.info.state_id == 6) {
-      alert(
-        "Tarefa finalizada! clique no estado atual da tarefa para ativar novamente."
+      showNotification(
+        "Aviso",
+        "Tarefa finalizada! clique no estado atual da tarefa para ativar novamente",
+        "warning"
       );
     } else {
       updateTopicDescription(itemId, description, taskId, AUTH).then(
         (response) => {
           if (response != null) {
+            SendInfo("Um item foi atualizado");
             dispatch(updateModal());
             dispatch(updateTopic());
           }
@@ -247,13 +315,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
     });
   }
 
-  const handleClick = () => {
-    if (ref.current)
-      ref.current.scrollIntoView(true, {
-        behavior: "smooth",
-        block: "end",
-      });
-  };
+ 
 
   const ref = React.createRef();
 
@@ -587,8 +649,10 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                                   setIdItem(item.id),
                                   setShowConfirmDelete(true))
                                 : (e.preventDefault(),
-                                  alert(
-                                    "Somente o criador da tarefa ou administrador pode fazer isto!"
+                                  showNotification(
+                                    "Aviso",
+                                    "Somente o criador da tarefa ou administrador pode fazer isto",
+                                    "warning"
                                   ))
                             }
                           >
@@ -605,8 +669,10 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                                 setIdItem(item.id),
                                 setShowConfirmDelete(true))
                               : (e.preventDefault(),
-                                alert(
-                                  "Somente o criador da tarefa ou administrador pode fazer isto!"
+                                showNotification(
+                                  "Aviso",
+                                  "Somente o criador da tarefa ou administrador pode fazer isto",
+                                  "warning"
                                 ))
                           }
                         >
@@ -624,10 +690,14 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
       <div className="addTopic">
         <label>Add item</label>
         <input
+          autoFocus
           type="text"
           size="10"
           name="newItem"
           value={newItem}
+          onKeyPress={(e) =>
+            e.key === "Enter" && addNewItem(taskVisible.info.task_id, newItem)
+          }
           onChange={(e) => setNewItem(e.target.value)}
         />
 
@@ -647,7 +717,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
           question="Tem certeza que deseja excluir este item"
           action={() => {
             deleteItemTopic(taskVisible.info.task_id, idItem);
-            setShowConfirmDelete(false)
+            setShowConfirmDelete(false);
           }}
           cancelAction={() => setShowConfirmDelete(false)}
         />
