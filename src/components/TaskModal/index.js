@@ -26,21 +26,25 @@ let TaskModal = ({ id = "modal", close, open }) => {
   const { permissions } = useSelector((state) => state);
   const { webSocket } = useSelector((state) => state);
   const { warning } = useSelector((state) => state);
-  const { modalUpdate } = useSelector((state) => state);
-  const { stateUpdate } = useSelector((state) => state);
-  const { stateAdmin } = useSelector((state) => state);
+  // const { modalUpdate } = useSelector((state) => state);
+  // const { stateUpdate } = useSelector((state) => state);
+  // const { stateAdmin } = useSelector((state) => state);
   const AUTH = permissions.session;
   const [description, setDescription] = useState(taskVisible.info.description);
   const [showDesc, setShowDesc] = useState(false);
   const [showWebChat, setShowWebChat] = useState(false);
 
-  // console.log(taskVisible)
+  // console.log(taskVisible);
+
+  useEffect(() => {
+    setDescription(taskVisible.info.description);
+  },[taskVisible.info.description])
 
   function upDescription(taskId, description, priority) {
     updateDescription(taskId, description, priority, AUTH).then((response) => {
       if (response !== null) {
         setDescription(description);
-        SendInfo("A descrição simples da tarefa foi atualizada",description);
+        SendInfo("A descrição simples da tarefa foi atualizada", description);
       }
     });
     setShowDesc(false);
@@ -58,13 +62,17 @@ let TaskModal = ({ id = "modal", close, open }) => {
     // dispatch(getTaskFilter([...changes]));
   }
 
-  function SendInfo(msg,update) {
+  function SendInfo(msg, update) {
     // alert("teste")
     if (msg !== "" && webSocket.websocketState === "connected") {
       try {
         let jsonString = {
           task_id: taskVisible.info.task_id,
-          message: {description:msg,task_id:taskVisible.info.task_id,update:update},
+          object: {
+            description: msg,
+            task_id: taskVisible.info.task_id,
+            update: update,
+          },
           date_time: null,
           user_id: Number(permissions.id),
           type: 3,
@@ -84,6 +92,7 @@ let TaskModal = ({ id = "modal", close, open }) => {
     if (e.target.id === id) {
       dispatch(taskVisibleUpdate());
       close();
+      setShowWebChat(false);
     }
   };
 
@@ -110,19 +119,23 @@ let TaskModal = ({ id = "modal", close, open }) => {
   useEffect(() => {
     // console.log('verificando')
     function verifyWarning() {
-      let task = warning.warning.filter(task => task.task_id == taskVisible.info.task_id);
+      let task = warning.warning.filter(
+        (task) => task.task_id == taskVisible.info.task_id
+      );
       // console.log(task);
-      if (warning.warning.length>0) {
-        const due_date = task[task.length-1].due_date;
-        const expire = task[task.length-1].expire;
-        const initial = task[task.length-1].initial;
+      if (warning.warning.length > 0) {
+        const due_date = task[task.length - 1].due_date;
+        const expire = task[task.length - 1].expire;
+        const initial = task[task.length - 1].initial;
 
         // console.log(warning);
 
-        if (due_date > 0) {
-          if (due_date === 1) {
+        if (due_date > -1) {
+          if (due_date === 0) {
             setWarningState("A tarefa vence hoje");
-          } else {
+          } else if (due_date===1){
+            setWarningState("A tarefa venceu há " + due_date + " dia");
+          }else{
             setWarningState("A tarefa venceu há " + due_date + " dias");
           }
         } else if (expire > 0) {
@@ -168,6 +181,24 @@ let TaskModal = ({ id = "modal", close, open }) => {
       ) : null}
       <div className="modalContainer">
         <div className="modalHeader">
+          <div
+            style={{
+              position: "absolute",
+              top: 5 + "em",
+              width: 100 + "%",
+              height: 3 + "px",
+              backgroundColor: "#1b1b1b",
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: "#00a2ff",
+                width: taskVisible.info.percent + "%",
+                height: 100 + "%",
+              }}
+            />
+          </div>
+
           <div className="modalTaskDescription">
             <div>
               <div onClick={() => setShowDesc(true)}>
@@ -178,7 +209,8 @@ let TaskModal = ({ id = "modal", close, open }) => {
             </div>
             <div
               style={
-                warningState.includes("venceu") || warningState.includes("vence")
+                warningState.includes("venceu") ||
+                warningState.includes("vence")
                   ? { color: "red" }
                   : warningState.includes("expira")
                   ? { color: "yellow" }
