@@ -8,6 +8,7 @@ import {
   getWebSocketMessage,
   updateStateAdmin,
   updateTask,
+  updateTopic,
 } from "../../redux";
 import ButtonLogoff from "../ButtonLogoff";
 import CreateTask from "../CreateTask";
@@ -41,15 +42,18 @@ function showNotification(title, message, type) {
 function Header() {
   const dispatch = useDispatch();
   const { webSocket } = useSelector((state) => state);
-  const { tasks } = useSelector((state) => state);
+  const { filterTask } = useSelector((state) => state);
   const { taskVisible } = useSelector((state) => state);
   const { permissions } = useSelector((state) => state);
   const { vinculatedUsers } = useSelector((state) => state);
   const { seeAdminSet } = useSelector((state) => state);
+  const { taskStates } = useSelector((state) => state);
+
+  // console.log(taskStates);
 
   function sumNotification(type, taskId) {
     if (type === "messages") {
-      tasks.map((task) => {
+      filterTask.filter.map((task) => {
         if (task.id === taskId) {
           task.notifications[0].amount += 1;
           let total = 0;
@@ -65,7 +69,7 @@ function Header() {
     }
 
     if (type === "reload") {
-      tasks.map((task) => {
+      filterTask.filter.map((task) => {
         if (task.id === taskId) {
           let total = 0;
           for (let i = 0; i < task.notifications.length - 1; i++) {
@@ -80,34 +84,17 @@ function Header() {
     }
   }
 
-  // useEffect(() => {
-  //   sumNotification("reload",taskVisible.info.task_id);
-  // },[webSocket.historic])
-
-  // function ownVerify(sendId,receiveId){
-  //   if(sendId===receiveId){
-  //     return false;
-  //   }else{
-  //     return true;
-  //   }
-  // }
-
   useEffect(() => {
-    // console.log(webSocket.message)
-
     if (
       webSocket.message !== "" &&
       webSocket.message !== undefined &&
       webSocket.message.type === 1
     ) {
-      // console.log(webSocket.message.task_id)
-      // console.log(webSocket.message);
-      let task = tasks.filter(
-        (task) => task.id == webSocket.message.message.task_id
+      let task = filterTask.filter.filter(
+        (task) => task.id == webSocket.message.object.task_id
       );
 
       let taskIsVisible = false;
-      // let sumOrNo = false;
 
       if (task !== undefined && task[0]) {
         //verify if modal is open
@@ -126,7 +113,7 @@ function Header() {
             task[0].description,
             webSocket.message.user_name +
               ": " +
-              webSocket.message.message.description,
+              webSocket.message.object.description,
             "info"
           );
           sumNotification("messages", task[0].id);
@@ -139,7 +126,7 @@ function Header() {
                 task[0].description,
                 webSocket.message.user_name +
                   ": " +
-                  webSocket.message.message.description,
+                  webSocket.message.object.description,
                 "info"
               );
 
@@ -150,7 +137,7 @@ function Header() {
               task[0].description,
               webSocket.message.user_name +
                 ": " +
-                webSocket.message.message.description,
+                webSocket.message.object.description,
               "info"
             );
 
@@ -163,7 +150,7 @@ function Header() {
 
         // }
 
-        // alert(webSocket.message.user_name + ": " + webSocket.message.message);
+        // alert(webSocket.message.user_name + ": " + webSocket.message.object);
         dispatch(getWebSocketMessage(""));
       }
     } else if (
@@ -171,21 +158,61 @@ function Header() {
       webSocket.message !== undefined &&
       webSocket.message.type === 2
     ) {
-      let task = tasks.filter(
-        (task) => task.id == webSocket.message.message.task_id
-      );
-
-      // console.log(webSocket.message);
       //type 2 == itens
 
+      // let taskIsVisible = false;
+
       if (permissions.id !== webSocket.message.user_id) {
-        showNotification(
-          task[0].description,
-          webSocket.message.message.description +
-            " por " +
-            webSocket.message.user_name,
-          "info"
+        let taskf = filterTask.filter.filter(
+          (task) => task.id == webSocket.message.object.task_id
         );
+        if (taskVisible && taskVisible.info.task_id) {
+          if (webSocket.message.object.itemUp) {
+            if (webSocket.message.object.remove) {
+              taskVisible.task.task_item = taskVisible.task.task_item.filter(
+                (item) => item.id !== webSocket.message.object.itemUp
+              );
+            } else {
+              let newItem = true;
+              taskVisible.task.task_item.map((item) => {
+                console.log(webSocket.message.object.itemUp);
+                if (item.id === webSocket.message.object.itemUp.id) {
+                  item.check = webSocket.message.object.itemUp.check;
+                  item.description =
+                    webSocket.message.object.itemUp.description;
+                  item.yes_no = webSocket.message.object.itemUp.yes_no;
+                  newItem = false;
+                }
+              });
+
+              if (newItem) {
+                taskVisible.task.task_item = [
+                  ...taskVisible.task.task_item,
+                  webSocket.message.object.itemUp,
+                ];
+              }
+            }
+          }
+          taskVisible.info.percent = webSocket.message.object.percent;
+        }
+
+        // console.log(webSocket.message);
+        let tasksUp = [...filterTask.filter];
+
+        tasksUp.map((task) => {
+          if (task.id == webSocket.message.object.task_id) {
+            task.percent = webSocket.message.object.percent;
+            showNotification(
+              taskf[0].description,
+              webSocket.message.object.description +
+                " por " +
+                webSocket.message.user_name,
+              "info"
+            );
+          }
+        });
+
+        dispatch(getTask([...tasksUp]));
       }
     } else if (
       webSocket.message !== "" &&
@@ -239,26 +266,43 @@ function Header() {
     ) {
       // console.log(webSocket);
       //type 3 == descriptions
-      let task = tasks.filter(
-        (task) => task.id == webSocket.message.message.task_id
-      );
 
-      if (webSocket.message.message.update) {
+      if (
+        webSocket.message.object &&
+        permissions.id !== webSocket.message.user_id
+      ) {
+        let task = filterTask.filter.filter(
+          (task) => task.id == webSocket.message.object.task_id
+        );
         // console.log(tasks);
-        const info = webSocket.message.message.update;
+        const info = webSocket.message.object.update
+          ? webSocket.message.object.update
+          : webSocket.message.object.full_description;
         const taskId = webSocket.message.task_id;
 
-        tasks.map((task) => {
-          if (task.id == taskId) {
-            task.description = info;
-          }
-        });
-      }
+        let tasksUp = [...filterTask.filter];
+        if (webSocket.message.object.update) {
+          tasksUp.map((task) => {
+            if (task.id == taskId) {
+              task.description = info;
+            }
+          });
 
-      if (permissions.id !== webSocket.message.user_id && task[0]) {
+          if (taskVisible && taskVisible.info.task_id===taskId) {
+            taskVisible.info.description = info;
+          }
+
+          dispatch(getTask([...tasksUp]));
+        } else {
+        
+          if (taskVisible && taskVisible.info.task_id===taskId) {
+            taskVisible.task.full_description = info;
+          }
+        }
+
         showNotification(
           task[0].description,
-          webSocket.message.message.description +
+          webSocket.message.object.description +
             " por " +
             webSocket.message.user_name,
           "info"
@@ -270,87 +314,82 @@ function Header() {
       webSocket.message.type === 4
     ) {
       //type 4 == priority
-      let task = tasks.filter(
-        (task) => task.id == webSocket.message.message.task_id
+      let task = filterTask.filter.filter(
+        (task) => task.id == webSocket.message.object.task_id
       );
 
-      if (webSocket.message.message.update) {
+      if (webSocket.message.object.update) {
         // console.log(tasks);
-        const info = Number(webSocket.message.message.update);
+        const info = Number(webSocket.message.object.update);
         const taskId = webSocket.message.task_id;
 
         // console.log(info)
 
-        tasks.map(
+        let tasksUp = [...filterTask.filter];
+
+        tasksUp.map(
           (task) => task.id == taskId && (task.priority = info > 0 ? info : 0)
         );
+
+        dispatch(getTask([...tasksUp]));
 
         //  task[0].priority = info;
       }
 
-      setTimeout(() => {
-        if (permissions.id !== webSocket.message.user_id) {
-          showNotification(
-            task[0].description,
-            webSocket.message.message.description +
-              " por " +
-              webSocket.message.user_name,
-            "info"
-          );
-        }
-      }, 4300);
+      if (permissions.id !== webSocket.message.user_id) {
+        showNotification(
+          task[0].description,
+          webSocket.message.object.description +
+            " por " +
+            webSocket.message.user_name,
+          "info"
+        );
+      }
     } else if (
       webSocket.message !== "" &&
       webSocket.message !== undefined &&
       webSocket.message.type === 5
     ) {
       // type 5 == users
-      // if (seeAdminSet === true) {
-      //   dispatch(updateStateAdmin());
-      // } else {
-      //   dispatch(updateTask());
-      // }
-
-      const changeUser = Number(webSocket.message.message.changeUser);
-      const msg = webSocket.message.message.description;
-      const task = webSocket.message.message.task;
-      // let task = tasks.filter(
-      //   (task) => task.id == Number(webSocket.message.task_id)
-      // );
+      // *add update for visualisation of adm
+      const changeUser = Number(webSocket.message.object.changeUser);
+      const msg = webSocket.message.object.description;
+      const task = webSocket.message.object.task;
 
       task.focus = true;
 
-      // console.log(task)
       let user = vinculatedUsers.filter((user) => user.id === changeUser);
 
       if (permissions.id !== webSocket.message.user_id) {
         if (permissions.id === changeUser) {
           showNotification(
-            webSocket.message.message.task.description,
+            webSocket.message.object.task.description,
             "Você " + msg,
             "info"
           );
 
           if (msg.includes("vinculado")) {
             if (seeAdminSet === false) {
-              dispatch(getTask([...tasks, task]));
+              dispatch(getTask([...filterTask.filter, task]));
             }
           } else {
-            const tasksf = tasks.filter((taskr) => taskr.id !== task.id);
+            const tasksf = filterTask.filter.filter(
+              (taskr) => taskr.id !== task.id
+            );
             if (seeAdminSet === false) {
               dispatch(getTask([...tasksf]));
             }
           }
         } else {
           showNotification(
-            webSocket.message.message.task.description,
+            webSocket.message.object.task.description,
             user[0].user + " " + msg,
             "info"
           );
         }
       } else if (permissions.id !== webSocket.message.user_id) {
         // showNotification(
-        //   webSocket.message.message.task.description,
+        //   webSocket.message.object.task.description,
         //   "Você " + msg,
         //   "info"
         // );
@@ -359,9 +398,64 @@ function Header() {
       // console.log(vinculatedUsers);
 
       //;console.log(webSocket.message);
+    } else if (
+      webSocket.message !== "" &&
+      webSocket.message !== undefined &&
+      webSocket.message.type === 6
+    ) {
+      //type 6 change state
+      if (permissions.id !== webSocket.message.user_id) {
+        if (taskVisible && taskVisible.info.task_id) {
+          taskVisible.info.state_id = webSocket.message.object.task.state_id;
+          // dispatch(updateTopic());
+        }
+
+        // console.log(webSocket.message);
+
+        const info = webSocket.message.object.task;
+        const task = filterTask.filter.filter(
+          (task) => task.id === info.task_id
+        );
+        const lastState = taskStates.filter(
+          (state) => Number(state.id) === Number(task[0].state_id)
+        );
+        const newState = taskStates.filter(
+          (state) => Number(state.id) === Number(info.state_id)
+        );
+
+        // console.log(task,lastState,newState)
+
+        let tasksUp = [...filterTask.filter];
+
+        tasksUp.map((task) => {
+          if (task.id === info.task_id) {
+            task.state_id = info.state_id;
+            task.percent = info.percent;
+          }
+        });
+
+        dispatch(getTask([...tasksUp]));
+
+        // console.log(info,lastState[0])
+
+        showNotification(
+          info.description,
+          "Mudou de " +
+            lastState[0].description +
+            " para " +
+            newState[0].description +
+            " por " +
+            webSocket.message.user_name,
+          "info"
+        );
+      }
+
+      // showNotification()
+      // console.log(webSocket.message);
+    } else {
     }
 
-    console.log(webSocket.message);
+    // console.log(webSocket.message);
   }, [webSocket.message]);
   // console.log(webSocket)
   return (
