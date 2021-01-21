@@ -15,6 +15,7 @@ import {
   setBlockedVisi,
   setDoneVisi,
   setCanceledVisi,
+  getTask,
 } from "../../redux";
 import {
   updateFullDescription,
@@ -67,6 +68,10 @@ const TaskInfo = () => {
   const AUTH = permissions.session;
 
   useEffect(() => {
+    setFullDescription(taskVisible.task.full_description);
+  },[taskVisible.task.full_description])
+
+  useEffect(() => {
     async function loadTaskVisible() {
       let { data } = await api.get(
         "GTPP/Task.php?AUTH=" +
@@ -75,33 +80,36 @@ const TaskInfo = () => {
           taskVisible.info.task_id
       );
 
-      if (data.data.csds == null) {
-        setTaskcsds([]);
-        setDepts(null);
-        setShops([]);
-        setCompany(false);
-        setShop(false);
-        setShowDept(false);
+      if (data.error === true) {
       } else {
-        setTaskcsds(data.data.csds);
-      }
+        if (data.data && data.data.csds && data.data.csds == null) {
+          setTaskcsds([]);
+          setDepts(null);
+          setShops([]);
+          setCompany(false);
+          setShop(false);
+          setShowDept(false);
+        } else {
+          setTaskcsds(data.data.csds);
+        }
 
-      if (data.data.csds != null) {
-        loadShopsCompany(data.data.csds[0].company_id, AUTH).then(
-          (response) => {
-            setShops(response.data);
-          }
-        );
-        loadDeptsCompany(
-          data.data.csds[0].company_id,
-          data.data.csds[0].shop_id,
-          taskVisible.info.task_id,
-          AUTH
-        ).then((response) => {
-          setDepts(response);
-        });
-        setCompany(data.data.csds[0].company_id);
-        setShop(data.data.csds[0].shop_id);
+        if (data.data.csds != null) {
+          loadShopsCompany(data.data.csds[0].company_id, AUTH).then(
+            (response) => {
+              setShops(response.data);
+            }
+          );
+          loadDeptsCompany(
+            data.data.csds[0].company_id,
+            data.data.csds[0].shop_id,
+            taskVisible.info.task_id,
+            AUTH
+          ).then((response) => {
+            setDepts(response);
+          });
+          setCompany(data.data.csds[0].company_id);
+          setShop(data.data.csds[0].shop_id);
+        }
       }
     }
 
@@ -162,9 +170,10 @@ const TaskInfo = () => {
           "Descrição completa atualizada com sucesso",
           "success"
         );
-        SendInfo("A descrição completa da tarefa foi atualizada");
+        
         setFullDescription(description);
         taskVisible.task.full_description = description;
+        SendInfo("A descrição completa da tarefa foi atualizada", 3);
       }
 
       tasks.map((task) => {
@@ -187,6 +196,7 @@ const TaskInfo = () => {
         },
       });
       try {
+        // console.log(data)
         setUsers(data.data);
       } catch (error) {}
     }
@@ -221,24 +231,6 @@ const TaskInfo = () => {
       showNotification("Aviso", "Selecione companhia e loja", "warning");
     } else {
       try {
-        // if (taskcsds != null) {
-        //   let csds = taskcsds.filter(
-        //     (csds) => csds.company_id !== companyId || csds.shop_id !== shopId
-        //   );
-
-        //   if (csds.length >= 1) {
-        //     updateCheckDept(
-        //       taskId,
-        //       csds[0].depart_id,
-        //       csds[0].shop_id,
-        //       csds[0].company_id,
-        //       AUTH
-        //     );
-
-        //     dispatch(updateModal());
-        //   }
-        // }
-
         updateCheckDept(taskId, deptId, shopId, companyId, AUTH)
           .then((response) => {
             if (response == null) {
@@ -274,12 +266,22 @@ const TaskInfo = () => {
         showNotification("Aviso", "motivo é obrigatório", "warning");
       } else {
         updateStateTask(taskVisible.info.task_id, reason, null, AUTH)
-          .then(
-            (response) => (
-              (taskVisible.info.state_id = response[0].id),
-              verifyState(response[0].id)
-            )
-          )
+          .then((response) => {
+            taskVisible.info.state_id = response[0].id;
+            verifyState(response[0].id);
+
+            let changes = [...tasks];
+            changes = changes.map((task) => {
+              if (task.id === taskVisible.info.task_id) {
+                if (Number(task.state_id) !== Number(response[0].id)) {
+                  SendInfo("send", 6);
+                }
+                task.state_id = response[0].id;
+              }
+            });
+
+            // dispatch(getTask([...changes]));
+          })
           .catch((error) => {});
         if (seeAdminSet === true) {
           dispatch(updateStateAdmin());
@@ -295,14 +297,24 @@ const TaskInfo = () => {
         setShowDayModal(true);
       } else {
         updateStateTask(taskVisible.info.task_id, reason, days, AUTH)
-          .then(
-            (response) => (
-              // console.log(response.id),
-              (taskVisible.info.state_id = response.id),
-              (taskVisible.info.final_date = response.final_date),
-              verifyState(response.id)
-            )
-          )
+          .then((response) => {
+            // console.log(response.id),
+            taskVisible.info.state_id = response.id;
+            taskVisible.info.final_date = response.final_date;
+            verifyState(response.id);
+
+            let changes = [...tasks];
+            changes = changes.map((task) => {
+              if (task.id === taskVisible.info.task_id) {
+                if (Number(task.state_id) !== Number(response[0].id)) {
+                  SendInfo("send", 6);
+                }
+                task.state_id = response[0].id;
+              }
+            });
+
+            // dispatch(getTask([...changes]));
+          })
           .catch((error) => {
             // console.log(error.message);
           });
@@ -321,12 +333,23 @@ const TaskInfo = () => {
         return;
       } else if (confirm == true) {
         updateStateTask(taskVisible.info.task_id, null, null, AUTH)
-          .then(
-            (response) => (
-              (taskVisible.info.state_id = response[0].id),
-              verifyState(response[0].id)
-            )
-          )
+          .then((response) => {
+            taskVisible.info.state_id = response[0].id;
+            verifyState(response[0].id);
+
+            let changes = [...tasks];
+            changes = changes.map((task) => {
+              if (task.id === taskVisible.info.task_id) {
+                if (Number(task.state_id) !== Number(response[0].id)) {
+                  SendInfo("send", 6);
+                }
+
+                task.state_id = response[0].id;
+              }
+            });
+
+            // dispatch(getTask([...changes]));
+          })
           .then(() => {
             if (seeAdminSet === true) {
               dispatch(updateStateAdmin());
@@ -377,18 +400,19 @@ const TaskInfo = () => {
 
     cancelStateTask(taskId, reason, AUTH)
       .then((response) => {
-        if (seeAdminSet === true) {
-          dispatch(updateStateAdmin());
-        } else {
-          dispatch(updateTask());
-        }
-
-        // dispatch(updateModal());
         setShowModalAsk(false);
 
         taskVisible.info.state_id = response.id;
 
         verifyState(response.id);
+
+        // if (seeAdminSet === true) {
+        //   dispatch(updateStateAdmin());
+        // } else {
+        //   dispatch(updateTask());
+        // }
+
+        // dispatch(updateModal());
       })
       .catch((error) => {
         // console.log(error);
@@ -405,8 +429,10 @@ const TaskInfo = () => {
 
   if (users.length > 0) {
     users.map((user) => {
-      let result = vinculatedUsers.filter((users) => users.id == user.user_id);
-      user.name = result[0].user;
+      let result = vinculatedUsers.filter(
+        (users) => Number(users.id) === Number(user.user_id)
+      );
+      user.name = result[0].name;
     });
   }
 
@@ -421,38 +447,64 @@ const TaskInfo = () => {
         });
       });
     }
-  },[webSocket])
+  }, [webSocket]);
 
- 
-
-  function SendInfo(msg) {
-    // alert("teste")
+  function SendInfo(msg, type) {
+    // alert("teste"+type)
     if (msg !== "" && webSocket.websocketState === "connected") {
-      try {
-        let jsonString = {
-          task_id: taskVisible.info.task_id,
-          message: {description:msg,task_id:taskVisible.info.task_id},
-          date_time: null,
-          user_id: Number(permissions.id),
-          type: 3,
-        };
-        webSocket.websocket.send(JSON.stringify(jsonString));
+      switch (type) {
+        case 3:
+          try {
+            let jsonString = {
+              task_id: taskVisible.info.task_id,
+              object: {
+                description: msg,
+                task_id: taskVisible.info.task_id,
+                full_description: taskVisible.task.full_description,
+              },
 
-        // console.log(jsonString);
-      } catch (error) {
-        alert(error);
+              date_time: null,
+              user_id: Number(permissions.id),
+              type: type,
+            };
+            webSocket.websocket.send(JSON.stringify(jsonString));
+
+            // console.log(jsonString);
+          } catch (error) {
+            alert(error);
+          }
+          break;
+        case 6:
+          // console.log("send");
+          try {
+            let jsonString = {
+              task_id: taskVisible.info.task_id,
+              object: {
+                description: msg,
+                task_id: taskVisible.info.task_id,
+                task: taskVisible.info,
+              },
+              date_time: null,
+              user_id: Number(permissions.id),
+              type: type,
+            };
+            webSocket.websocket.send(JSON.stringify(jsonString));
+          } catch (error) {
+            alert(error);
+          }
+          break;
       }
     }
   }
 
-  function verifyStatus(userId){
+  function verifyStatus(userId) {
     // webSocket.users && webSocket.users.map((id) => user.user_id == id && return "online")
 
-    const filter = webSocket.users.filter(id => id == userId);
+    const filter = webSocket.users.filter((id) => id == userId);
 
-    if(filter[0]){
+    if (filter[0]) {
       return "online";
-    }else{
+    } else {
       return "";
     }
   }

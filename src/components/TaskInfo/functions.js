@@ -46,13 +46,11 @@ export const updateCheckDept = async (
       }
     );
 
-    if(data.error===true){
-      if(data.message==='No data'){
-
-      }else{
-        showNotification('Erro',data.message,'danger');
+    if (data.error === true) {
+      if (data.message === "No data") {
+      } else {
+        showNotification("Erro", data.message, "danger");
       }
-      
     }
 
     // console.log(data);
@@ -61,13 +59,21 @@ export const updateCheckDept = async (
     let msg = String(error.response.data.message);
     // console.log(error.response.data.message);
     if (msg.includes("Task with this state cannot be modified")) {
-      showNotification('Aviso','Tarefa com este estado não pode ser modificada','warning');
+      showNotification(
+        "Aviso",
+        "Tarefa com este estado não pode ser modificada",
+        "warning"
+      );
     } else if (
       msg.includes("Only the task creator or administrator can do this")
     ) {
-      showNotification('Aviso','Somente o criador da tarefa ou administrador pode fazer isto','warning');
-    }else{
-      showNotification('Erro',msg,'danger');
+      showNotification(
+        "Aviso",
+        "Somente o criador da tarefa ou administrador pode fazer isto",
+        "warning"
+      );
+    } else {
+      showNotification("Erro", msg, "danger");
     }
     return null;
   }
@@ -81,19 +87,17 @@ export const loadShopsCompany = async (idCompany, auth) => {
       "CCPP/Shop.php?AUTH=" + AUTH + "&app_id=3&company_id=" + idCompany
     );
 
-    if(data.error===true){
-      if(data.message==='No data'){
-
-      }else{
-        showNotification('Erro',data.message,'danger');
+    if (data.error === true) {
+      if (data.message === "No data") {
+      } else {
+        showNotification("Erro", data.message, "danger");
       }
-      
     }
 
     // console.log(data);
     return data;
   } catch (error) {
-    showNotification('Erro',String(error.message),'danger');
+    showNotification("Erro", String(error.message), "danger");
     return [{}];
   }
 };
@@ -113,12 +117,12 @@ export const loadDeptsCompany = async (idCompany, idShop, idTask, auth) => {
         idTask
     );
 
-    if(data.error===true){
+    if (data.error === true) {
       // showNotification('Erro',data.message,'danger');
     }
     return data.data;
   } catch (error) {
-    showNotification('Erro',String(error.message),'danger');
+    showNotification("Erro", String(error.message), "danger");
     return [{}];
   }
 };
@@ -138,19 +142,27 @@ export const updateStateTask = async (idTask, reason, days, auth) => {
         return response;
       });
 
-      if(data.error===true){
-        showNotification('Erro',data.message,'danger');
-      }
+    if (data.error === true) {
+      showNotification("Erro", data.message, "danger");
+    }
     return data.data;
   } catch (error) {
     let msg = String(error.response.data.message);
     // console.log(error.response.data.message);
     if (msg.includes("This user can not do this")) {
-      showNotification('Aviso','Somente o criador da tarefa ou administrador pode fazer isto','warning');
+      showNotification(
+        "Aviso",
+        "Somente o criador da tarefa ou administrador pode fazer isto",
+        "warning"
+      );
     } else if (msg.includes("Days cannot be negative")) {
-      showNotification('Aviso','A quantidade de dias não pode ser negativa','warning');
-    }else{
-      showNotification('Erro',String(error.message),'danger');
+      showNotification(
+        "Aviso",
+        "A quantidade de dias não pode ser negativa",
+        "warning"
+      );
+    } else {
+      showNotification("Erro", String(error.message), "danger");
     }
   }
 };
@@ -170,36 +182,44 @@ export const cancelStateTask = async (idTask, reason, auth) => {
         return response;
       });
 
-      if(data.error===true){
-        showNotification('Erro',data.message,'danger');
-      }
+    if (data.error === true) {
+      showNotification("Erro", data.message, "danger");
+    }
     return data.data[0];
   } catch (error) {
-
-    if(error.response){
+    if (error.response) {
       let msg = String(error.response.data.message);
       // console.log(error.response.data.message);
       if (msg.includes("This user can not do this")) {
-        showNotification('Aviso','Somente o criador da tarefa ou administrador pode fazer isto','warning');
+        showNotification(
+          "Aviso",
+          "Somente o criador da tarefa ou administrador pode fazer isto",
+          "warning"
+        );
       } else if (msg.includes("This state can not modified")) {
-        showNotification('Aviso','Este estado não pode ser modificado','warning');
-      }else{
-        showNotification('Erro',msg,'danger');
+        showNotification(
+          "Aviso",
+          "Este estado não pode ser modificado",
+          "warning"
+        );
+      } else {
+        showNotification("Erro", msg, "danger");
       }
-    }else{
-      showNotification('Erro',String(error.message),'danger');
+    } else {
+      showNotification("Erro", String(error.message), "danger");
     }
-   
   }
 };
 
 export function formatDate(props) {
-  let data = props.split("-");
-  const date = new Date(props);
-  var day = data[2];
-  var month = data[1];
-  var year = data[0];
-  return day + "/" + month + "/" + year;
+  if (props !== undefined) {
+    let data = props.split("-");
+    const date = new Date(props);
+    var day = data[2];
+    var month = data[1];
+    var year = data[0];
+    return day + "/" + month + "/" + year;
+  }
 }
 
 export function showNotification(title, message, type) {
