@@ -85,25 +85,25 @@ const ButtonFilter = () => {
 
     if (company == "-1" || shop == "-1" || dept == "-1") {
       filterDo = tasks.filter((task) =>
-      filterTask.do ? task.state_id == 1 : null
+      filterTask.do && task ? Number(task.state_id) === 1 : null
       );
       filterDoing = tasks.filter((task) =>
-      filterTask.doing ? task.state_id == 2 : null
+      filterTask.doing && task  ? Number(task.state_id) === 2 : null
       );
       filterAnalyze = tasks.filter((task) =>
-      filterTask.analyze ? task.state_id == 3 : null
+      filterTask.analyze && task ? Number(task.state_id) === 3 : null
       );
       filterStopped = tasks.filter((task) =>
-      filterTask.stopped ? task.state_id == 4 : null
+      filterTask.stopped && task  ? Number(task.state_id) === 4 : null
       );
       filterBlocked = tasks.filter((task) =>
-      filterTask.blocked ? task.state_id == 5 : null
+      filterTask.blocked && task  ? Number(task.state_id) === 5 : null
       );
       filterDone = tasks.filter((task) =>
-      filterTask.done ? task.state_id == 6 : null
+      filterTask.done && task  ? Number(task.state_id) === 6 : null
       );
       filterCanceled = tasks.filter((task) =>
-      filterTask.canceled ? task.state_id == 7 : null
+      filterTask.canceled && task  ? Number(task.state_id) === 7 : null
       );
     } else {
       let filterCsds = [];
