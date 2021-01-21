@@ -47,47 +47,41 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   const [orderItem, setOrderItem] = useState(false);
   const [itemEdit, setItemEdit] = useState();
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
-  // let itemDelete = {};
   const dispatch = useDispatch();
 
-  // const[loadItems,setLoadItems] = useState(false);
-
- 
-
-  // useEffect(() => {
-  //   setTaskItem(taskVisible.task_item);
-  // },[])
-
   function changeInputCheck(e, taskId, itemId) {
-    // tarefa bloqueada
-    // if (taskVisible.info.state_id == 5 || taskVisible.info.state_id  == 4) {
-    //   alert("A tarefa foi bloqueada!");
-    // } else if(taskVisible.info.state_id  == 6){
-    //   alert("Tarefa finalizada! clique no estado atual da tarefa para ativar novamente.")
-    // }
-
-    // console.log(e)
     let check = !e;
 
     changeItemChecked(taskId, itemId, check, AUTH).then((response) => {
       if (response != null) {
-        if(e===true){
-          SendInfo("Um item foi desmarcado");
-        }else{
-          SendInfo("Um item foi marcado");
-        }
+        let itemUp;
+        taskVisible.task.task_item.map((item) => {
+          if (item.id === itemId) {
+            item.check = check;
+            itemUp = item;
+          }
+        });
         taskVisible.info.percent = response.percent;
         taskVisible.info.state_id = response.state_id;
+
+        if (e === true) {
+          SendInfo("Um item foi desmarcado", 2, response.percent, "", itemUp);
+        } else {
+          SendInfo("Um item foi marcado", 2, response.percent, "", itemUp);
+        }
 
         let changes = [...tasks];
 
         changes = changes.map((task) => {
           if (task.id === taskVisible.info.task_id) {
+            if (task.state_id != response.state_id) {
+              SendInfo("Mudou para ", 6, response.percent, response.state_id);
+            }
             task.percent = response.percent;
             task.state_id = response.state_id;
           }
         });
-        dispatch(updateTopic());
+        // dispatch(updateTopic());
         // dispatch(getTaskFilter([...changes]));
       }
     });
@@ -106,7 +100,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
           params: { AUTH: AUTH, app_id: 3, task_id: taskVisible.info.task_id },
         });
         // console.log(data)
-  
+
         return data;
       } catch (error) {
         // console.log(error);
@@ -117,9 +111,9 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
     loadTaskItems().then((response) => {
       // console.log(response)
       if (response.error == false) {
-        setTaskItem(response.data);
+        taskVisible.task.task_item = response.data;
       } else {
-        setTaskItem([{}]);
+        taskVisible.task.task_item = [{}];
       }
     });
   }, [topicUpdate, modalUpdate]);
@@ -135,23 +129,52 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
     handleClick();
   }, [showBottom]);
 
-  function SendInfo(msg) {
-    // alert("fsdf")
+  function SendInfo(msg, type, percent, state, item, remove) {
+    // console.log(itens)
     if (msg !== "" && webSocket.websocketState === "connected") {
-      try {
-        let jsonString = {
-          task_id: taskVisible.info.task_id,
-          message: {description:msg,task_id:taskVisible.info.task_id},
-          date_time: null,
-          user_id: Number(permissions.id),
-          type: 2,
-        };
-        webSocket.websocket.send(JSON.stringify(jsonString));
-
-        // console.log(jsonString);
-
-      } catch (error) {
-        alert(error);
+      switch (type) {
+        case 2:
+          try {
+            let jsonString = {
+              task_id: taskVisible.info.task_id,
+              object: {
+                description: msg,
+                task_id: taskVisible.info.task_id,
+                percent: percent,
+                itemUp: item,
+                remove: remove,
+              },
+              date_time: null,
+              user_id: Number(permissions.id),
+              type: type,
+            };
+            webSocket.websocket.send(JSON.stringify(jsonString));
+          } catch (error) {
+            alert(error);
+          }
+          break;
+        case 6: {
+          // console.log("type 6")
+          try {
+            let jsonString = {
+              task_id: taskVisible.info.task_id,
+              object: {
+                description: msg,
+                task_id: taskVisible.info.task_id,
+                percent: percent,
+                state_id: state,
+                task: taskVisible.info,
+              },
+              date_time: null,
+              user_id: Number(permissions.id),
+              type: type,
+            };
+            webSocket.websocket.send(JSON.stringify(jsonString));
+          } catch (error) {
+            alert(error);
+          }
+          break;
+        }
       }
     }
   }
@@ -172,39 +195,47 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
       );
     } else {
       if (description !== "") {
-       
-        addItem(taskId, description, AUTH)
-          .then((response) => {
-            // console.log(response);
-            if (response != null) {
-              SendInfo("Novo item adicionado");
-              taskVisible.info.percent = response.percent;
-              taskVisible.info.state_id = response.state_id;
-              dispatch(updateTopic());
-              dispatch(updateModal());
-              
+        addItem(taskId, description, AUTH).then((response) => {
+          if (response != null) {
+            const newItem = {
+              check: false,
+              id: response.last_id,
+              description: description,
+              order: response.order,
+              yes_no: response.yes_no,
+            };
 
-              setTimeout(() => {
-                setShowBottom(!showBottom);
-              }, 500);
+            taskVisible.task.task_item = [
+              ...taskVisible.task.task_item,
+              newItem,
+            ];
+            // console.log(taskVisible.task)
+            SendInfo("Novo item adicionado", 2, response.percent, "", newItem);
+            taskVisible.info.percent = response.percent;
+            taskVisible.info.state_id = response.state_id;
 
-              
-            }
-          })
-         ;
+            let changes = [...tasks];
+
+            changes = changes.map((task) => {
+              if (task.id === taskVisible.info.task_id) {
+                if (task.state_id != response.state_id) {
+                  SendInfo(" para ", 6, response.percent, response.state_id);
+                }
+                task.percent = response.percent;
+                task.state_id = response.state_id;
+              }
+            });
+            dispatch(updateTopic());
+            dispatch(updateModal());
+
+            setTimeout(() => {
+              setShowBottom(!showBottom);
+            }, 500);
+          }
+        });
         setNewItem("");
       }
     }
-
-    // $('#topicList').scrollTop($('#topicList')[0].scrollHeight);
-
-    // var list = document.getElementById("topicList");
-    // list.scrollIntoView(false);
-    // // console.log(list.scrollTop)
-    // list.scrollTop = 9999999999;
-    // console.log(list.scrollTop)
-
-    // handleClick()
   }
 
   function deleteItemTopic(taskId, itemId) {
@@ -225,9 +256,38 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
       deleteItem(taskId, itemId, AUTH)
         .then((response) => {
           if (response != null) {
-            SendInfo("Um item foi removido");
+            taskVisible.task.task_item = taskVisible.task.task_item.filter(
+              (item) => item.id !== itemId
+            );
+
+            SendInfo(
+              "Um item foi removido",
+              2,
+              response.percent,
+              "",
+              itemId,
+              true
+            );
             taskVisible.info.percent = response.percent;
             taskVisible.info.state_id = response.state_id;
+
+            let changes = [...tasks];
+
+            changes = changes.map((task) => {
+              if (task.id === taskVisible.info.task_id) {
+                if (task.state_id != response.state_id) {
+                  SendInfo(
+                    "Mudou para ",
+                    6,
+                    response.percent,
+                    response.state_id,
+                    false
+                  );
+                }
+                task.percent = response.percent;
+                task.state_id = response.state_id;
+              }
+            });
 
             dispatch(updateModal());
             dispatch(updateTopic());
@@ -254,7 +314,22 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
       updateTopicDescription(itemId, description, taskId, AUTH).then(
         (response) => {
           if (response != null) {
-            SendInfo("Um item foi atualizado");
+            let itemUp;
+
+            taskVisible.task.task_item.map((item) => {
+              if (item.id === itemId) {
+                item.description = description;
+                itemUp = item;
+              }
+            });
+
+            SendInfo(
+              "Um item foi atualizado",
+              2,
+              taskVisible.info.percent,
+              "",
+              itemUp
+            );
             dispatch(updateModal());
             dispatch(updateTopic());
           }
@@ -290,32 +365,105 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
     changeYesNoTopic(taskVisible.info.task_id, change, itemEdit.id, AUTH).then(
       (response) => {
         if (response != null) {
+          let itemUp;
+          taskVisible.task.task_item.map((item) => {
+            if (item.id === idItem) {
+              item.yes_no = change;
+              itemUp = item;
+            }
+          });
+
+          if (change === -1) {
+            SendInfo(
+              "Agora é uma questão ",
+              2,
+              response.percent,
+              response.state_id,
+              itemUp
+            );
+          } else {
+            SendInfo(
+              "Agora é uma item comum ",
+              2,
+              response.percent,
+              response.state_id,
+              itemUp
+            );
+          }
+
           taskVisible.info.percent = response.percent;
           taskVisible.info.state_id = response.state_id;
 
-          dispatch(updateModal());
-          dispatch(updateTopic());
-          itemEdit.yes_no = change;
+          // dispatch(updateModal());
+          // dispatch(updateTopic());
+
+          setItemEdit({ ...itemEdit, yes_no: change });
+          // itemEdit.yes_no = change;
         }
       }
     );
   }
 
   function setYesNo(taskId, yesOrNo, idItem, auth) {
+    // console.log(yesOrNo);
     let change = yesOrNo;
 
     changeYesNoTopic(taskId, change, idItem, auth).then((response) => {
       if (response != null) {
+        let itemUp;
+        taskVisible.task.task_item.map((item) => {
+          if (item.id === idItem) {
+            item.yes_no = change;
+            itemUp = item;
+          }
+        });
+
+        if (yesOrNo === 1) {
+          SendInfo(
+            "Marcou uma questão como sim ",
+            2,
+            response.percent,
+            response.state_id,
+            itemUp
+          );
+        } else if (yesOrNo === 2) {
+          SendInfo(
+            "Marcou uma questão como não ",
+            2,
+            response.percent,
+            response.state_id,
+            itemUp
+          );
+        } else {
+          SendInfo(
+            "Desmarcou uma questão ",
+            2,
+            response.percent,
+            response.state_id,
+            itemUp
+          );
+        }
+
         taskVisible.info.percent = response.percent;
         taskVisible.info.state_id = response.state_id;
 
-        dispatch(updateModal());
+        let changes = [...tasks];
+
+        changes = changes.map((task) => {
+          if (task.id === taskVisible.info.task_id) {
+            if (task.state_id != response.state_id) {
+              SendInfo("Mudou para ", 6, response.percent, response.state_id);
+            }
+            task.percent = response.percent;
+            task.state_id = response.state_id;
+          }
+        });
+
+        // dispatch(updateModal());
         dispatch(updateTopic());
       }
     });
   }
-
- 
 
   const ref = React.createRef();
 
@@ -444,8 +592,8 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
       ) : null}
 
       <div className="topicList" id="topicList">
-        {taskItem
-          ? taskItem.map((item) =>
+        {taskVisible.task.task_item
+          ? taskVisible.task.task_item.map((item) =>
               item.id != null ? (
                 <React.Fragment key={item.id}>
                   {/* {console.log(item)} */}
@@ -607,7 +755,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                                 id="yes"
                                 type="checkbox"
                                 checked={item.yes_no === 1}
-                                onChange={() => {
+                                onChange={(e) => {
                                   let change = item.yes_no !== 1 ? 1 : -1;
                                   setYesNo(
                                     taskVisible.info.task_id,
@@ -625,7 +773,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                               <input
                                 type="checkbox"
                                 checked={item.yes_no === 2}
-                                onChange={() => {
+                                onChange={(e) => {
                                   let change = item.yes_no !== 2 ? 2 : -1;
                                   setYesNo(
                                     taskVisible.info.task_id,

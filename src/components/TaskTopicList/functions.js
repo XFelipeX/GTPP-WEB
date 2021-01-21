@@ -19,7 +19,7 @@ export const changeItemChecked = async (taskId, itemId, check, auth) => {
   } catch (error) {
     // console.log('error')
 
-    if(error.response){
+    if (error.response) {
       let msg = error.response.data.message;
 
       if (msg.includes("Task with this state cannot be modified")) {
@@ -28,30 +28,23 @@ export const changeItemChecked = async (taskId, itemId, check, auth) => {
           "Tarefa neste estado não pode ser modificada",
           "warning"
         );
-      }else if(msg.includes("Only the task creator, administrator or attached user can do this")){
+      } else if (
+        msg.includes(
+          "Only the task creator, administrator or attached user can do this"
+        )
+      ) {
         showNotification(
           "Aviso",
           "Somente o criador da tarefa ou administrador pode fazer isto",
           "warning"
         );
+      } else {
+        showNotification("Erro", msg, "danger");
       }
-      
-      else {
-        showNotification(
-          "Erro",
-          msg,
-          "danger"
-        );
-      }
-    }else{
-      showNotification(
-        "Erro",
-        String(error.message),
-        "danger"
-      );
+    } else {
+      showNotification("Erro", String(error.message), "danger");
     }
 
-  
     return null;
   }
 };
@@ -70,7 +63,7 @@ export const deleteItem = async (taskId, itemId, auth) => {
     showNotification("Sucesso", "O item foi removido da tarefa", "success");
     return data.data;
   } catch (error) {
-    if(error.response){
+    if (error.response) {
       let msg = error.response.data.message;
 
       if (msg.includes("Task with this state cannot be modified")) {
@@ -80,15 +73,10 @@ export const deleteItem = async (taskId, itemId, auth) => {
           "warning"
         );
       }
-    }else{
-      showNotification(
-        "Erro",
-        String(error.message),
-        "danger"
-      );
+    } else {
+      showNotification("Erro", String(error.message), "danger");
     }
 
-   
     return null;
   }
 };
@@ -101,6 +89,7 @@ export const addItem = async (taskId, description, auth) => {
       "GTPP/TaskItem.php?AUTH=" + AUTH + "&app_id=3",
       { task_id: taskId, description: description }
     );
+    
     if (data.error === true) {
       showNotification("Erro", String(data.message), "danger");
       return null;
@@ -112,7 +101,7 @@ export const addItem = async (taskId, description, auth) => {
     );
     return data.data;
   } catch (error) {
-    if(error.response){
+    if (error.response) {
       let msg = error.response.data.message;
 
       if (msg.includes("Task with this state cannot be modified")) {
@@ -122,15 +111,10 @@ export const addItem = async (taskId, description, auth) => {
           "warning"
         );
       }
-    }else{
-      showNotification(
-        "Aviso",
-        String(error.message),
-        "warning"
-      );
+    } else {
+      showNotification("Aviso", String(error.message), "warning");
     }
 
-   
     return null;
   }
 };
@@ -199,7 +183,10 @@ export const takeHistoricTask = async (taskId, auth) => {
     );
     // console.log(data);
     if (data.error === true) {
-      showNotification("Erro", String(data.message), "danger");
+      if (data.message.includes("No data")) {
+      } else {
+        showNotification("Erro", String(data.message), "danger");
+      }
     }
     return data;
   } catch (error) {
