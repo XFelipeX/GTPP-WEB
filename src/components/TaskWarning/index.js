@@ -28,7 +28,7 @@ const TaskWarning = ({ task }) => {
 
       // console.log(task);
       if (task.state_id == 6 || task.state_id == 7) {
-        warning = {task_id:task.id, expire: 0, due_date: 0, initial: 0 };
+        warning = {task_id:task.id, expire: 0, due_date: -2, initial: 0 };
         dispatch(getWarning(warning));
         setWarningState(2);
       } else {
@@ -36,15 +36,15 @@ const TaskWarning = ({ task }) => {
         if (today.getTime() > finalDate.getTime()) {
           warning = Math.round((today - finalDate) / (1000 * 60 * 60 * 24)) - 1;
 
-          if (warning === 0) {
-            warning = {task_id:task.id, expire: 0, due_date: 1, initial: 0 };
-            dispatch(getWarning(warning));
-            // task.warning = ;
-          } else {
+          // if (warning === 0) {
+          //   warning = {task_id:task.id, expire: 0, due_date: 1, initial: 0 };
+          //   dispatch(getWarning(warning));
+          //   // task.warning = ;
+          // } else {
             warning = {task_id:task.id, expire: 0, due_date: warning, initial: 0 };
             dispatch(getWarning(warning));
             // task.warning = ;
-          }
+          // }
 
           setWarningState(1);
         } else if (today.getTime() > final_date.getTime()) {
@@ -52,7 +52,7 @@ const TaskWarning = ({ task }) => {
           warning = {
             task_id:task.id,
             expire: warning.getDate() > 0 ? warning.getDate() : 1,
-            due_date: 0,
+            due_date: -2,
             initial: 0,
           }
           dispatch(
@@ -63,13 +63,13 @@ const TaskWarning = ({ task }) => {
         } else if (today.getTime() < initialDate.getTime()) {
           warning =
             Math.round((today - initialDate) / (1000 * 60 * 60 * 24)) - 1;
-            warning = {task_id:task.id, expire: 0, due_date: 0, initial: Math.abs(warning) };
+            warning = {task_id:task.id, expire: 0, due_date: -2, initial: Math.abs(warning) };
           dispatch(
             getWarning(warning)
           );
           setWarningState(-1);
         } else {
-          warning = {task_id:task.id, expire: 0, due_date: 0, initial: 0 };
+          warning = {task_id:task.id, expire: 0, due_date: -2, initial: 0 };
           dispatch(getWarning(warning));
 
           setWarningState(2);

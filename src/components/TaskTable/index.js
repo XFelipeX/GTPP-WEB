@@ -169,7 +169,7 @@ const TaskTable = (props) => {
   async function loadVinculateUsers() {
     // const AUTH = permissions.session;
 
-    const { data } = await api.get("CCPP/User.php?AUTH=" + AUTH + "&app_id=3");
+    const { data } = await api.get("CCPP/Employee.php?AUTH=" + AUTH + "&app_id=3");
     // console.log(data);
     try {
       dispatch(getVinculatedUsers(data.data));

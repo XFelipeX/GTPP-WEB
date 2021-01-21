@@ -214,7 +214,7 @@ let TaskUsers = ({ task }) => {
       try {
         let jsonString = {
           task_id: task.id,
-          message: {
+          object: {
             description: msg,
             task_id: task.id,
             task: taskf[0],
@@ -390,9 +390,9 @@ let TaskUsers = ({ task }) => {
     if (users.length > 0) {
       users.map((user) => {
         let result = vinculatedUsers.filter(
-          (users) => users.id == user.user_id
+          (users) => Number(users.id) == Number(user.user_id)
         );
-        user.name = result[0].user;
+        user.name = result[0].name;
         // console.log(user.name)
       });
     }

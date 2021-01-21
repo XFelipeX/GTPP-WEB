@@ -29,7 +29,7 @@ const TaskPriority = ({ task }) => {
       try {
         let jsonString = {
           task_id: task.id,
-          message: {description:msg,task_id:task.id,update:update==0?-1:update},
+          object: {description:msg,task_id:task.id,update:update==0?-1:update},
           date_time: null,
           user_id: Number(permissions.id),
           type: 4,

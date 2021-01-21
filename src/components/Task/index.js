@@ -174,7 +174,7 @@ const Task = ({ task }) => {
           {photo[0] ? (
             <>
               <img src={photo[0].photo} alt="" width="30" height="30" />
-              <span className="tooltiptext">{user[0].user}</span>
+              <span className="tooltiptext">{user[0].name}</span>
             </>
           ) : null}
         </div>
