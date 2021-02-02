@@ -34,7 +34,6 @@ export const updateCheckDept = async (
   auth
 ) => {
   const AUTH = auth;
-  // console.log(taskId,deptId,shopId,companyId);
   try {
     const data = await api.post(
       "GTPP/TaskComShoDepSub.php?AUTH=" + AUTH + "&app_id=3",
@@ -53,11 +52,9 @@ export const updateCheckDept = async (
       }
     }
 
-    // console.log(data);
     return data;
   } catch (error) {
     let msg = String(error.response.data.message);
-    // console.log(error.response.data.message);
     if (msg.includes("Task with this state cannot be modified")) {
       showNotification(
         "Aviso",
@@ -94,7 +91,6 @@ export const loadShopsCompany = async (idCompany, auth) => {
       }
     }
 
-    // console.log(data);
     return data;
   } catch (error) {
     showNotification("Erro", String(error.message), "danger");
@@ -118,7 +114,10 @@ export const loadDeptsCompany = async (idCompany, idShop, idTask, auth) => {
     );
 
     if (data.error === true) {
-      // showNotification('Erro',data.message,'danger');
+      if (data.message === "No data") {
+      } else {
+        showNotification("Erro", data.message, "danger");
+      }
     }
     return data.data;
   } catch (error) {
@@ -138,7 +137,6 @@ export const updateStateTask = async (idTask, reason, days, auth) => {
         days: days,
       })
       .then((response) => {
-        // console.log(response)
         return response;
       });
 
@@ -148,7 +146,6 @@ export const updateStateTask = async (idTask, reason, days, auth) => {
     return data.data;
   } catch (error) {
     let msg = String(error.response.data.message);
-    // console.log(error.response.data.message);
     if (msg.includes("This user can not do this")) {
       showNotification(
         "Aviso",
@@ -177,8 +174,6 @@ export const cancelStateTask = async (idTask, reason, auth) => {
         cancel: 1,
       })
       .then((response) => {
-        // console.log(response)
-
         return response;
       });
 
@@ -189,7 +184,7 @@ export const cancelStateTask = async (idTask, reason, auth) => {
   } catch (error) {
     if (error.response) {
       let msg = String(error.response.data.message);
-      // console.log(error.response.data.message);
+
       if (msg.includes("This user can not do this")) {
         showNotification(
           "Aviso",
@@ -214,7 +209,6 @@ export const cancelStateTask = async (idTask, reason, auth) => {
 export function formatDate(props) {
   if (props !== undefined) {
     let data = props.split("-");
-    const date = new Date(props);
     var day = data[2];
     var month = data[1];
     var year = data[0];
@@ -237,27 +231,3 @@ export function showNotification(title, message, type) {
     width: 400,
   });
 }
-
-// export function formatDate(props) {
-//   const date = new Date(props);
-//   var day = date.getDate();
-//   var month = date.getMonth();
-//   day++;
-//   if (day < 10) {
-//     day = "0" + day;
-//   }else if(day==32){
-//     day = "0"+1;
-//     if(month<12){
-//     month++;}else{
-//       month = 0;
-//     }
-//   }
-
-//   if(month<12){
-//     month++;}
-//   if (month < 10) {
-//     month = "0" + month;
-//   }
-//   var year = date.getFullYear();
-//   return day + "/" + month + "/" + year;
-// }

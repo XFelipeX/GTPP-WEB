@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-// import { useDispatch } from "react-redux";
-// import { updateTask } from "../../redux";
 import { BsFilterLeft } from "react-icons/bs";
-import { getTaskFilter, updateTask } from "../../redux";
+import { getTaskFilter } from "../../redux";
 import { store } from "react-notifications-component";
 import "./style.css";
 
@@ -19,20 +17,16 @@ let OrderTasks = () => {
   }, [count]);
 
   useEffect(() => {
-    // console.log(count)
-
     setTimeout(() => {
       orderTasks();
     }, 1000);
   }, [orderTask]);
 
   function orderTasks() {
-    // console.log(showAlert);
     if (count == 0) {
       return;
     }
 
-    // console.log(count);
     let filterDo = [];
     let filterDoing = [];
     let filterAnalyze = [];
@@ -151,10 +145,7 @@ let OrderTasks = () => {
     }
 
     dispatch(getTaskFilter(finalFilter));
-    // dispatch(updateTask());
   }
-
-  // console.log(filterTask)
 
   return (
     <div className="load-tasks-area">

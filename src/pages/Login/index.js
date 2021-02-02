@@ -8,6 +8,8 @@ import img from "../../assets/art.png";
 import logo from "../../assets/logo.png";
 import api from "../../services/api";
 import { store } from "react-notifications-component";
+// import useClickOutside from "../../components/ClickOutside";
+import AlterPassword from "../../components/AlterPassword";
 
 function showNotification(title, message, type) {
   store.addNotification({
@@ -19,7 +21,7 @@ function showNotification(title, message, type) {
     animationIn: ["animate__animated animate__fadeIn"],
     animationOut: ["animate__animated animate__fadeOut"],
     dismiss: {
-      duration: 2000,
+      duration: 4000,
     },
     width: 400,
   });
@@ -29,7 +31,8 @@ const Login = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const [access, setAccess] = useState(false);
-
+  const [showChangePassword, setShowChangePassword] = useState(false);
+ 
   // console.log(taskVisible)
 
   async function UserLogin() {
@@ -83,15 +86,21 @@ const Login = () => {
                   "Preencha todos os campos",
                   "warning"
                 );
-              } else {
+              } else if (msg.includes("Default password is not permited")) {
+                setShowChangePassword(true);
+              } else if(msg.includes("This password do is not match")){
+                showNotification("Aviso", "Senha incorreta", "warning");
+              } else if(msg.includes("No data")){
+                showNotification("Aviso", "Usuário não encontrado", "warning");
+              } else{
                 showNotification("Aviso", msg, "warning");
               }
             } else {
               sessionStorage.setItem("token", data.data.session);
-              dispatch(logIn(data.data));
-              // dispatch(loadingScreen());
-              // console.log(loading)
-              // setPermissions(data.data);
+              const object = {...data.data};
+              object.user = document.getElementById("user_name").value;
+              // console.log(object)
+              dispatch(logIn(object));
               history.push("/main");
             }
           } catch (error) {
@@ -137,8 +146,23 @@ const Login = () => {
     verifyVersion();
   }, []);
 
+ 
+
+  
+
+ 
+
   return (
     <div className="container">
+      {showChangePassword && (
+        <AlterPassword
+          closeModal={setShowChangePassword}
+          defaultUser={document.getElementById("user_name").value}
+          oldPassword={document.getElementById("password").value}
+          userLogin={UserLogin}
+          onlyRead={true}
+        />
+      )}
       <form className="formSection" onSubmit={(e) => e.preventDefault()}>
         <img src={logo} alt="" />
         <h2>Gerenciador de Tarefas</h2>
@@ -165,3 +189,64 @@ const Login = () => {
 };
 
 export default Login;
+
+{
+  /* <div className="changePasswordContainer">
+          <div ref={domNode} className="changePasswordModal">
+            <div className="changePasswordModalTop">
+              <h2>Redefina sua senha</h2>
+            </div>
+
+            <div className="changePasswordModalCenter">
+              <div>
+                <span htmlFor="name">Usuário</span>
+                <input
+                  readOnly
+                  defaultValue={document.getElementById("user_name").value}
+                  type="text"
+                  id="name"
+                  name="name"
+                />
+              </div>
+              <div>
+                <span htmlFor="oldPassword">Senha antiga</span>
+                <input
+                  readOnly
+                  defaultValue={document.getElementById("password").value}
+                  type="password"
+                  id="oldPassword"
+                  name="oldPassword"
+                />
+              </div>
+
+              <div>
+                <span htmlFor="newPassword">Nova senha</span>
+                <input
+                  value={newPassword}
+                  onChange={({ target }) => setNewPassword(target.value)}
+                  type="password"
+                  id="newPassword"
+                  name="newPassword"
+                />
+              </div>
+
+              <div>
+                <span htmlFor="confirmPassword">Confirmar senha</span>
+                <input
+                  value={confirmPassword}
+                  onChange={({ target }) => setConfirmPassword(target.value)}
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                />
+              </div>
+            </div>
+
+            <div className="changePasswordModalFooter">
+              <button type="button" onClick={changePassword}>
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div> */
+}

@@ -55,3 +55,28 @@ export async function createMessage(msg, taskId, auth) {
     console.log(error);
   }
 }
+
+export async function createMessageWithImage(msg,image, taskId, auth) {
+
+  const img = image.split(',');
+  // console.log(image);
+  try {
+    const { data } = await api.post(`GTPP/Message.php?AUTH=${auth}&app_id=3`, {
+      description: msg,
+      task_id: taskId,
+      image:img[1],
+    });
+
+    if (data.error === true) {
+      console.log(data.message);
+    } else {
+      return data.data;
+    }
+  } catch (error) {
+    if (error.response) {
+      console.log(error.response);
+    }
+
+    console.log(error);
+  }
+}

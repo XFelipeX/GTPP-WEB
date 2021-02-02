@@ -25,6 +25,14 @@
     
 }
 
+
+@media only screen and (max-width: 1536px) {
+    .modal .modalContainer{
+      width: 70%;
+    }
+  
+  }
+
 .modal .modalContainer .modalClose{
     background-color: transparent;
     
@@ -155,6 +163,15 @@
     margin-bottom: 1.5em;
     margin-right: 1.5em;
 }
+
+
+@media only screen and (max-width: 1536px) {
+    .webChatArea{
+      height: 500px;
+      width: 350px;
+    }
+  
+  }
 
 @media only screen and (max-width:1366px){
     .webChatArea{

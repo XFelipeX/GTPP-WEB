@@ -50,3 +50,15 @@
         right: 2.8em;
     }
 }
+
+@media screen and (max-width:1536px){
+    .searchArea div{
+        margin: 1.1em;
+    }
+
+    .clearSearch{
+        right: 2.3em;
+    }
+}
+
+

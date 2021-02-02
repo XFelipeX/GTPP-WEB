@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { getTaskFilter, orderTasks, updateTask } from "../../redux";
+import { orderTasks } from "../../redux";
 import { store } from "react-notifications-component";
 import "./style.css";
 import lowPriority from "../../assets/Path1.png";
@@ -10,8 +10,6 @@ import api from "../../services/api";
 import useClickOutside from "../ClickOutside";
 import Loading from "../Loading";
 import { showNotification } from "../TaskModal/functions";
-
-// import useClickOutside from '../Button/index';
 
 const TaskPriority = ({ task }) => {
   const { permissions } = useSelector((state) => state);
@@ -23,30 +21,30 @@ const TaskPriority = ({ task }) => {
 
   const [open, setOpen] = useState(false);
 
-  function SendInfo(msg,update) {
-    // alert(update)
+  function SendInfo(msg, update) {
     if (msg !== "" && webSocket.websocketState === "connected") {
       try {
         let jsonString = {
           task_id: task.id,
-          object: {description:msg,task_id:task.id,update:update==0?-1:update},
+          object: {
+            description: msg,
+            task_id: task.id,
+            update: update == 0 ? -1 : update,
+          },
           date_time: null,
           user_id: Number(permissions.id),
           type: 4,
         };
         webSocket.websocket.send(JSON.stringify(jsonString));
-
-        // console.log(jsonString);
       } catch (error) {
         alert(error);
       }
     }
   }
 
-
   const updatePriority = async (id) => {
     try {
-      const {data} = await api
+      const { data } = await api
         .put(`GTPP/Task.php?AUTH=${AUTH}&app_id=3`, {
           id: task.id,
           description: task.description,
@@ -69,34 +67,28 @@ const TaskPriority = ({ task }) => {
           return response;
         });
 
-        // console.log(data);
-
-        if(data.error===true){
-          showNotification('Erro',data.message,'danger');
-        }else{
-          SendInfo("A prioridade da tarefa foi alterada",id)
-          store.addNotification({
-            title: "Sucesso",
-            message: "A prioridade foi alterada",
-            type: "success",
-            container: "top-center",
-            insert: "top",
-            animationIn: ["animate__animated animate__fadeIn"],
-            animationOut: ["animate__animated animate__fadeOut"],
-            dismiss: {
-              duration: 2000,
-            },
-            width: 400,
-          });
-        }
-
-     
-
-      // console.log(data);
+      if (data.error === true) {
+        showNotification("Erro", data.message, "danger");
+      } else {
+        SendInfo("A prioridade da tarefa foi alterada", id);
+        store.addNotification({
+          title: "Sucesso",
+          message: "A prioridade foi alterada",
+          type: "success",
+          container: "top-center",
+          insert: "top",
+          animationIn: ["animate__animated animate__fadeIn"],
+          animationOut: ["animate__animated animate__fadeOut"],
+          dismiss: {
+            duration: 2000,
+          },
+          width: 400,
+        });
+      }
     } catch (error) {
       let msg = error.message;
 
-      showNotification('Erro',error.message,'danger');
+      showNotification("Erro", error.message, "danger");
 
       if (msg.includes("Network Error")) {
         store.addNotification({
@@ -146,8 +138,6 @@ const TaskPriority = ({ task }) => {
         });
       }
 
-      
-
       setOpen(false);
     }
   };
@@ -159,7 +149,16 @@ const TaskPriority = ({ task }) => {
   return loading == true ? (
     <Loading />
   ) : (
-    <div ref={domNode} className="containerPriority" value={task.priority} style={task.focus===true ? {backgroundColor:"black",borderRadius:50+'%'} : {}}>
+    <div
+      ref={domNode}
+      className="containerPriority"
+      value={task.priority}
+      style={
+        task.focus === true
+          ? { backgroundColor: "black", borderRadius: 50 + "%" }
+          : {}
+      }
+    >
       <div
         onClick={() => setOpen(!open)}
         title={

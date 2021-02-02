@@ -26,30 +26,30 @@ const SearchTask = () => {
     }
   }
 
-  function clearSearch(){
-      document.getElementById("search").value = "";
+  function clearSearch() {
+    document.getElementById("search").value = "";
     if (seeAdminSet === true) {
-        dispatch(updateStateAdmin());
-      } else {
-        dispatch(updateTask());
-      }
+      dispatch(updateStateAdmin());
+    } else {
+      dispatch(updateTask());
+    }
   }
 
   return (
     <div className="searchContainer">
       <div className="searchArea">
-        {/* <label>Pesquisar</label> */}
-        
-        
         <div>
-        
-        <input placeholder="Pesquisar..."  id="search" type="text" onChange={(e) => search(e.target.value)} />
+          <input
+            placeholder="Pesquisar..."
+            id="search"
+            type="text"
+            onChange={(e) => search(e.target.value)}
+          />
         </div>
 
         <span className="clearSearch" onClick={() => clearSearch()}>
-        <AiOutlineClose color="#ccc"/>
+          <AiOutlineClose color="#ccc" />
         </span>
-    
       </div>
     </div>
   );

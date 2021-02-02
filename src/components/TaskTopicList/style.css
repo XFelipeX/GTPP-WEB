@@ -232,6 +232,13 @@
   overflow: auto;
 }
 
+@media only screen and (max-width: 1536px) {
+  #topicList {
+    height: 380px;
+  }
+
+}
+
 @media only screen and (max-width:1366px){
   #topicList{
     height: 370px;

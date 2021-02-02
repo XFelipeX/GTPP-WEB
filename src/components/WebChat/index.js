@@ -4,7 +4,7 @@ import "./style.css";
 import { AiOutlineClose } from "react-icons/ai";
 import { IoMdSend } from "react-icons/io";
 import { getWebSocketState, getWebSocketHistoric } from "../../redux";
-import { createMessage } from "./functions";
+import { createMessage, createMessageWithImage } from "./functions";
 import { AiOutlinePaperClip } from "react-icons/ai";
 import api from "../../services/api";
 
@@ -16,10 +16,12 @@ function WebChat({ close }) {
 
   const { taskVisible } = useSelector((state) => state);
   const { permissions } = useSelector((state) => state);
+  const { vinculatedUsers } = useSelector((state) => state);
   const dispatch = useDispatch();
   const { webSocket } = useSelector((state) => state);
   const [msg, setMsg] = useState("");
   const [messages, setMessages] = useState([]);
+  const [showImage, setShowImage] = useState(false);
   const [imageMessage, setImageMessage] = useState(null);
   // const {permissions} = useSelector(state => state);
   const AUTH = permissions.session;
@@ -31,12 +33,15 @@ function WebChat({ close }) {
     const mainChat = document.getElementById("mainChat");
     setTimeout(() => {
       setMessages(webSocket.historic);
+
       mainChat.scrollTop = 100000000;
     }, 60);
   }, [webSocket.historic]);
   // useEffect(() => {
   //   getMessage(AUTH,250)
   // },[])
+
+  // console.log(webSocket.historic)
 
   function formatDate(dateFormat) {
     if (dateFormat !== undefined) {
@@ -62,6 +67,8 @@ function WebChat({ close }) {
   }
 
   function SetMessage(response) {
+
+    // console.log(response)
     const taskId = response.task_id;
 
     if (taskId != taskVisible.info.task_id) {
@@ -76,27 +83,37 @@ function WebChat({ close }) {
       return;
     }
 
-    let uid = response.user_id;
+    let uid = response.send_user_id;
     let user = response.user_name;
     let message = response.object.description;
     let nowResponse = response.object.date_time;
     let image = response.object.image;
+    let haveImage = false;
 
-    let haveImage;
+    let userAuthor = vinculatedUsers.filter(
+      (user) => Number(user.id) === Number(uid)
+    );
 
-    if (image === "1") {
+    user = userAuthor[0].name;
+
+    // console.log(response)
+
+    if (image === 1) {
       loadImage(response.object.last_id);
       // dispatch(getH)
       haveImage = true;
     }
 
-    if (haveImage===true) {
+    if (haveImage === true) {
       // console.log('tem imagem')
-      setMessages([...webSocket.historic, {...response.object,user_name:user}]);
+      setMessages([
+        ...webSocket.historic,
+        { ...response.object, user_id:uid,user_name: user },
+      ]);
+      // console.log(messages);
       setTimeout(() => {
         document.getElementById("mainChat").scrollTop = 10000000000;
-      },60)
-      
+      }, 60);
     } else {
       const box = document.createElement("div");
       const author = document.createElement("span");
@@ -133,8 +150,49 @@ function WebChat({ close }) {
     output.scrollTop = 100000000;
   }
 
+  // console.log(messages)
+
   function SendMessage(msg) {
-    if (msg !== "" && webSocket.websocketState === "connected") {
+    let image = document.getElementById("upload-photo").files[0];
+
+    if (image) {
+      // console.log(image);
+
+      // image = convertBase64(image);
+      convertBase64(image)
+        .then((data) => (image = data))
+        .then(() => {
+          createMessageWithImage(
+            msg,
+            image,
+            taskVisible.info.task_id,
+            AUTH
+          ).then((response) => {
+            // console.log(response)
+
+            try {
+              let jsonString = {
+                task_id: taskVisible.info.task_id,
+                object: {
+                  description: msg,
+                  id: response.last_id,
+                  date_time: response.date_time,
+                  image:1
+                },
+                user_id: permissions.id,
+                type: 1,
+              };
+              webSocket.websocket.send(JSON.stringify(jsonString));
+
+    
+              document.getElementById("upload-photo").value = "";
+              setMsg("");
+            } catch (error) {
+              alert(error);
+            }
+          });
+        });
+    } else if (msg !== "" && webSocket.websocketState === "connected") {
       createMessage(msg, taskVisible.info.task_id, AUTH).then((response) => {
         // console.log(response);
 
@@ -143,15 +201,15 @@ function WebChat({ close }) {
             task_id: taskVisible.info.task_id,
             object: {
               description: msg,
-              last_id: response.last_id,
+              id: response.last_id,
               date_time: response.date_time,
+              image:0
             },
             user_id: permissions.id,
             type: 1,
           };
           webSocket.websocket.send(JSON.stringify(jsonString));
 
-          // console.log(jsonString);
 
           setMsg("");
         } catch (error) {
@@ -204,6 +262,31 @@ function WebChat({ close }) {
     }
   }
 
+  function convertBase64(file) {
+    // console.log(file);
+
+    if (file !== null) {
+
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+        ;
+      });
+
+      // console.log(reader);
+    }
+
+    // if (file != null) {
+    //   var image = new Image();
+    //   image.src = "data:image.jpeg;base64, " + file;
+    //   return image.src;
+    // } else {
+    //   return null;
+    // }
+  }
+
   // console.log(messages);
 
   return (
@@ -236,7 +319,7 @@ function WebChat({ close }) {
         </div>
       </div>
       <div className="mainChat" id="mainChat" onLoad={() => {}}>
-        {imageMessage !== null ? (
+        {showImage===true ? (
           <div
             className="showImageMessage"
             style={
@@ -263,15 +346,17 @@ function WebChat({ close }) {
                   <span
                     className="authorRight"
                     style={
-                      message.image === "1" ? { marginRight: "-.1em" } : {}
+                      message.image === 1 ? { marginRight: "-.1em" } : {}
                     }
                   >
                     Eu
                   </span>
-                  {message.image === "1" && (
+                  {message.image === 1 && (
                     <span
                       className="clipImageRight"
-                      onClick={() => loadImage(message.id)}
+                      onClick={() => {
+                       
+                        loadImage(message.id).then(() =>  setShowImage(true))}}
                     >
                       <AiOutlinePaperClip size={18} />
                     </span>
@@ -286,10 +371,14 @@ function WebChat({ close }) {
               <div className="boxLeft" key={message.id}>
                 <div className="infoMessage">
                   <span className="authorLeft">{message.user_name} </span>
-                  {message.image === "1" && (
+                  {message.image === 1 && (
                     <span
                       className="clipImage"
-                      onClick={() => loadImage(message.id)}
+                      onClick={() => {
+                        
+                        loadImage(message.id).then(() =>setShowImage(true) )
+                        
+                        }}
                     >
                       <AiOutlinePaperClip size={18} />
                     </span>
@@ -306,15 +395,20 @@ function WebChat({ close }) {
       </div>
       <div className="footerChat">
         <div>
-          <input
-            autoFocus
+          <textarea
             type="text"
             id="msg"
-            placeholder="Escreva sua mensagem"
             value={msg}
             onKeyPress={(e) => (e.key === "Enter" ? SendMessage(msg) : null)}
             onChange={(e) => setMsg(e.target.value)}
           />
+          <div>
+            <label className="upload" htmlFor="upload-photo">
+              <AiOutlinePaperClip size={37} />
+            </label>
+            <input type="file" name="photo" id="upload-photo" />
+          </div>
+
           <button type="button" onClick={() => SendMessage(msg)}>
             <IoMdSend size={50} color="#ccc" />
           </button>

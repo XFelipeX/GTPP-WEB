@@ -38,6 +38,7 @@
   height: 40px;
   padding: 0 20px;
   font-size: 18px;
+  background-color: #fff;
 }
 
 .formSection button{
@@ -100,3 +101,4 @@
 .version span{
   padding: 3px;
 }
+

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FaElementor, FaTrash } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa";
 import { BiCommentAdd } from "react-icons/bi";
 import { AiOutlineClose } from "react-icons/ai";
 import { AiOutlineClockCircle, AiOutlineEdit } from "react-icons/ai";
@@ -20,12 +20,7 @@ import {
   changeYesNoTopic,
   showNotification,
 } from "./functions";
-import {
-  getTaskFilter,
-  updateModal,
-  updateTask,
-  updateTopic,
-} from "../../redux";
+import { taskInfoShow, updateModal, updateTopic } from "../../redux";
 import "./style.css";
 
 const TaskTopicList = ({ id = "modalEdit" }) => {
@@ -37,7 +32,6 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   const AUTH = permissions.session;
   const { modalUpdate } = useSelector((state) => state);
   const [newItem, setNewItem] = useState("");
-  const [taskItem, setTaskItem] = useState([{}]);
   const [showEdit, setShowEdit] = useState(false);
   const [showHistoric, setShowHistoric] = useState(false);
   const [editDescription, setEditDescription] = useState();
@@ -85,33 +79,29 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
         // dispatch(getTaskFilter([...changes]));
       }
     });
-    // e.target.setAttribute("checked",check);
-
-    // console.log(e)
   }
 
   const [showBottom, setShowBottom] = useState(false);
 
   useEffect(() => {
     async function loadTaskItems() {
-      // const AUTH = sessionStorage.getItem("token");
       try {
         const { data } = await api.get("GTPP/TaskItem.php", {
           params: { AUTH: AUTH, app_id: 3, task_id: taskVisible.info.task_id },
         });
-        // console.log(data)
 
         return data;
       } catch (error) {
-        // console.log(error);
+        console.log(error);
         return [{}];
       }
     }
 
     loadTaskItems().then((response) => {
-      // console.log(response)
       if (response.error == false) {
-        taskVisible.task.task_item = response.data;
+        dispatch(
+          taskInfoShow({ ...taskVisible.task, task_item: response.data })
+        );
       } else {
         taskVisible.task.task_item = [{}];
       }
@@ -130,7 +120,6 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   }, [showBottom]);
 
   function SendInfo(msg, type, percent, state, item, remove) {
-    // console.log(itens)
     if (msg !== "" && webSocket.websocketState === "connected") {
       switch (type) {
         case 2:
@@ -154,7 +143,6 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
           }
           break;
         case 6: {
-          // console.log("type 6")
           try {
             let jsonString = {
               task_id: taskVisible.info.task_id,
@@ -209,7 +197,6 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
               ...taskVisible.task.task_item,
               newItem,
             ];
-            // console.log(taskVisible.task)
             SendInfo("Novo item adicionado", 2, response.percent, "", newItem);
             taskVisible.info.percent = response.percent;
             taskVisible.info.state_id = response.state_id;
@@ -239,7 +226,6 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   }
 
   function deleteItemTopic(taskId, itemId) {
-    // e.preventDefault();
     if (taskVisible.info.state_id == 5 || taskVisible.info.state_id == 4) {
       showNotification(
         "Aviso",
@@ -293,7 +279,9 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
             dispatch(updateTopic());
           }
         })
-        .catch((error) => {});
+        .catch((error) => {
+          console.log(error);
+        });
     }
   }
 
@@ -340,11 +328,10 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   }
 
   function changeOrderTopic(taskId, nextOrPrevious, itemId) {
-    nextOrPreviousTopic(taskId, AUTH, nextOrPrevious, itemId).then(() =>
-      dispatch(updateModal())
+    nextOrPreviousTopic(taskId, AUTH, nextOrPrevious, itemId).then(
+      () => dispatch(updateModal()),
+      dispatch(updateTopic())
     );
-
-    // console.log(document.getElementById(itemId).getBoundingClientRect().top);
 
     let element = document.getElementById("topicList");
 
@@ -353,10 +340,6 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
     if (distance.offsetTop > element.offsetTop * 2 - 100) {
       element.scrollTop = distance.offsetTop - 280;
     }
-
-    // console.log(distance.offsetTop)
-    // console.log(element.offsetTop)
-    // handleClick()
   }
 
   function setYesNoOption() {
@@ -383,7 +366,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
             );
           } else {
             SendInfo(
-              "Agora é uma item comum ",
+              "Agora é um item comum ",
               2,
               response.percent,
               response.state_id,
@@ -405,7 +388,6 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   }
 
   function setYesNo(taskId, yesOrNo, idItem, auth) {
-    // console.log(yesOrNo);
     let change = yesOrNo;
 
     changeYesNoTopic(taskId, change, idItem, auth).then((response) => {
@@ -459,7 +441,6 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
           }
         });
 
-        // dispatch(updateModal());
         dispatch(updateTopic());
       }
     });
@@ -547,7 +528,6 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
         ) : null}
       </div>
 
-      {/* alterar modelo de modal */}
       {showEdit && taskVisible.info.state_id != 5 ? (
         <div id={id} className="modalEdit" onClick={() => {}}>
           <div>
@@ -596,10 +576,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
           ? taskVisible.task.task_item.map((item) =>
               item.id != null ? (
                 <React.Fragment key={item.id}>
-                  {/* {console.log(item)} */}
-
                   <div className="topic" ref={ref} id={item.id}>
-                    {/* {console.log(item.check)} */}
                     {item.yes_no !== 0 ? (
                       <div className="topicLeft">
                         <a
@@ -726,7 +703,6 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                           : null
                       }
                     >
-                      {/* <input type="checkbox"  onChange={() => {changeChecked(taskVisible.id,item.id,item.check)}} checked={item.check}/> */}
                       <label
                         style={
                           item.yes_no === -1 ||

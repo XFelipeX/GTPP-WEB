@@ -6,10 +6,18 @@ import TaskPriority from "../TaskPriority";
 import TaskDate from "../TaskDate";
 import TaskUsers from "../TaskUsers";
 import TaskModal from "../TaskModal";
-import { taskInfoShow, sendInfoModal, taskInfoOwner, updateModal } from "../../redux";
+import {
+  taskInfoShow,
+  sendInfoModal,
+  taskInfoOwner,
+  updateModal,
+  getNotifications,
+} from "../../redux";
 import api from "../../services/api";
 import { store } from "react-notifications-component";
 import TaskWarning from "../TaskWarning";
+import ModalNotifications from "../ModalNotifications/ModalNotifications";
+import useClickOutside from "../ClickOutside";
 
 function showNotification(title, message, type) {
   store.addNotification({
@@ -33,8 +41,9 @@ const Task = ({ task }) => {
   const { taskVisible } = useSelector((state) => state);
   const { permissions } = useSelector((state) => state);
   const { vinculatedUsers } = useSelector((state) => state);
+  const { notifications } = useSelector((state) => state);
   const [showModal, setShowModal] = useState(false);
-  const [taskModal, setTaskModal] = useState();
+  const [showNotifications, setShowNotifications] = useState();
 
   const dispatch = useDispatch();
 
@@ -47,17 +56,28 @@ const Task = ({ task }) => {
     state_id,
     userId,
     priority,
-    notifications,
+    notificationsTask,
     warning
   ) {
+    let newArray = [...notifications];
+
+    newArray.map((notify) => {
+      if (notify.task_id === task.id) {
+        notify.content.amount = notify.content.message;
+        notify.content.object = notify.content.object.filter(
+          (object) => object.type === 1
+        );
+      }
+    });
+
+    dispatch(getNotifications([...newArray]));
+
     task.focus = false;
     const AUTH = permissions.session;
-    // console.log(task)
     try {
       let { data } = await api.get(
         "GTPP/Task.php?AUTH=" + AUTH + "&app_id=3&id=" + taskId
       );
-      // console.log(taskVisible);
 
       if (data.error === true) {
         let msg = data.message;
@@ -78,27 +98,25 @@ const Task = ({ task }) => {
             state_id,
             userId,
             priority,
-            notifications,
-            warning,
+            notificationsTask,
+            warning
           )
         );
         dispatch(taskInfoShow(data.data));
         loadUserInfo();
       }
     } catch (error) {
-      if(error.response){
+      if (error.response) {
         let msg = error.response.data.message;
 
-      if (msg.includes("Authorization denied")) {
-        showNotification("Erro", "Autorização negada", "danger");
+        if (msg.includes("Authorization denied")) {
+          showNotification("Erro", "Autorização negada", "danger");
+        } else {
+          showNotification("Erro", msg, "danger");
+        }
       } else {
-        showNotification("Erro", msg, "danger");
+        showNotification("Erro", String(error.message), "danger");
       }
-      }else{
-        showNotification("Erro",String(error.message),"danger");
-      }
-
-      
     }
   }
 
@@ -112,7 +130,6 @@ const Task = ({ task }) => {
       let { data } = await api.get(
         "CCPP/Employee.php?AUTH=" + AUTH + "&app_id=3&id=" + userId
       );
-      // console.log(data)
 
       if (data.error === true) {
         let msg = data.message;
@@ -129,44 +146,55 @@ const Task = ({ task }) => {
 
         dispatch(taskInfoOwner(info));
       }
-
-      // console.log(taskVisible)
     } catch (error) {
       showNotification("Erro", error.message, "danger");
     }
   }
 
-  // useEffect(() => {
-  //   loadUserInfo();
-  // }, []);
-
-  // console.log(task)
   const [notification, setNotification] = useState(0);
 
   useEffect(() => {
-    if (task.notifications[6].amount > 99) {
-      setNotification("+99");
-    } else if (task.notifications[6].amount === 0) {
-      setNotification(0);
-    } else {
-      setNotification(task.notifications[6].amount);
+    if (notifications.length > 0) {
+      notifications.map((notification) => {
+        if (notification.task_id === task.id) {
+          let total = 0;
+
+          total += notification.content.amount;
+
+          if (total > 99) {
+            setNotification("+99");
+          } else if (total === 0) {
+            setNotification(0);
+          } else {
+            setNotification(total);
+          }
+        }
+      });
     }
-  }, [task.notifications[6].amount]);
+  }, [notifications]);
 
+  let domNode = useClickOutside(() => {
+    setShowNotifications(false);
+  });
 
-  // console.log(task.focus)
   return (
-    <li className="containerTask" style={task.focus==true ? {backgroundColor:"#f29503"} : {}}>
+    <li
+      className="containerTask"
+      style={task.focus == true ? { backgroundColor: "#f29503" } : {}}
+      ref={domNode}
+    >
       <div className="tableLeft">
         <div
           style={notification === 0 ? { backgroundColor: "transparent" } : null}
           className="tableNotification"
+          onClick={() => notification > 0 && setShowNotifications(true)}
         >
           {notification > 0 && notification}
         </div>
         <div className="priority">
           {visionMenu.priority === true ? <TaskPriority task={task} /> : null}
         </div>
+        {showNotifications && <ModalNotifications task={task} />}
       </div>
 
       <div className="taskName">
@@ -180,7 +208,7 @@ const Task = ({ task }) => {
         </div>
         <h2
           onClick={() => {
-            dispatch(updateModal())
+            dispatch(updateModal());
             loadTaskVisible(
               task.id,
               task.percent,
@@ -206,10 +234,7 @@ const Task = ({ task }) => {
         ) : null}
       </div>
       <div className="taskContent">
-          
-        <TaskWarning task={task}/>
-        {/* {visionMenu.shop === true ? <TaskShop task={task}/> : null}
-        {visionMenu.company === true ? <TaskCompany task={task}/> : null} */}
+        <TaskWarning task={task} />
         {visionMenu.vinc === true ? <TaskUsers task={task} /> : null}
         {visionMenu.state === true ? <TaskState task={task} /> : null}
         {visionMenu.date === true ? <TaskDate task={task} /> : null}

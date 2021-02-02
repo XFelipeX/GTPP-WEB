@@ -1,12 +1,12 @@
 import { useEffect, useRef } from "react";
 
-// função de click fora do componente para fechar componentes
+// function for click outside modal
 let useClickOutside = (handler) => {
   let domNode = useRef();
 
   useEffect(() => {
     let maybeHandler = (event) => {
-      if (!domNode.current.contains(event.target)) {
+      if (domNode.current && !domNode.current.contains(event.target)) {
         handler();
       }
     };

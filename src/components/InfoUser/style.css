@@ -33,6 +33,13 @@
   padding: 0.15em;
   margin-left: 0.5em;
   font-size: 1.1em;
+  display:flex;
+  align-items: center;
+}
+
+.user-info-content p > strong::after{
+  content: '';
+  margin-right: 1rem;
 }
 
 .user-img-card {
@@ -52,4 +59,8 @@
 .show-admin {
   /* border-bottom: 1px solid #406d9a; */
   max-width: 320px;
+}
+
+.password{
+  cursor: pointer;
 }

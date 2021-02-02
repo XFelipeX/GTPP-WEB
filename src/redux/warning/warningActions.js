@@ -1,5 +1,5 @@
 import {GET_WARNING} from './warningTypes';
-import { CHANGE } from "./warningTypes";
+import { REMOVE_ITEM } from "./warningTypes";
 
 export const getWarning = (info) => {
     return{
@@ -8,9 +8,9 @@ export const getWarning = (info) => {
     }
 }
 
-export const change = (info) => {
+export const removeWarning = (info) => {
     return{
-        type:CHANGE,
+        type:REMOVE_ITEM,
         payload:info
     }
 }

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getWebSocketState, getWebSocket } from "../../redux";
 import Header from "../../components/Header/index";
@@ -11,17 +11,25 @@ function Main() {
   const dispatch = useDispatch();
   const { permissions } = useSelector((state) => state);
   const { webSocket } = useSelector((state) => state);
+  // const [token,setToken] = useState();
   const AUTH = permissions.session;
+  
 
   useEffect(() => {
     dispatch(getWebSocketState("error"));
   }, []);
   let socket;
 
+  // useEffect(() => {
+  //   setToken(sessionStorage.getItem("token"));
+  // },[])
+
   function Connect() {
     // console.log("nova conexão criada");
-    const token = sessionStorage.getItem("token");
+    
     // console.log(token);
+    const token = sessionStorage.getItem("token");
+    // setToken(sessionStorage.getItem("token"));
     if (token && token !== undefined) {
       socket = new WebSocket("ws://192.168.0.99:3333");
 

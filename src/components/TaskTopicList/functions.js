@@ -9,16 +9,12 @@ export const changeItemChecked = async (taskId, itemId, check, auth) => {
       { task_id: taskId, id: itemId, check: check }
     );
 
-    // console.log(data);
-
     if (data.error === true) {
       showNotification("Erro", String(data.message), "danger");
       return null;
     }
     return data.data;
   } catch (error) {
-    // console.log('error')
-
     if (error.response) {
       let msg = error.response.data.message;
 
@@ -89,7 +85,7 @@ export const addItem = async (taskId, description, auth) => {
       "GTPP/TaskItem.php?AUTH=" + AUTH + "&app_id=3",
       { task_id: taskId, description: description }
     );
-    
+
     if (data.error === true) {
       showNotification("Erro", String(data.message), "danger");
       return null;
@@ -150,7 +146,6 @@ export const updateTopicDescription = async (
       "A descrição do item foi modificada",
       "success"
     );
-    // console.log(data);
     return data;
   } catch (error) {
     let msg = error.response.data.message;
@@ -181,7 +176,6 @@ export const takeHistoricTask = async (taskId, auth) => {
     const { data } = await api.get(
       "GTPP/TaskHistoric.php?AUTH=" + AUTH + "&app_id=3&task_id=" + taskId
     );
-    // console.log(data);
     if (data.error === true) {
       if (data.message.includes("No data")) {
       } else {
@@ -211,7 +205,6 @@ export const nextOrPreviousTopic = async (
         next_or_previous: nextOrPrevious,
       }
     );
-    // console.log(data);
     if (data.error === true) {
       showNotification("Erro", String(data.message), "danger");
     }
@@ -240,7 +233,6 @@ export const changeYesNoTopic = async (taskId, yesOrNo, itemId, auth) => {
       return null;
     }
 
-    // console.log(data);
     return data.data;
   } catch (error) {
     if (error.response) {

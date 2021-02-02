@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   addUsersOnline,
+  getNotifications,
   getTask,
-  getTaskFilter,
   getUsersOnline,
   getWebSocketMessage,
-  updateStateAdmin,
-  updateTask,
-  updateTopic,
+  taskInfoShow,
 } from "../../redux";
 import ButtonLogoff from "../ButtonLogoff";
 import CreateTask from "../CreateTask";
@@ -18,7 +16,7 @@ import InfoUser from "../InfoUser";
 import LoadTasks from "../LoadTasks";
 import OrderTasks from "../OrderTasks";
 import { store } from "react-notifications-component";
-
+import api from "../../services/api";
 import "./style.css";
 import SearchTask from "../SearchTask";
 import { removeUsersOnline } from "../../redux/webSocket/webSocketActions";
@@ -48,39 +46,79 @@ function Header() {
   const { vinculatedUsers } = useSelector((state) => state);
   const { seeAdminSet } = useSelector((state) => state);
   const { taskStates } = useSelector((state) => state);
+  const { tasks } = useSelector((state) => state);
+  const { notifications } = useSelector((state) => state);
 
-  // console.log(taskStates);
+  function sumNotification(type, taskId, object) {
+    if (type === 1) {
+      if (notifications.length > 0) {
+        let taskNotification = [...notifications];
+        let isNewNotification = true;
 
-  function sumNotification(type, taskId) {
-    if (type === "messages") {
-      filterTask.filter.map((task) => {
-        if (task.id === taskId) {
-          task.notifications[0].amount += 1;
-          let total = 0;
-          for (let i = 0; i < task.notifications.length - 1; i++) {
-            total += task.notifications[i].amount;
+        taskNotification.map((notification) => {
+          if (notification.task_id === taskId) {
+            if (notification.content.object) {
+              notification.content.message += 1;
+              notification.content.amount += 1;
+              notification.content.object = [
+                ...notification.content.object,
+                object,
+              ];
+              isNewNotification = false;
+            }
           }
+        });
 
-          // console.log(total);
-          task.notifications[6].amount = total;
-          return;
+        if (isNewNotification) {
+          const notification = {
+            task_id: taskId,
+            content: { message: 1, amount: 1, object: [object] },
+          };
+          dispatch(getNotifications([...taskNotification, notification]));
+        } else {
+          dispatch(getNotifications([...taskNotification]));
         }
-      });
-    }
+      } else {
+        const notification = {
+          task_id: taskId,
+          content: { message: 1, amount: 1, object: [object] },
+        };
+        dispatch(getNotifications([notification]));
+      }
+    } else {
+      if (notifications.length > 0) {
+        let taskNotification = [...notifications];
+        let isNewNotification = true;
 
-    if (type === "reload") {
-      filterTask.filter.map((task) => {
-        if (task.id === taskId) {
-          let total = 0;
-          for (let i = 0; i < task.notifications.length - 1; i++) {
-            total += task.notifications[i].amount;
+        taskNotification.map((notification) => {
+          if (notification.task_id === taskId) {
+            if (notification.content && notification.content.object) {
+              isNewNotification = false;
+              notification.content.amount += 1;
+              notification.content.object = [
+                ...notification.content.object,
+                object,
+              ];
+            }
           }
+        });
 
-          // console.log(total);
-          task.notifications[6].amount = total;
-          return;
+        if (isNewNotification) {
+          const notification = {
+            task_id: taskId,
+            content: { message: 0, amount: 1, object: [object] },
+          };
+          dispatch(getNotifications([...taskNotification, notification]));
+        } else {
+          dispatch(getNotifications([...taskNotification]));
         }
-      });
+      } else {
+        const notification = {
+          task_id: taskId,
+          content: { message: 0, amount: 1, object: [object] },
+        };
+        dispatch(getNotifications([notification]));
+      }
     }
   }
 
@@ -90,10 +128,13 @@ function Header() {
       webSocket.message !== undefined &&
       webSocket.message.type === 1
     ) {
-      let task = filterTask.filter.filter(
-        (task) => task.id == webSocket.message.object.task_id
+      //type 1 == Message
+      let task = tasks.filter(
+        (task) => Number(task.id) === Number(webSocket.message.task_id)
       );
-
+      let user = vinculatedUsers.filter(
+        (user) => Number(user.id) === Number(webSocket.message.send_user_id)
+      );
       let taskIsVisible = false;
 
       if (task !== undefined && task[0]) {
@@ -107,50 +148,78 @@ function Header() {
         // if modal is close show notification
         if (
           taskIsVisible === false &&
-          permissions.id !== webSocket.message.user_id
+          permissions.id !== webSocket.message.send_user_id
         ) {
+          console.log("notificacao");
           showNotification(
             task[0].description,
-            webSocket.message.user_name +
-              ": " +
-              webSocket.message.object.description,
+            user[0].name + ": " + webSocket.message.object.description,
             "info"
           );
-          sumNotification("messages", task[0].id);
-        } else if (permissions.id !== webSocket.message.user_id) {
+
+          if (
+            Notification.permission === "granted" &&
+            document.hidden === true
+          ) {
+            const notification = new Notification(task[0].description, {
+              body: user[0].name + ": " + webSocket.message.object.description,
+            });
+
+            window.focus();
+            notification.close();
+          }
+
+          sumNotification(1, task[0].id, webSocket.message);
+        } else if (permissions.id !== webSocket.message.send_user_id) {
           //verify if webchat is open
           if (webSocket.historic && webSocket.historic.length > 0) {
             //webchat open is not the same of modal
             if (webSocket.historic[0].task_id !== taskVisible.info.task_id) {
               showNotification(
                 task[0].description,
-                webSocket.message.user_name +
-                  ": " +
-                  webSocket.message.object.description,
+                user[0].name + ": " + webSocket.message.object.description,
                 "info"
               );
 
-              sumNotification("messages", task[0].id);
+              if (
+                Notification.permission === "granted" &&
+                document.hidden === true
+              ) {
+                const notification = new Notification(task[0].description, {
+                  body:
+                    user[0].name + ": " + webSocket.message.object.description,
+                });
+
+                window.focus();
+                notification.close();
+              }
+
+              sumNotification(1, task[0].id, { ...webSocket.message });
             }
-          } else if (permissions.id !== webSocket.message.user_id) {
+          } else if (permissions.id !== webSocket.message.send_user_id) {
             showNotification(
               task[0].description,
-              webSocket.message.user_name +
-                ": " +
-                webSocket.message.object.description,
+              user[0].name + ": " + webSocket.message.object.description,
               "info"
             );
 
-            sumNotification("messages", task[0].id);
+            if (
+              Notification.permission === "granted" &&
+              document.hidden === true
+            ) {
+              const notification = new Notification(task[0].description, {
+                body:
+                  user[0].name + ": " + webSocket.message.object.description,
+              });
+
+              window.focus();
+              notification.close();
+            }
+
+            sumNotification(1, task[0].id, webSocket.message);
           }
         }
 
-        // if the user what send de message is not the same receive
-        // if(permissions.id!==Number(webSocket.message.user_id && sumOrNo===true)){
-
-        // }
-
-        // alert(webSocket.message.user_name + ": " + webSocket.message.object);
         dispatch(getWebSocketMessage(""));
       }
     } else if (
@@ -160,13 +229,15 @@ function Header() {
     ) {
       //type 2 == itens
 
-      // let taskIsVisible = false;
-
-      if (permissions.id !== webSocket.message.user_id) {
-        let taskf = filterTask.filter.filter(
+      if (permissions.id !== webSocket.message.send_user_id) {
+        let taskf = tasks.filter(
           (task) => task.id == webSocket.message.object.task_id
         );
-        if (taskVisible && taskVisible.info.task_id) {
+        let user = vinculatedUsers.filter(
+          (user) => Number(user.id) === Number(webSocket.message.send_user_id)
+        );
+
+        if (taskVisible.info && taskVisible.info.task_id === taskf[0].id) {
           if (webSocket.message.object.itemUp) {
             if (webSocket.message.object.remove) {
               taskVisible.task.task_item = taskVisible.task.task_item.filter(
@@ -175,7 +246,7 @@ function Header() {
             } else {
               let newItem = true;
               taskVisible.task.task_item.map((item) => {
-                console.log(webSocket.message.object.itemUp);
+                // console.log(webSocket.message.object.itemUp);
                 if (item.id === webSocket.message.object.itemUp.id) {
                   item.check = webSocket.message.object.itemUp.check;
                   item.description =
@@ -194,21 +265,35 @@ function Header() {
             }
           }
           taskVisible.info.percent = webSocket.message.object.percent;
+        } else {
+          if (taskf[0]) {
+            sumNotification(2, taskf[0].id, webSocket.message);
+          }
         }
 
-        // console.log(webSocket.message);
-        let tasksUp = [...filterTask.filter];
+        let tasksUp = [...tasks];
 
         tasksUp.map((task) => {
           if (task.id == webSocket.message.object.task_id) {
             task.percent = webSocket.message.object.percent;
             showNotification(
               taskf[0].description,
-              webSocket.message.object.description +
-                " por " +
-                webSocket.message.user_name,
+              webSocket.message.object.description + " por " + user[0].name,
               "info"
             );
+
+            if (
+              Notification.permission === "granted" &&
+              document.hidden === true
+            ) {
+              const notification = new Notification(taskf[0].description, {
+                body:
+                  webSocket.message.object.description + " por " + user[0].name,
+              });
+
+              window.focus();
+              notification.close();
+            }
           }
         });
 
@@ -219,15 +304,19 @@ function Header() {
       webSocket.message !== undefined &&
       webSocket.message.type === -1
     ) {
-      if (permissions.id !== webSocket.message.user_id) {
-        const state = webSocket.message.state;
-        const userName = webSocket.message.user_name;
-        const userId = webSocket.message.user_id;
+      // type -1 = state of connection
 
-        if (state === "connected") {
+      if (permissions.id !== webSocket.message.send_user_id) {
+        const state = webSocket.message.state;
+        let user = vinculatedUsers.filter(
+          (user) => Number(user.id) === Number(webSocket.message.send_user_id)
+        );
+        const userId = webSocket.message.send_user_id;
+
+        if (state === "connected" && user[0]) {
           dispatch(addUsersOnline(userId));
-          showNotification(userName, "Acabou de entrar", "info");
-        } else {
+          showNotification(user[0].name, "Acabou de entrar", "info");
+        } else if (user[0]) {
           let users = [...webSocket.users];
           let item;
           let indexRemove;
@@ -241,20 +330,17 @@ function Header() {
           });
 
           users.splice(item, indexRemove);
-          // console.log(users);
           dispatch(getUsersOnline([...users]));
           dispatch(removeUsersOnline(userId));
-          showNotification(userName, "Acabou de sair", "info");
+          showNotification(user[0].name, "Acabou de sair", "info");
         }
       }
-
-      // console.log(webSocket.message)
     } else if (
       webSocket.message !== "" &&
       webSocket.message !== undefined &&
       webSocket.message.type === -2
     ) {
-      // console.log(webSocket);
+      // type -2 == users online;
 
       if (!webSocket.message.error) {
         dispatch(getUsersOnline([...webSocket.message.user]));
@@ -264,23 +350,25 @@ function Header() {
       webSocket.message !== undefined &&
       webSocket.message.type === 3
     ) {
-      // console.log(webSocket);
       //type 3 == descriptions
 
       if (
         webSocket.message.object &&
-        permissions.id !== webSocket.message.user_id
+        permissions.id !== webSocket.message.send_user_id
       ) {
         let task = filterTask.filter.filter(
           (task) => task.id == webSocket.message.object.task_id
         );
-        // console.log(tasks);
+        let user = vinculatedUsers.filter(
+          (user) => Number(user.id) === Number(webSocket.message.send_user_id)
+        );
+
         const info = webSocket.message.object.update
           ? webSocket.message.object.update
           : webSocket.message.object.full_description;
         const taskId = webSocket.message.task_id;
 
-        let tasksUp = [...filterTask.filter];
+        let tasksUp = [...tasks];
         if (webSocket.message.object.update) {
           tasksUp.map((task) => {
             if (task.id == taskId) {
@@ -288,25 +376,38 @@ function Header() {
             }
           });
 
-          if (taskVisible && taskVisible.info.task_id===taskId) {
-            taskVisible.info.description = info;
-          }
-
           dispatch(getTask([...tasksUp]));
+
+          if (taskVisible.info && taskVisible.info.task_id === taskId) {
+            // dispatch(sendInfoModal({...taskVisible.info,description:info}))
+            taskVisible.info.description = info;
+          } else {
+            sumNotification(3, task[0].id, webSocket.message);
+          }
         } else {
-        
-          if (taskVisible && taskVisible.info.task_id===taskId) {
-            taskVisible.task.full_description = info;
+          if (taskVisible.info && taskVisible.info.task_id === taskId) {
+            dispatch(
+              taskInfoShow({ ...taskVisible.task, full_description: info })
+            );
+          } else {
+            sumNotification(3, task[0].id, webSocket.message);
           }
         }
 
         showNotification(
           task[0].description,
-          webSocket.message.object.description +
-            " por " +
-            webSocket.message.user_name,
+          webSocket.message.object.description + " por " + user[0].name,
           "info"
         );
+
+        if (Notification.permission === "granted" && document.hidden === true) {
+          const notification = new Notification(task[0].description, {
+            body: webSocket.message.object.description + " por " + user[0].name,
+          });
+
+          window.focus();
+          notification.close();
+        }
       }
     } else if (
       webSocket.message !== "" &&
@@ -314,108 +415,153 @@ function Header() {
       webSocket.message.type === 4
     ) {
       //type 4 == priority
-      let task = filterTask.filter.filter(
-        (task) => task.id == webSocket.message.object.task_id
-      );
 
-      if (webSocket.message.object.update) {
-        // console.log(tasks);
-        const info = Number(webSocket.message.object.update);
-        const taskId = webSocket.message.task_id;
-
-        // console.log(info)
-
-        let tasksUp = [...filterTask.filter];
-
-        tasksUp.map(
-          (task) => task.id == taskId && (task.priority = info > 0 ? info : 0)
+      if (permissions.id !== webSocket.message.send_user_id) {
+        let task = filterTask.filter.filter(
+          (task) => task.id == webSocket.message.object.task_id
+        );
+        let user = vinculatedUsers.filter(
+          (user) => Number(user.id) === Number(webSocket.message.user_id)
         );
 
-        dispatch(getTask([...tasksUp]));
+        if (webSocket.message.object.update) {
+          const info = Number(webSocket.message.object.update);
+          const taskId = webSocket.message.task_id;
 
-        //  task[0].priority = info;
-      }
+          let tasksUp = [...tasks];
 
-      if (permissions.id !== webSocket.message.user_id) {
+          tasksUp.map(
+            (task) => task.id == taskId && (task.priority = info > 0 ? info : 0)
+          );
+
+          dispatch(getTask([...tasksUp]));
+        }
+
+        if (!(taskVisible.info && taskVisible.info.task_id === task[0].id)) {
+          sumNotification(4, task[0].id, webSocket.message);
+        }
+
         showNotification(
           task[0].description,
-          webSocket.message.object.description +
-            " por " +
-            webSocket.message.user_name,
+          webSocket.message.object.description + " por " + user[0].name,
           "info"
         );
+
+        if (Notification.permission === "granted" && document.hidden === true) {
+          const notification = new Notification(task[0].description, {
+            body: webSocket.message.object.description + " por " + user[0].name,
+          });
+
+          window.focus();
+          notification.close();
+        }
       }
     } else if (
       webSocket.message !== "" &&
       webSocket.message !== undefined &&
       webSocket.message.type === 5
     ) {
-      // type 5 == users
+      // type 5 == vinculated or remove user
       // *add update for visualisation of adm
       const changeUser = Number(webSocket.message.object.changeUser);
-      const msg = webSocket.message.object.description;
-      const task = webSocket.message.object.task;
+      let user = vinculatedUsers.filter(
+        (user) => Number(user.id) === Number(changeUser)
+      );
+      // console.log(webSocket.message);
+      if (permissions.id !== webSocket.message.send_user_id && user[0]) {
+        // console.log(webSocket.message);
 
-      task.focus = true;
+        const msg = webSocket.message.object.description;
 
-      let user = vinculatedUsers.filter((user) => user.id === changeUser);
+        if (msg.includes("vinculado")) {
+          takeTask(webSocket.message.task_id).then((response) => {
+            if (response) {
+              let task = response;
 
-      if (permissions.id !== webSocket.message.user_id) {
-        if (permissions.id === changeUser) {
-          showNotification(
-            webSocket.message.object.task.description,
-            "Você " + msg,
-            "info"
+              // console.log(task);
+
+              if (!(taskVisible.info && taskVisible.info.task_id === task.id)) {
+                sumNotification(5, task.id, webSocket.message);
+              }
+
+              task[0].focus = true;
+
+              if (permissions.id === changeUser) {
+                showNotification(task[0].description, "Você " + msg, "info");
+
+                if (
+                  Notification.permission === "granted" &&
+                  document.hidden === true
+                ) {
+                  const notification = new Notification(
+                    webSocket.message.object.task.description,
+                    {
+                      body: "Você " + msg,
+                    }
+                  );
+
+                  window.focus();
+                  notification.close();
+                }
+
+                if (seeAdminSet === false) {
+                  dispatch(getTask([...tasks, task[0]]));
+                }
+              } else {
+                showNotification(
+                  task[0].description,
+                  user[0].name + " " + msg,
+                  "info"
+                );
+
+                if (
+                  Notification.permission === "granted" &&
+                  document.hidden === true
+                ) {
+                  const notification = new Notification(task[0].description, {
+                    body: user[0].name + " " + msg,
+                  });
+
+                  window.focus();
+                  notification.close();
+                }
+              }
+            }
+          });
+        } else if (permissions.id === changeUser) {
+          const tasksf = tasks.filter(
+            (taskr) => taskr.id !== webSocket.message.task_id
           );
-
-          if (msg.includes("vinculado")) {
-            if (seeAdminSet === false) {
-              dispatch(getTask([...filterTask.filter, task]));
-            }
-          } else {
-            const tasksf = filterTask.filter.filter(
-              (taskr) => taskr.id !== task.id
-            );
-            if (seeAdminSet === false) {
-              dispatch(getTask([...tasksf]));
-            }
+          if (seeAdminSet === false) {
+            dispatch(getTask([...tasksf]));
           }
-        } else {
-          showNotification(
-            webSocket.message.object.task.description,
-            user[0].user + " " + msg,
-            "info"
-          );
         }
-      } else if (permissions.id !== webSocket.message.user_id) {
-        // showNotification(
-        //   webSocket.message.object.task.description,
-        //   "Você " + msg,
-        //   "info"
-        // );
       }
-
-      // console.log(vinculatedUsers);
-
-      //;console.log(webSocket.message);
     } else if (
       webSocket.message !== "" &&
       webSocket.message !== undefined &&
       webSocket.message.type === 6
     ) {
       //type 6 change state
-      if (permissions.id !== webSocket.message.user_id) {
-        if (taskVisible && taskVisible.info.task_id) {
-          taskVisible.info.state_id = webSocket.message.object.task.state_id;
-          // dispatch(updateTopic());
+      if (permissions.id !== webSocket.message.send_user_id) {
+        const info = webSocket.message.object;
+        let user = vinculatedUsers.filter(
+          (user) => Number(user.id) === Number(webSocket.message.send_user_id)
+        );
+
+        if (taskVisible.info && taskVisible.info.task_id === info.task_id) {
+          taskVisible.info.state_id = webSocket.message.object.state_id;
+          if (webSocket.message.object.new_final_date) {
+            taskVisible.info.final_date =
+              webSocket.message.object.new_final_date;
+          }
+        } else {
+          sumNotification(6, info.task_id, webSocket.message);
         }
 
-        // console.log(webSocket.message);
+        let isNewDate = false;
 
-        const info = webSocket.message.object.task;
-        const task = filterTask.filter.filter(
-          (task) => task.id === info.task_id
-        );
+        const task = tasks.filter((task) => task.id === info.task_id);
         const lastState = taskStates.filter(
           (state) => Number(state.id) === Number(task[0].state_id)
         );
@@ -423,41 +569,81 @@ function Header() {
           (state) => Number(state.id) === Number(info.state_id)
         );
 
-        // console.log(task,lastState,newState)
-
-        let tasksUp = [...filterTask.filter];
+        let tasksUp = [...tasks];
 
         tasksUp.map((task) => {
           if (task.id === info.task_id) {
             task.state_id = info.state_id;
             task.percent = info.percent;
+            if (webSocket.message.object.new_final_date) {
+              task.final_date = webSocket.message.object.new_final_date;
+              isNewDate = true;
+            }
           }
         });
 
         dispatch(getTask([...tasksUp]));
 
-        // console.log(info,lastState[0])
+        if (isNewDate) {
+          const date = formatDate(webSocket.message.object.new_final_date);
+          showNotification(
+            info.description,
+            "A tarefa foi adiada para " + date,
+            "info"
+          );
 
-        showNotification(
-          info.description,
-          "Mudou de " +
-            lastState[0].description +
-            " para " +
-            newState[0].description +
-            " por " +
-            webSocket.message.user_name,
-          "info"
-        );
+          if (
+            Notification.permission === "granted" &&
+            document.hidden === true
+          ) {
+            const notification = new Notification(info.description, {
+              body: "A tarefa foi adiada para " + date,
+            });
+
+            window.focus();
+            notification.close();
+          }
+        } else {
+          showNotification(
+            task[0].description,
+            "Mudou de " +
+              lastState[0].description +
+              " para " +
+              newState[0].description +
+              " por " +
+              user[0].name,
+            "info"
+          );
+        }
       }
-
-      // showNotification()
-      // console.log(webSocket.message);
     } else {
     }
-
-    // console.log(webSocket.message);
   }, [webSocket.message]);
-  // console.log(webSocket)
+
+  async function takeTask(taskId) {
+    try {
+      const { data } = await api.get(
+        `GTPP/Task.php?AUTH=${permissions.session}&app_id=3&simple&id=${taskId}`
+      );
+
+      if (data.error === true) {
+        return [{}];
+      } else {
+        return data.data;
+      }
+    } catch (error) {
+      return [{}];
+    }
+  }
+
+  function formatDate(props) {
+    let data = props.split("-");
+    var day = data[2];
+    var month = data[1];
+    var year = data[0];
+    return day + "/" + month + "/" + year;
+  }
+
   return (
     <div className="header-area">
       <div className="container-custom">

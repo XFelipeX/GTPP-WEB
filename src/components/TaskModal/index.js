@@ -2,12 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "./style.css";
 import {
-  updateTask,
   taskVisibleUpdate,
-  getTaskFilter,
-  getWebSocket,
-  getWebSocketMessage,
   getWebSocketHistoric,
+  getNotifications,
 } from "../../redux";
 import { AiOutlineClose } from "react-icons/ai";
 import { BiEdit } from "react-icons/bi";
@@ -26,19 +23,15 @@ let TaskModal = ({ id = "modal", close, open }) => {
   const { permissions } = useSelector((state) => state);
   const { webSocket } = useSelector((state) => state);
   const { warning } = useSelector((state) => state);
-  // const { modalUpdate } = useSelector((state) => state);
-  // const { stateUpdate } = useSelector((state) => state);
-  // const { stateAdmin } = useSelector((state) => state);
+  const { notifications } = useSelector((state) => state);
   const AUTH = permissions.session;
   const [description, setDescription] = useState(taskVisible.info.description);
   const [showDesc, setShowDesc] = useState(false);
   const [showWebChat, setShowWebChat] = useState(false);
 
-  // console.log(taskVisible);
-
   useEffect(() => {
     setDescription(taskVisible.info.description);
-  },[taskVisible.info.description])
+  }, [taskVisible.info.description]);
 
   function upDescription(taskId, description, priority) {
     updateDescription(taskId, description, priority, AUTH).then((response) => {
@@ -49,21 +42,14 @@ let TaskModal = ({ id = "modal", close, open }) => {
     });
     setShowDesc(false);
 
-    // let changes = [...tasks];
-
     tasks.map((task) => {
       if (task.id === taskVisible.info.task_id) {
         task.description = description;
       }
     });
-
-    // console.log(changes)
-
-    // dispatch(getTaskFilter([...changes]));
   }
 
   function SendInfo(msg, update) {
-    // alert("teste")
     if (msg !== "" && webSocket.websocketState === "connected") {
       try {
         let jsonString = {
@@ -78,17 +64,13 @@ let TaskModal = ({ id = "modal", close, open }) => {
           type: 3,
         };
         webSocket.websocket.send(JSON.stringify(jsonString));
-
-        // console.log(jsonString);
       } catch (error) {
         alert(error);
       }
     }
   }
 
-  // console.log(permissions)
   const handleOutsideClick = (e) => {
-    // console.log(e.target.id);
     if (e.target.id === id) {
       dispatch(taskVisibleUpdate());
       close();
@@ -98,44 +80,53 @@ let TaskModal = ({ id = "modal", close, open }) => {
 
   const [loading, setLoading] = useState(true);
 
-  setTimeout(() => {
-    setLoading(false);
-  }, 1000);
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  }, []);
 
   const [notification, setNotification] = useState(0);
 
   useEffect(() => {
-    if (taskVisible.info.notifications[0].amount > 99) {
-      setNotification("+99");
-    } else if (taskVisible.info.notifications[0].amount === 0) {
-      setNotification(0);
-    } else {
-      setNotification(taskVisible.info.notifications[0].amount);
+    if (notifications.length > 0) {
+      notifications.map((notification) => {
+        if (notification.task_id === taskVisible.info.task_id) {
+          let total = 0;
+
+          total += notification.content.message;
+
+          if (total > 99) {
+            setNotification("+99");
+          } else if (total === 0) {
+            setNotification(0);
+          } else {
+            setNotification(total);
+          }
+        }
+      });
     }
-  }, [taskVisible.info.notifications[0].amount]);
+  }, [notifications]);
 
   const [warningState, setWarningState] = useState("");
 
   useEffect(() => {
-    // console.log('verificando')
     function verifyWarning() {
       let task = warning.warning.filter(
         (task) => task.task_id == taskVisible.info.task_id
       );
-      // console.log(task);
-      if (warning.warning.length > 0) {
-        const due_date = task[task.length - 1].due_date;
-        const expire = task[task.length - 1].expire;
-        const initial = task[task.length - 1].initial;
 
-        // console.log(warning);
+      if (warning.warning.length > 0 && task[0]) {
+        const due_date = task[0].due_date;
+        const expire = task[0].expire;
+        const initial = task[0].initial;
 
         if (due_date > -1) {
           if (due_date === 0) {
             setWarningState("A tarefa vence hoje");
-          } else if (due_date===1){
+          } else if (due_date === 1) {
             setWarningState("A tarefa venceu há " + due_date + " dia");
-          }else{
+          } else {
             setWarningState("A tarefa venceu há " + due_date + " dias");
           }
         } else if (expire > 0) {
@@ -151,15 +142,13 @@ let TaskModal = ({ id = "modal", close, open }) => {
             setWarningState("A tarefa começa em " + initial + " dias");
           }
         }
+      } else {
+        setWarningState(null);
       }
     }
 
-    // setTimeout(() => {
-    //   verifyWarning();
-    // },2000)
-
     verifyWarning();
-  }, [warning.warning.length]);
+  }, [warning]);
 
   return (
     <div id={id} className="modal" onClick={handleOutsideClick}>
@@ -207,18 +196,22 @@ let TaskModal = ({ id = "modal", close, open }) => {
 
               <span>{description}</span>
             </div>
-            <div
-              style={
-                warningState.includes("venceu") ||
-                warningState.includes("vence")
-                  ? { color: "red" }
-                  : warningState.includes("expira")
-                  ? { color: "yellow" }
-                  : {}
-              }
-            >
-              {warningState}
-            </div>
+            {warningState ? (
+              <div
+                style={
+                  warningState.includes("venceu") ||
+                  warningState.includes("vence")
+                    ? { color: "red" }
+                    : warningState.includes("expira")
+                    ? { color: "yellow" }
+                    : {}
+                }
+              >
+                {warningState}
+              </div>
+            ) : (
+              <div></div>
+            )}
           </div>
           <div>
             <button
@@ -249,9 +242,17 @@ let TaskModal = ({ id = "modal", close, open }) => {
             .then(() => {});
           setShowWebChat(!showWebChat);
           document.getElementById("openChat").style.display = "none";
-          taskVisible.info.notifications[6].amount -=
-            taskVisible.info.notifications[0].amount;
-          taskVisible.info.notifications[0].amount = 0;
+          let newArray = [...notifications];
+
+          newArray.map((notify) => {
+            if (notify.task_id === taskVisible.info.task_id) {
+              notify.content.message = 0;
+              notify.content.amount = 0;
+              notify.content.object = [];
+            }
+          });
+
+          dispatch(getNotifications([...newArray]));
         }}
       >
         <div

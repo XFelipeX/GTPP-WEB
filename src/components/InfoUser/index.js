@@ -4,7 +4,6 @@ import userEmpty from "../../assets/nullphoto.jpeg";
 import useClickOutside from "../ClickOutside";
 import {
   getUserInfo,
-  getTask,
   updateTask,
   seeAdmin,
   updateStateAdmin,
@@ -13,22 +12,21 @@ import {
 import { store } from "react-notifications-component";
 import api from "../../services/api";
 import Loading from "../Loading";
+import { RiLockPasswordFill } from "react-icons/ri";
 import "./style.css";
+import AlterPassword from "../AlterPassword";
 
 let InfoUser = () => {
   let dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state);
   const { permissions } = useSelector((state) => state);
-  const { tasks } = useSelector((state) => state);
   const { seeAdminSet } = useSelector((state) => state);
   const { webSocket } = useSelector((state) => state);
   const [showLoading, setShowLoading] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+  const [changePassword, setChangePassword] = useState(false);
   const [seeAdm, setSeeAdm] = useState(false);
   const [info, setInfo] = useState([]);
-  const AUTH = permissions.session;
-  // const [isConnected, setIsConnected] = useState(false);
-
   const [photo, setPhoto] = useState(userEmpty);
 
   function showNotification(title, message, type) {
@@ -61,7 +59,7 @@ let InfoUser = () => {
       return data;
     } catch (error) {
       showNotification("Erro", error.message, "danger");
-      return {data:{}};
+      return { data: {} };
     }
   }
 
@@ -71,7 +69,6 @@ let InfoUser = () => {
     dispatch(seeAdmin());
     if (seeAdm === false) {
       setSeeAdm(true);
-      // loadAllTasks().then((response) => dispatch(getTask(response)));
       dispatch(updateStateAdmin());
       showNotification(
         "Sucesso",
@@ -94,10 +91,14 @@ let InfoUser = () => {
   }
 
   useEffect(() => {
-    loadUserInfo().then((response) => {
-      dispatch(getUserInfo(response.data));
-      setInfo(response.data);
-    });
+    loadUserInfo()
+      .then((response) => {
+        dispatch(getUserInfo(response.data));
+        setInfo(response.data);
+      })
+      .catch((error) => {
+        dispatch(getUserInfo([{}]));
+      });
   }, []);
 
   async function loadUserPhoto() {
@@ -108,8 +109,6 @@ let InfoUser = () => {
       let { data } = await api.get(
         "CCPP/EmployeePhoto.php?AUTH=" + AUTH + "&app_id=3&id=" + idUser
       );
-
-      // console.log(data);
 
       if (data.photo != null) {
         setPhoto(convertImage(data.photo));
@@ -129,15 +128,12 @@ let InfoUser = () => {
       dispatch(getUserInfo({}));
       return;
     }
-    if(userInfo[0]){
+    if (userInfo[0]) {
       userInfo[0].photo = photo;
-    let info = [userInfo[0], userInfo[1]];
-    dispatch(getUserInfo(info));
+      let info = [userInfo[0], userInfo[1]];
+      dispatch(getUserInfo(info));
     }
-    
   }
-
-  // console.log(userInfo);
 
   function convertImage(src) {
     if (src != null) {
@@ -157,10 +153,17 @@ let InfoUser = () => {
     loadUserPhoto();
   }, []);
 
-  // console.log(webSocket.websocket);
-
   return (
     <div ref={domNode} className="user-info-area">
+      {changePassword && (
+        <AlterPassword
+          closeModal={setChangePassword}
+          defaultUser={permissions.user}
+          oldPassword={""}
+          userLogin={null}
+          onlyRead={false}
+        />
+      )}
       {showLoading === true ? <Loading /> : null}
       <div className="user-img">
         <img
@@ -180,7 +183,7 @@ let InfoUser = () => {
           alt="imagem do usuário logado"
         ></img>
       </div>
-      {showInfo ? (
+      {showInfo && info[0] && info[1] ? (
         <div className="user-info">
           <div className="user-info-content">
             <div className="user-img-card">
@@ -206,6 +209,12 @@ let InfoUser = () => {
                   <>
                     <p>
                       <strong>Administrador</strong>
+                      <RiLockPasswordFill
+                        className="password"
+                        size={20}
+                        color="#c9c9c9"
+                        onClick={() => setChangePassword(true)}
+                      />
                     </p>
                     <p className="show-admin">
                       Visualizar como administrador
@@ -219,6 +228,12 @@ let InfoUser = () => {
                 ) : (
                   <p>
                     <strong>Usuário comum</strong>
+                    <RiLockPasswordFill
+                      className="password"
+                      size={20}
+                      color="#c9c9c9"
+                      onClick={() => setChangePassword(true)}
+                    />
                   </p>
                 )
               ) : null}

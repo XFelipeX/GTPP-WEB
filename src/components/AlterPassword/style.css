@@ -1,0 +1,98 @@
+/* Change password  */
+
+.changePasswordContainer{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background-color: rgba(0, 0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+  }
+  
+  .changePasswordModal{
+    background-color: #2b2b2b;
+    border-radius:8px ;
+    box-shadow: 0px 0px 10px 4px black;
+    width: 350px;
+    height: 400px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: left;
+    color: white;
+    /* z-index: 300; */
+  }
+  
+  .changePasswordModalTop{
+    width: 80%;
+    height: 15%;
+    text-align: center;
+  }
+  
+  .changePasswordModalCenter{
+    width: 75%;
+    height: 65%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .changePasswordModalCenter div{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .changePasswordModalCenter input{
+    padding: .3rem;
+    margin-top: .2rem;
+    font-size: 1rem;
+    padding: .3rem;
+  
+  
+  }
+  
+  .changePasswordModalCenter input:focus{
+      background-color: #dddd;
+  
+  }
+  
+  .changePasswordModalFooter{
+    width: 75%;
+    height: 15%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+  }
+  
+  .changePasswordModalFooter button{
+    height: 2rem;
+    width: 8rem;
+    background-color: #4da6ff;
+    color: rgb(28, 28, 28);
+  }
+  
+  .changePasswordModal  h2{
+    width: 93%;
+    font-size: 1.5rem;
+    margin: 0 auto;
+    padding-bottom: .1rem;
+    /* border-bottom: 2px solid #4da6ff; */
+  }
+  
+  .changePasswordModal  h2::after{
+  content:'';
+  width:90%;
+  display: block;
+  margin: .3rem auto 0;
+  height: 2px;
+  background-color:#4da6ff ;
+  }

@@ -59,8 +59,6 @@ let CreateTask = () => {
   }
 
   async function createTask() {
-    // let description = document.getElementById("taskDescription").value;
-
     if (
       description !== "" &&
       dateFinal !== "" &&
@@ -68,20 +66,17 @@ let CreateTask = () => {
       priority !== ""
     ) {
       try {
-        // let data = {};
-
-        const {data} = await api
-          .post(
-            "http://192.168.0.99:71/GLOBAL/Controller/GTPP/Task.php?AUTH=" +
-              auth +
-              "&mobile=1&app_id=3",
-            {
-              description: description,
-              priority: priority,
-              initial_date: dateInitial,
-              final_date: dateFinal,
-            }
-          )
+        const { data } = await api.post(
+          "http://192.168.0.99:71/GLOBAL/Controller/GTPP/Task.php?AUTH=" +
+            auth +
+            "&mobile=1&app_id=3",
+          {
+            description: description,
+            priority: priority,
+            initial_date: dateInitial,
+            final_date: dateFinal,
+          }
+        );
 
         // console.log(data);
 
@@ -119,69 +114,6 @@ let CreateTask = () => {
       showNotification("Aviso", "Preencha todos os campos", "warning");
     }
   }
-
-  // async function createTask() {
-  //   // let description = document.getElementById("taskDescription").value;
-
-  //   if (
-  //     description !== "" &&
-  //     dateFinal !== "" &&
-  //     dateInitial !== "" &&
-  //     priority !== ""
-  //   ) {
-  //     try {
-  //       let data = {};
-
-  //       (async () => {
-  //         data = await fetch(
-  //           "http://192.168.0.99:71/GLOBAL/Controller/GTPP/Task.php?AUTH=" +
-  //             auth +
-  //             "&mobile=1&app_id=3",
-  //           {
-  //             method: "post",
-  //             body: JSON.stringify({
-  //               description: description,
-  //               priority: priority,
-  //               initial_date: `${dateInitial}`,
-  //               final_date: `${dateFinal}`,
-  //             }),
-  //           }
-  //         )
-  //           .then((response) => {
-  //             return response.json();
-  //           })
-
-  //         console.log(data)
-
-  //         if (data.error === true) {
-  //           let msg = data.message;
-
-  //           if (msg.includes("Authorization denied")) {
-  //             showNotification('Erro','Autorização negada','danger');
-  //           } else if (
-  //             msg.includes(
-  //               "The final_date may not be less than the current date"
-  //             )
-  //           ) {
-  //             showNotification('Erro','A data final não pode ser menor que a data atual','danger');
-  //           } else {
-  //             showNotification('Erro' ,msg,'danger');
-  //           }
-  //         } else {
-  //           setOpen(false);
-  //           dispatch(updateTask());
-  //           showNotification('Sucesso','Nova tarefa foi adicionada','success');
-
-  //           clear();
-  //         }
-  //       })();
-  //     } catch (error) {
-  //       // console.log(error1.message);
-  //     }
-  //   } else {
-  //     showNotification('Aviso','Preencha todos os campos','warning');
-  //   }
-  // }
 
   let changePriority = (e) => {
     let select = document.getElementById("selectOption");
@@ -246,15 +178,15 @@ let CreateTask = () => {
             {showPriority ? (
               <>
                 <li value="0" onClick={(e) => changePriority(e)}>
-                  <img src={lowPriority} />
+                  <img src={lowPriority} alt=""/>
                   Baixa
                 </li>
                 <li value="1" onClick={(e) => changePriority(e)}>
-                  <img src={medPriority} />
+                  <img src={medPriority} alt=""/>
                   Média
                 </li>
                 <li value="2" onClick={(e) => changePriority(e)}>
-                  <img src={highPriority} />
+                  <img src={highPriority} alt=""/>
                   Alta
                 </li>
               </>

@@ -11,7 +11,7 @@ const api = axios.create({
     // 'Access-Control-Allow-Origin': 'localhost',
     // 'Access-Control-Allow-Credentials' : true,
     // 'Access-Control-Allow-Headers':'application/json',
-    // 'Content-Type': 'application/json',
+    'Content-Type': 'application/json',
 },
 });
 

@@ -53,25 +53,40 @@
 
 .footerChat > div:first-child {
   width: 100%;
-  height: 30px;
+  height: 50px;
   display: flex;
+  align-items: center;
   justify-content: space-evenly;
+  margin: 0 auto;
+  
 }
 
-.footerChat div > input {
-  width: 80%;
+.footerChat div > textarea {
+  width: 70%;
   /* margin-left: 7%; */
   font-size: 16px;
-  padding: 15px;
+  padding: 10px;
   color: white;
   /* width: 20px; */
-  height: 100%;
-  border-radius: 25px;
+  height: 60%;
+  border-radius: 20px;
   background-color: #4b4b4b;
+  transition: .7s;
+  word-break: break-word;
+  resize: none;
+  overflow: hidden;
+  border: none;
 }
 
-.footerChat div > input:focus {
-  background-color: #4b4b4b;
+
+/* .footerChat div > input {
+  
+} */
+
+.footerChat div > textarea:focus {
+  height: 100%;
+  overflow: auto;
+  /* background-color: #4b4b4b; */
 }
 
 .footerChat div button {
@@ -98,6 +113,9 @@
   padding: 10px;
   margin-right: 1em;
   font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .dateTextRight {
@@ -138,12 +156,14 @@
   width: 170px;
   display: block;
   justify-content: flex-start;
-  /* text-align:justify; */
   padding: 0;
   background-color: #343434;
   padding: 10px;
   margin-left: 1em;
   font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .dateTextLeft {
   display: flex;
@@ -177,7 +197,7 @@
   margin: 10px 0 0.5em 0;
 }
 
-.infoMessage{
+.infoMessage {
   width: 100%;
   display: flex;
 }
@@ -194,24 +214,24 @@
   /* height: 20px; */
 }
 
-.clipImage{
+.clipImage {
   /* position: absolute;
   left:6.2em;
   top: .2em; */
   position: relative;
-  right:1.8em ;
-  top: .5em;
-  cursor:pointer;
-}
-
-.clipImageRight{
-  position: relative;
-  right: 1.5em;
-  top: .3em;
+  right: 1.8em;
+  top: 0.5em;
   cursor: pointer;
 }
 
-.showImageMessage{
+.clipImageRight {
+  position: relative;
+  right: 1.5em;
+  top: 0.3em;
+  cursor: pointer;
+}
+
+.showImageMessage {
   z-index: 10;
   position: absolute;
   /* right: 10em; */
@@ -220,10 +240,10 @@
   align-items: center;
   width: 100%;
   height: 82%;
-  background-color: rgba(0,0,0,0.4);
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
-.showImageMessage img{
+.showImageMessage img {
   z-index: 15;
   width: 250px;
   height: 300px;
@@ -240,4 +260,14 @@
     opacity: 1;
     transform: translate3d(0, 0, 0);
   }
+}
+
+#upload-photo {
+  opacity: 0;
+  position: absolute;
+  z-index: -1;
+}
+
+.upload{
+  cursor: pointer;
 }

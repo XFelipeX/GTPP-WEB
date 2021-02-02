@@ -4,18 +4,10 @@ import "./style.css";
 import api from "../../services/api";
 import { store } from "react-notifications-component";
 import userImg from "../../assets/user@2x.png";
-import {
-  getUsersPhotos,
-  orderTasks,
-  removeUsersList,
-  removeUsersOnline,
-  updateStateAdmin,
-  updateTask,
-} from "../../redux";
+import { getUsersPhotos, orderTasks } from "../../redux";
 import useClickOutside from "../ClickOutside";
 import Loading from "../Loading";
 import { showNotification } from "../TaskTable/functions";
-// import { BiRepost } from "react-icons/bi";
 
 let TaskUsers = ({ task }) => {
   const { permissions } = useSelector((state) => state);
@@ -23,21 +15,15 @@ let TaskUsers = ({ task }) => {
   const { userPhotos } = useSelector((state) => state);
   const { stateUpdate } = useSelector((state) => state);
   const { stateAdmin } = useSelector((state) => state);
-  const { seeAdminSet } = useSelector((state) => state);
   const { webSocket } = useSelector((state) => state);
-  const { tasks } = useSelector((state) => state);
   const [loading, setLoading] = useState(false);
   const [takePhotos, setTakePhotos] = useState([]);
   const { vinculatedUsers } = useSelector((state) => state);
   const [users, setUsers] = useState([]);
   const [showUsers, setShowUsers] = useState(false);
   const [open, setOpen] = useState(false);
-  // const [photos, setPhotos] = useState([]);
-
   const [allUsers, setAllUsers] = useState([]);
   const dispatch = useDispatch();
-
-  // console.log(webSocket);
 
   useEffect(() => {
     async function loadVinculateUsers() {
@@ -54,7 +40,6 @@ let TaskUsers = ({ task }) => {
         let msg = data.message;
 
         if (msg.includes("No data")) {
-          // showNotification('Aviso','Você ainda não possui tarefas','warning');
         } else if (msg.includes("Authorization denied")) {
           showNotification("Erro", "Autorização negada", "danger");
         } else {
@@ -63,13 +48,10 @@ let TaskUsers = ({ task }) => {
       }
 
       try {
-        // dispatch(getVinculatedUsers(data.data));
         setUsers(data.data);
       } catch (error) {
         showNotification("Erro", error, "danger");
       }
-
-      // console.log(task.id)
     }
 
     loadVinculateUsers();
@@ -90,7 +72,6 @@ let TaskUsers = ({ task }) => {
         let msg = data.message;
 
         if (msg.includes("No data")) {
-          // showNotification('Aviso','Você ainda não possui tarefas','warning');
         } else if (msg.includes("Authorization denied")) {
           showNotification("Erro", "Autorização negada", "danger");
         } else {
@@ -108,63 +89,10 @@ let TaskUsers = ({ task }) => {
   useEffect(() => {
     loadAllUsers().then((response) => {
       if (response.error === false) {
-        // console.log(response.data)
         setAllUsers(response.data);
       }
     });
   }, [stateUpdate, stateAdmin]);
-
-  // useEffect(() => {
-  //   allUsers.map((user) => {
-  //     user.status = false;
-  //   });
-  // }, [allUsers]);
-
-  // if (webSocket.users !== undefined) {
-  //   // if (seeAdminSet === true) {
-  //   //   dispatch(updateStateAdmin());
-  //   // } else {
-  //   //   dispatch(updateTask());
-  //   // }
-
-  //   allUsers.map((user) => {
-  //     webSocket.users.forEach((item, index) => {
-  //       if (user.user_id == item) {
-  //         // console.log("online");
-  //         user.status = true;
-  //         // console.log(user)
-  //       }
-  //     });
-  //   });
-  // }
-
-  // if (webSocket.users !== undefined) {
-
-  //   allUsers.map((user) => {
-  //     webSocket.users.forEach((item, index) => {
-  //       if (user.user_id == item) {
-  //         // console.log("online");
-  //         user.status = true;
-  //         // console.log(user)
-  //       }
-  //     });
-  //   });
-  // }
-
-  // useEffect(() => {
-  //   if (webSocket.users !== undefined) {
-  //     allUsers.map((user) => {
-  //       webSocket.users.map((item) => {
-  //         if (user.user_id == item) {
-  //           // console.log("online");
-  //           user.status = true;
-  //           // console.log(user)
-  //         }
-  //       });
-  //     });
-  //   }
-
-  // }, [webSocket]);
 
   function SendMessage() {
     if (webSocket.websocketState === "connected") {
@@ -173,15 +101,11 @@ let TaskUsers = ({ task }) => {
           type: -2,
         };
         webSocket.websocket.send(JSON.stringify(jsonString));
-
-        // console.log(jsonString);
       } catch (error) {
         alert(error);
       }
     }
   }
-
-  // console.log(webSocket.users)
 
   const [filterUser, setFilterUser] = useState(null);
 
@@ -207,9 +131,6 @@ let TaskUsers = ({ task }) => {
   }, [takePhotos]);
 
   function SendInfo(msg, changeUser) {
-    let taskf = tasks.filter((taskf) => taskf.id === task.id);
-    taskf.focus = true;
-
     if (msg !== "" && webSocket.websocketState === "connected") {
       try {
         let jsonString = {
@@ -217,16 +138,15 @@ let TaskUsers = ({ task }) => {
           object: {
             description: msg,
             task_id: task.id,
-            task: taskf[0],
+            // task: taskf[0],
             changeUser: changeUser,
+            // a:""
           },
           date_time: null,
           user_id: Number(permissions.id),
           type: 5,
         };
         webSocket.websocket.send(JSON.stringify(jsonString));
-
-        // console.log(jsonString);
       } catch (error) {
         alert(error);
       }
@@ -234,7 +154,6 @@ let TaskUsers = ({ task }) => {
   }
 
   async function changeUser(id, vinculated) {
-    // alert(vinculated)
     if (vinculated == true) {
       SendInfo("foi removido da tarefa", id);
     }
@@ -248,12 +167,13 @@ let TaskUsers = ({ task }) => {
         }
       );
 
-      // console.log(data);
-
       if (data.error === true) {
         showNotification("Erro", data.message, "danger");
       } else {
-        SendInfo("foi vinculado a tarefa", id);
+        if (vinculated === false) {
+          SendInfo("foi vinculado a tarefa", id);
+        }
+
         store.addNotification({
           title: "Sucesso",
           message: "A lista de usuários vinculados foi atualizada",
@@ -283,31 +203,24 @@ let TaskUsers = ({ task }) => {
         });
 
         if (vinculated == true) {
-          // console.log(userReply)
           let vinculatedUser = [];
 
           users.map((user) => {
             if (Number(user.user_id) != Number(userReply.user_id)) {
-              // console.log(user);
               vinculatedUser.push(user);
             }
-            // console.log(user);
           });
 
           setUsers([...vinculatedUser]);
-          // users = [...vinculatedUser];
         } else {
           if (users.length > 0) {
             setUsers((oldarray) => [...oldarray, userReply]);
           } else {
             setUsers([userReply]);
           }
-
-          // users.push(userReply);
         }
       }
     } catch (error) {
-      // console.log(error)
       let msg = "";
 
       if (error.response) {
@@ -370,8 +283,6 @@ let TaskUsers = ({ task }) => {
     }
   }
 
-  // console.log(userPhotos);
-
   let domNode = useClickOutside(() => {
     setOpen(false);
   });
@@ -382,10 +293,6 @@ let TaskUsers = ({ task }) => {
     setUser("");
   });
 
-  // console.log(vinculatedUsers);
-
-  // console.log(allUsers)
-
   useEffect(() => {
     if (users.length > 0) {
       users.map((user) => {
@@ -393,7 +300,6 @@ let TaskUsers = ({ task }) => {
           (users) => Number(users.id) == Number(user.user_id)
         );
         user.name = result[0].name;
-        // console.log(user.name)
       });
     }
   }, [users]);
@@ -406,7 +312,6 @@ let TaskUsers = ({ task }) => {
 
     if (menu !== null) {
       if (client > windowY) {
-        // console.log(menu);
         menu.classList.remove("menu-users-top");
         searchUser.classList.remove("search-user-top");
         menu.classList.add("menu-users-bottom");
@@ -418,16 +323,9 @@ let TaskUsers = ({ task }) => {
         searchUser.classList.add("search-user-top");
       }
     }
-
-    // console.log(e);
-
-    // console.log(client)
-    // console.log(windowY)
   }
 
   function verifyStatus(userId) {
-    // webSocket.users && webSocket.users.map((id) => user.user_id == id && return "online")
-
     const filter = webSocket.users.filter((id) => id == userId);
 
     if (filter[0]) {
@@ -441,10 +339,7 @@ let TaskUsers = ({ task }) => {
     <div className="containerUsers">
       {loading == true ? <Loading /> : null}
       <div ref={domNode} className="vinculatedUsers">
-        <div onClick={() => setOpen(!open)}>
-          {/* <p>{vinculatedUsers.length}</p> */}
-          {users ? users.length : 0}
-        </div>
+        <div onClick={() => setOpen(!open)}>{users ? users.length : 0}</div>
         {open && users.length > 0 ? (
           <ul className="vinculatedList">
             {users.map((user) => (
@@ -468,13 +363,6 @@ let TaskUsers = ({ task }) => {
                         >
                           {user.name}
                         </p>
-                        {/* {task.user_id == permissions.id ||
-                        (permissions.administrator == 1 &&
-                          user.user_id != permissions.id) ? (
-                          <button onClick={() => changeUser(user.user_id)}>
-                            Remover
-                          </button>
-                        ) : null} */}
                       </li>
                     ) : null}
                   </React.Fragment>
@@ -583,14 +471,6 @@ let TaskUsers = ({ task }) => {
                                 >
                                   {user.name}
                                 </p>
-                                {/* 
-                              {webSocket.users
-                                && webSocket.users.map((id) =>
-                                    user.user_id == id && (
-                                      <span className="online"></span>
-                                    ) 
-                                  )
-                                } */}
 
                                 <input
                                   type="checkbox"
@@ -599,13 +479,6 @@ let TaskUsers = ({ task }) => {
                                     changeUser(user.user_id, user.check)
                                   }
                                 />
-                                {/* <button
-                                onClick={() => {
-                                  changeUser(user.user_id);
-                                }}
-                              >
-                                Vincular
-                              </button> */}
                               </li>
                             ) : null}
                           </a>

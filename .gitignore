@@ -3,6 +3,9 @@
 # dependencies
 /node_modules
 /.pnp
+/.cert
+/.env.development
+/generate-dev-ssl-cert.sh
 .pnp.js
 
 # testing

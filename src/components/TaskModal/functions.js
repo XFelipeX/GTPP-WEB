@@ -25,12 +25,14 @@ export const updateDescription = async (
       return null;
     }
 
-    showNotification("Sucesso", "A descrição da tarefa foi atualizada", "success");
+    showNotification(
+      "Sucesso",
+      "A descrição da tarefa foi atualizada",
+      "success"
+    );
     return data;
-    // console.log(data);
   } catch (error) {
     let msg = String(error.response.data.message);
-    // console.log(error.response.data.message);
     if (msg.includes("Only the task creator or administrator can do this")) {
       showNotification(
         "Aviso",
@@ -49,7 +51,11 @@ export const updateDescription = async (
         "Tarefa neste estado não pode ser modificada",
         "warning"
       );
-    } else if(msg.includes("(id, full_description || (description, priority)) is broken")){
+    } else if (
+      msg.includes(
+        "(id, full_description || (description, priority)) is broken"
+      )
+    ) {
       showNotification(
         "Aviso",
         "Preencha o campo da descrição para atualizar",
@@ -61,17 +67,18 @@ export const updateDescription = async (
   }
 };
 
-export async function getMessage(auth,taskId){
+export async function getMessage(auth, taskId) {
   const AUTH = auth;
 
   try {
-      const {data} = await api.get(`GTPP/Message.php?AUTH=${AUTH}&app_id=3&task_id=${taskId}`);
-      
-      // console.log(data);
-      return data.data
+    const { data } = await api.get(
+      `GTPP/Message.php?AUTH=${AUTH}&app_id=3&task_id=${taskId}`
+    );
+
+    return data.data;
   } catch (error) {
-      console.log(error);
-      return [{}]
+    console.log(error);
+    return [{}];
   }
 }
 

@@ -15,7 +15,7 @@ import {
   setBlockedVisi,
   setDoneVisi,
   setCanceledVisi,
-  getTask,
+  removeWarning,
 } from "../../redux";
 import {
   updateFullDescription,
@@ -63,13 +63,12 @@ const TaskInfo = () => {
   const [users, setUsers] = useState([]);
   const { filterTask } = useSelector((state) => state);
   const [showModalAsk, setShowModalAsk] = useState(false);
-
   const { permissions } = useSelector((state) => state);
   const AUTH = permissions.session;
 
   useEffect(() => {
     setFullDescription(taskVisible.task.full_description);
-  },[taskVisible.task.full_description])
+  }, [taskVisible.task.full_description]);
 
   useEffect(() => {
     async function loadTaskVisible() {
@@ -170,7 +169,7 @@ const TaskInfo = () => {
           "Descrição completa atualizada com sucesso",
           "success"
         );
-        
+
         setFullDescription(description);
         taskVisible.task.full_description = description;
         SendInfo("A descrição completa da tarefa foi atualizada", 3);
@@ -298,7 +297,6 @@ const TaskInfo = () => {
       } else {
         updateStateTask(taskVisible.info.task_id, reason, days, AUTH)
           .then((response) => {
-            // console.log(response.id),
             taskVisible.info.state_id = response.id;
             taskVisible.info.final_date = response.final_date;
             verifyState(response.id);
@@ -306,17 +304,20 @@ const TaskInfo = () => {
             let changes = [...tasks];
             changes = changes.map((task) => {
               if (task.id === taskVisible.info.task_id) {
-                if (Number(task.state_id) !== Number(response[0].id)) {
-                  SendInfo("send", 6);
+                if (Number(task.state_id) !== Number(response.id)) {
+                  SendInfo("send", 6, taskVisible.info.final_date);
                 }
-                task.state_id = response[0].id;
+                task.final_date = response.final_date;
+                task.state_id = response.id;
               }
             });
+
+            dispatch(removeWarning(taskVisible.info));
 
             // dispatch(getTask([...changes]));
           })
           .catch((error) => {
-            // console.log(error.message);
+            console.log(error.message);
           });
         if (seeAdminSet === true) {
           dispatch(updateStateAdmin());
@@ -404,24 +405,30 @@ const TaskInfo = () => {
 
         taskVisible.info.state_id = response.id;
 
+        let changes = [...tasks];
+        changes = changes.map((task) => {
+          if (task.id === taskVisible.info.task_id) {
+            if (Number(task.state_id) !== Number(response.id)) {
+              SendInfo("send", 6);
+            }
+            task.state_id = response.id;
+          }
+        });
+
         verifyState(response.id);
 
-        // if (seeAdminSet === true) {
-        //   dispatch(updateStateAdmin());
-        // } else {
-        //   dispatch(updateTask());
-        // }
-
-        // dispatch(updateModal());
+        if (seeAdminSet === true) {
+          dispatch(updateStateAdmin());
+        } else {
+          dispatch(updateTask());
+        }
       })
       .catch((error) => {
-        // console.log(error);
+        console.log(error);
       });
   }
 
-  // console.log(taskVisible)
-
-  //contador button estados
+  //count button change state
   let count = 0;
 
   const [showConfirmAction, setShowConfirmAction] = useState(false);
@@ -441,7 +448,6 @@ const TaskInfo = () => {
       users.map((user) => {
         webSocket.users.forEach((item, index) => {
           if (user.user_id == item) {
-            // console.log(user);
             user.status = true;
           }
         });
@@ -449,8 +455,7 @@ const TaskInfo = () => {
     }
   }, [webSocket]);
 
-  function SendInfo(msg, type) {
-    // alert("teste"+type)
+  function SendInfo(msg, type, newDateFinal) {
     if (msg !== "" && webSocket.websocketState === "connected") {
       switch (type) {
         case 3:
@@ -468,21 +473,20 @@ const TaskInfo = () => {
               type: type,
             };
             webSocket.websocket.send(JSON.stringify(jsonString));
-
-            // console.log(jsonString);
           } catch (error) {
-            alert(error);
+            console.log(error);
           }
           break;
         case 6:
-          // console.log("send");
           try {
             let jsonString = {
               task_id: taskVisible.info.task_id,
               object: {
                 description: msg,
                 task_id: taskVisible.info.task_id,
-                task: taskVisible.info,
+                state_id: taskVisible.info.state_id,
+                percent: taskVisible.info.percent,
+                new_final_date: newDateFinal,
               },
               date_time: null,
               user_id: Number(permissions.id),
@@ -498,8 +502,6 @@ const TaskInfo = () => {
   }
 
   function verifyStatus(userId) {
-    // webSocket.users && webSocket.users.map((id) => user.user_id == id && return "online")
-
     const filter = webSocket.users.filter((id) => id == userId);
 
     if (filter[0]) {
@@ -529,7 +531,6 @@ const TaskInfo = () => {
               cancelAction={() => setShowConfirmAction(false)}
             />
           ) : null}
-          {/* {taskVisible.state_id == 7 ? (<ConfirmAction confirm={() => setConfirm(true)} question="Tem certeza que deseja finalizar esta tarefa" action={() => updateState(taskVisible.state_id)} cancelAction={() => setShowConfirmAction(false)}/> ) : null} */}
         </>
       ) : null}
 
@@ -663,7 +664,6 @@ const TaskInfo = () => {
                   className="buttonState stateControl"
                   style={{ backgroundColor: "#" + state.color }}
                 >
-                  {/* {console.log(state.color)} */}
                   <h2>{state.description}</h2>
                 </button>
               ) : null
@@ -799,7 +799,6 @@ const TaskInfo = () => {
                 <React.Fragment key={userPhoto.user_id}>
                   {user.user_id == userPhoto.user_id ? (
                     <div className="userControl">
-                      {/* {webSocket.users.map(id => id==user.user_id ? <span className="status" ></span> : "")} */}
                       <img
                         className={verifyStatus(user.user_id)}
                         src={userPhoto.photo}
@@ -822,12 +821,6 @@ const TaskInfo = () => {
         {showInfoUser == true ? (
           <InfoUserCard id={infoUserId} close={() => setShowInfoUser(false)} />
         ) : null}
-        {/* <div className="addUser">
-                <div>
-                  <AiOutlineUserAdd size="20" />
-                </div>
-              </div>
-              </div> */}
       </div>
     </div>
   );

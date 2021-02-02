@@ -13,9 +13,9 @@ const ButtonFilter = () => {
   const { taskCompanies } = useSelector((state) => state);
   const { tasks } = useSelector((state) => state);
   const [showModal, setShowModal] = useState(false);
-  const [company, setCompany] = useState(-1);
-  const [shop, setShop] = useState(-1);
-  const [dept, setDept] = useState(-1);
+  const [company, setCompany] = useState("-1");
+  const [shop, setShop] = useState("-1");
+  const [dept, setDept] = useState("-1");
   const [depts, setDepts] = useState([]);
   const [shops, setShops] = useState([]);
   const {filterTask} = useSelector(state => state)
@@ -83,27 +83,31 @@ const ButtonFilter = () => {
     let filterDone = [];
     let filterCanceled = [];
 
+    // console.log(filterTask)
+
     if (company == "-1" || shop == "-1" || dept == "-1") {
+      // console.log(tasks)
+      // console.log('filter')
       filterDo = tasks.filter((task) =>
-      filterTask.do && task ? Number(task.state_id) === 1 : null
+      filterTask.do===true ? Number(task.state_id) === 1 : null
       );
       filterDoing = tasks.filter((task) =>
-      filterTask.doing && task  ? Number(task.state_id) === 2 : null
+      filterTask.doing===true   ? Number(task.state_id) === 2 : null
       );
       filterAnalyze = tasks.filter((task) =>
-      filterTask.analyze && task ? Number(task.state_id) === 3 : null
+      filterTask.analyze===true  ? Number(task.state_id) === 3 : null
       );
       filterStopped = tasks.filter((task) =>
-      filterTask.stopped && task  ? Number(task.state_id) === 4 : null
+      filterTask.stopped===true  ? Number(task.state_id) === 4 : null
       );
       filterBlocked = tasks.filter((task) =>
-      filterTask.blocked && task  ? Number(task.state_id) === 5 : null
+      filterTask.blocked===true  ? Number(task.state_id) === 5 : null
       );
       filterDone = tasks.filter((task) =>
-      filterTask.done && task  ? Number(task.state_id) === 6 : null
+      filterTask.done===true  ? Number(task.state_id) === 6 : null
       );
       filterCanceled = tasks.filter((task) =>
-      filterTask.canceled && task  ? Number(task.state_id) === 7 : null
+      filterTask.canceled===true   ? Number(task.state_id) === 7 : null
       );
     } else {
       let filterCsds = [];
@@ -120,25 +124,25 @@ const ButtonFilter = () => {
 
       if (tasksFilter.length > 0) {
         filterDo = tasksFilter.filter((task) =>
-        filterTask.do ? task.state_id == 1 : null
+        filterTask.do ? task.state_id === 1 : null
         );
         filterDoing = tasksFilter.filter((task) =>
-        filterTask.doing ? task.state_id == 2 : null
+        filterTask.doing ? task.state_id === 2 : null
         );
         filterAnalyze = tasksFilter.filter((task) =>
-        filterTask.analyze ? task.state_id == 3 : null
+        filterTask.analyze ? task.state_id === 3 : null
         );
         filterStopped = tasksFilter.filter((task) =>
-        filterTask.stopped ? task.state_id == 4 : null
+        filterTask.stopped ? task.state_id === 4 : null
         );
         filterBlocked = tasksFilter.filter((task) =>
-        filterTask.blocked ? task.state_id == 5 : null
+        filterTask.blocked ? task.state_id === 5 : null
         );
         filterDone = tasksFilter.filter((task) =>
-        filterTask.done ? task.state_id == 6 : null
+        filterTask.done ? task.state_id === 6 : null
         );
         filterCanceled = tasksFilter.filter((task) =>
-        filterTask.canceled ? task.state_id == 7 : null
+        filterTask.canceled ? task.state_id === 7 : null
         );
       }
     }
@@ -153,7 +157,8 @@ const ButtonFilter = () => {
       ...filterCanceled,
     ];
     // setFilter([...finalFilter]);
-    dispatch(getTaskFilter(finalFilter));
+    // console.log(finalFilter);
+    dispatch(getTaskFilter([...finalFilter]));
   }
 
   const setDoVisibility = (value) => {

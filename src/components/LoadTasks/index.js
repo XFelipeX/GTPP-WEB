@@ -1,23 +1,22 @@
 import React from "react";
-import { useDispatch,useSelector } from "react-redux";
-import { seeAdmin, updateStateAdmin, updateTask } from "../../redux";
+import { useDispatch, useSelector } from "react-redux";
+import { updateStateAdmin, updateTask } from "../../redux";
 import { VscRefresh } from "react-icons/vsc";
 import "./style.css";
 
 let LoadTasks = () => {
   const dispatch = useDispatch();
-  const {seeAdminSet} = useSelector(state => state);
+  const { seeAdminSet } = useSelector((state) => state);
 
   function loadingTasks() {
     const element = document.getElementById("refresh-icon");
     element.classList.add("loading");
-    if(seeAdminSet===true){
+    if (seeAdminSet === true) {
       dispatch(updateStateAdmin());
-    }else{
+    } else {
       dispatch(updateTask());
     }
-   
-    // dispatch(seeAdmin());
+
     setTimeout(() => element.classList.remove("loading"), 1000);
   }
 

@@ -27,6 +27,7 @@ import seeAdminReducer from "./seeAdmin/seeAdminReducer";
 import webSocketReducer from "./webSocket/webSocketReducer";
 import stateAdminReducer from './adminStateUpdate/adminStateUpdateReducer';
 import warningReducer from './warning/warningReducer';
+import notifications from './notifications/notificationsReducer';
 
 const appReducer = combineReducers({
   permissions: userAuthReducer,
@@ -53,7 +54,8 @@ const appReducer = combineReducers({
   seeAdminSet: seeAdminReducer,
   webSocket: webSocketReducer,
   stateAdmin:stateAdminReducer,
-  warning:warningReducer
+  warning:warningReducer,
+  notifications
 });
 
 const rootReducer = (state, action) => {

@@ -25,7 +25,7 @@
 }  
 
 .depts {
-  height: 130px;
+  max-height: 130px;
 }
 
 .rowDept {
@@ -67,6 +67,16 @@
   height: 315px;
 }
 
+@media screen and (max-width:1536px){
+  .rowCompShop div select option {
+    font-size: 12px;
+  }
+
+  .comshopsubArea {
+    height: 170px;
+  }
+}
+
 @media only screen and (max-width: 1740px) {
   .rowCompShop {
     flex-direction: column;
@@ -88,6 +98,14 @@
   }
 }
 
+@media only screen and (max-width: 1740px) {
+  .rowCompShop {
+    height: 150px;
+    margin-top: -2em;
+  }
+
+}
+
 .menuDept {
   display: flex;
   flex-direction: column;
@@ -105,6 +123,14 @@
   z-index: 30;
 }
 
+@media only screen and (max-width: 1536px) {
+  .menuDept {
+    bottom: 1.8em;
+    left: 9.3em;
+  }
+
+}
+
 .menuDept li {
   padding: 0.2em 0.5em 0.2em 0;
   width: 130px;
@@ -118,6 +144,12 @@
   display: flex;
   z-index: 5;
   height: 250px;
+}
+
+@media only screen and (max-width:1536px){
+  .taskDescription {
+    height: 200px;
+  }
 }
 
 .taskDescription h1 {
@@ -169,9 +201,16 @@
   }
 }
 
+@media only screen and (max-width: 1536px) {
+  .usersVinculated {
+    top: 12em;
+  }
+
+}
+
 @media only screen and (max-width: 1366px) {
   .usersVinculated {
-    top: 2em;
+    top: 12.5em;
   }
 
   .rowCompShop {
