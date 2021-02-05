@@ -28,6 +28,7 @@ import webSocketReducer from "./webSocket/webSocketReducer";
 import stateAdminReducer from './adminStateUpdate/adminStateUpdateReducer';
 import warningReducer from './warning/warningReducer';
 import notifications from './notifications/notificationsReducer';
+import stateUsersReducer from './stateUsers/stateUsersReducer';
 
 const appReducer = combineReducers({
   permissions: userAuthReducer,
@@ -55,7 +56,8 @@ const appReducer = combineReducers({
   webSocket: webSocketReducer,
   stateAdmin:stateAdminReducer,
   warning:warningReducer,
-  notifications
+  notifications,
+  stateUsers:stateUsersReducer
 });
 
 const rootReducer = (state, action) => {

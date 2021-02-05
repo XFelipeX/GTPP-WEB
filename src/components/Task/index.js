@@ -39,6 +39,7 @@ const Task = ({ task }) => {
   const { visionMenu } = useSelector((state) => state);
   const { userPhotos } = useSelector((state) => state);
   const { taskVisible } = useSelector((state) => state);
+  const { webSocket } = useSelector((state) => state);
   const { permissions } = useSelector((state) => state);
   const { vinculatedUsers } = useSelector((state) => state);
   const { notifications } = useSelector((state) => state);
@@ -59,6 +60,7 @@ const Task = ({ task }) => {
     notificationsTask,
     warning
   ) {
+    SendMessage();
     let newArray = [...notifications];
 
     newArray.map((notify) => {
@@ -78,6 +80,8 @@ const Task = ({ task }) => {
       let { data } = await api.get(
         "GTPP/Task.php?AUTH=" + AUTH + "&app_id=3&id=" + taskId
       );
+
+      // console.log(data);
 
       if (data.error === true) {
         let msg = data.message;
@@ -173,6 +177,19 @@ const Task = ({ task }) => {
     }
   }, [notifications]);
 
+  function SendMessage() {
+    if (webSocket.websocketState === "connected") {
+      try {
+        let jsonString = {
+          type: -2,
+        };
+        webSocket.websocket.send(JSON.stringify(jsonString));
+      } catch (error) {
+        alert(error);
+      }
+    }
+  }
+
   let domNode = useClickOutside(() => {
     setShowNotifications(false);
   });
@@ -185,7 +202,7 @@ const Task = ({ task }) => {
     >
       <div className="tableLeft">
         <div
-          style={notification === 0 ? { backgroundColor: "transparent" } : null}
+          style={notification === 0 ? { backgroundColor: "transparent" } : {cursor:"pointer"}}
           className="tableNotification"
           onClick={() => notification > 0 && setShowNotifications(true)}
         >

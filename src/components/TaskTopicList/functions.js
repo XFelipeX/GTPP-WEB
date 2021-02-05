@@ -77,14 +77,16 @@ export const deleteItem = async (taskId, itemId, auth) => {
   }
 };
 
-export const addItem = async (taskId, description, auth) => {
+export const addItem = async (taskId, description, auth, file) => {
+
   const AUTH = auth;
 
   try {
     const { data } = await api.post(
       "GTPP/TaskItem.php?AUTH=" + AUTH + "&app_id=3",
-      { task_id: taskId, description: description }
+      { task_id: taskId, description: description, file: file }
     );
+
 
     if (data.error === true) {
       showNotification("Erro", String(data.message), "danger");

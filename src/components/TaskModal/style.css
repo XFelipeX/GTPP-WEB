@@ -29,6 +29,7 @@
 @media only screen and (max-width: 1536px) {
     .modal .modalContainer{
       width: 70%;
+      margin-top: 5.5em;
     }
   
   }
@@ -144,7 +145,7 @@
     content: ' ';
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: space-between;
 }
 .modalContent .taskInfo > h2{
     height: .5em;

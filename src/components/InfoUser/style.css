@@ -5,6 +5,20 @@
   width: 14%;
 }
 
+@media screen and (max-width:1536px){
+  .user-info-area {
+    width: 18.2%;
+  }
+}
+
+@media screen and (max-width:1366px){
+  .user-info-area {
+    width: 21%;
+  }
+}
+
+
+
 .user-img img {
   border-radius: 50%;
 }
@@ -18,13 +32,13 @@
   display: flex;
   /* flex-direction: column; */
   background-color: #343434;
-  max-width: 520px;
+  max-width: 600px;
   color: white;
   padding: 15px;
   box-shadow: 0 0px 20px 2px black;
   border-radius: 10px;
   position: absolute;
-  height: 170px;
+  max-height: 200px;
   top: 15px;
   z-index: 10;
 }
@@ -48,8 +62,8 @@
 }
 
 .user-img-card img {
-  height: 100%;
-  max-width: 150px;
+  height: 145px;
+  width: 135px;
 }
 
 .user-info-content p input {
@@ -64,3 +78,4 @@
 .password{
   cursor: pointer;
 }
+

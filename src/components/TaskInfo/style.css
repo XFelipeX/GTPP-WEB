@@ -101,7 +101,15 @@
 @media only screen and (max-width: 1740px) {
   .rowCompShop {
     height: 150px;
-    margin-top: -2em;
+    margin-top: -1em;
+  }
+
+}
+
+@media only screen and (max-width: 1536px) {
+  .rowCompShop {
+    height: 150px;
+    margin-top: -2.5em;
   }
 
 }
@@ -203,18 +211,19 @@
 
 @media only screen and (max-width: 1536px) {
   .usersVinculated {
-    top: 12em;
+    top: 11em;
   }
 
 }
 
 @media only screen and (max-width: 1366px) {
   .usersVinculated {
-    top: 12.5em;
+    top: 11em;
   }
 
   .rowCompShop {
-    height: 200px;
+    height: 150px;
+    margin-top: 1.5em;
   }
 
   .rowCompShop > div {
@@ -234,10 +243,8 @@
   margin: 0 1em 0.5em 0;
   cursor: pointer;
   background-size: cover;
-  min-width: 30px;
-  min-height: 33px;
-  max-width: 30px;
-  max-height: 33px;
+  width: 50px;
+  height: 50px;
 }
 
 .userControl > img {

@@ -15,8 +15,10 @@ const ButtonLogoff = () => {
 
   function UserLogoff() {
     sessionStorage.removeItem("token");
-
-    webSocket.websocket.close();
+  
+      webSocket.websocket.close();
+  
+    
 
     dispatch(logOff());
     history.push("/");
@@ -27,11 +29,15 @@ const ButtonLogoff = () => {
       <button
         type="button"
         onClick={() => {
+          const element = document.getElementById("buttonLogoffIcon");
+          element.classList.add("buttonLogoffIcon");
+          setTimeout(() => element.classList.remove("buttonLogoffIcon"), 1000);
           setShowConfirmAction(true);
         }}
         className="buttonLogoff"
+        title="Sair"
       >
-        <BiExit size={50} color="#959595" />
+        <BiExit size={50} color="#959595" id="buttonLogoffIcon" />
       </button>
 
       {showConfirmAction ? (

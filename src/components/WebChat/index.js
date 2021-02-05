@@ -67,7 +67,6 @@ function WebChat({ close }) {
   }
 
   function SetMessage(response) {
-
     // console.log(response)
     const taskId = response.task_id;
 
@@ -108,7 +107,7 @@ function WebChat({ close }) {
       // console.log('tem imagem')
       setMessages([
         ...webSocket.historic,
-        { ...response.object, user_id:uid,user_name: user },
+        { ...response.object, user_id: uid, user_name: user },
       ]);
       // console.log(messages);
       setTimeout(() => {
@@ -177,14 +176,13 @@ function WebChat({ close }) {
                   description: msg,
                   id: response.last_id,
                   date_time: response.date_time,
-                  image:1
+                  image: 1,
                 },
                 user_id: permissions.id,
                 type: 1,
               };
               webSocket.websocket.send(JSON.stringify(jsonString));
 
-    
               document.getElementById("upload-photo").value = "";
               setMsg("");
             } catch (error) {
@@ -203,13 +201,12 @@ function WebChat({ close }) {
               description: msg,
               id: response.last_id,
               date_time: response.date_time,
-              image:0
+              image: 0,
             },
             user_id: permissions.id,
             type: 1,
           };
           webSocket.websocket.send(JSON.stringify(jsonString));
-
 
           setMsg("");
         } catch (error) {
@@ -263,28 +260,14 @@ function WebChat({ close }) {
   }
 
   function convertBase64(file) {
-    // console.log(file);
-
     if (file !== null) {
-
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = () => resolve(reader.result);
         reader.onerror = (error) => reject(error);
-        ;
       });
-
-      // console.log(reader);
     }
-
-    // if (file != null) {
-    //   var image = new Image();
-    //   image.src = "data:image.jpeg;base64, " + file;
-    //   return image.src;
-    // } else {
-    //   return null;
-    // }
   }
 
   // console.log(messages);
@@ -319,7 +302,7 @@ function WebChat({ close }) {
         </div>
       </div>
       <div className="mainChat" id="mainChat" onLoad={() => {}}>
-        {showImage===true ? (
+        {showImage === true ? (
           <div
             className="showImageMessage"
             style={
@@ -345,9 +328,7 @@ function WebChat({ close }) {
                 >
                   <span
                     className="authorRight"
-                    style={
-                      message.image === 1 ? { marginRight: "-.1em" } : {}
-                    }
+                    style={message.image === 1 ? { marginRight: "-.1em" } : {}}
                   >
                     Eu
                   </span>
@@ -355,8 +336,8 @@ function WebChat({ close }) {
                     <span
                       className="clipImageRight"
                       onClick={() => {
-                       
-                        loadImage(message.id).then(() =>  setShowImage(true))}}
+                        loadImage(message.id).then(() => setShowImage(true));
+                      }}
                     >
                       <AiOutlinePaperClip size={18} />
                     </span>
@@ -375,10 +356,8 @@ function WebChat({ close }) {
                     <span
                       className="clipImage"
                       onClick={() => {
-                        
-                        loadImage(message.id).then(() =>setShowImage(true) )
-                        
-                        }}
+                        loadImage(message.id).then(() => setShowImage(true));
+                      }}
                     >
                       <AiOutlinePaperClip size={18} />
                     </span>

@@ -165,10 +165,10 @@ export const loadDept = async (auth) => {
 
 export const loadNotifications = async (auth) => {
   const AUTH = auth;
-
+  
   try {
     const { data } = await api.get(`GTPP/Notify.php?AUTH=${AUTH}&app_id=3`);
-
+    // console.log(data);
     if (data.error === true) {
       let msg = data.message;
       if (msg.includes("No data")) {

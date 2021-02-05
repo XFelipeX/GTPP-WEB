@@ -4,9 +4,16 @@ import { loadShopsCompany, loadDeptsCompany } from "./functions";
 import "./style.css";
 import { AiTwotoneFilter } from "react-icons/ai";
 import useClickOutside from "../ClickOutside";
-import { getTaskFilter, setAnalyzeVisi, setBlockedVisi, setCanceledVisi, setDoingVisi, setDoneVisi, setDoVisi, setStoppedVisi } from "../../redux";
-
-
+import {
+  getTaskFilter,
+  setAnalyzeVisi,
+  setBlockedVisi,
+  setCanceledVisi,
+  setDoingVisi,
+  setDoneVisi,
+  setDoVisi,
+  setStoppedVisi,
+} from "../../redux";
 
 const ButtonFilter = () => {
   const dispatch = useDispatch();
@@ -18,7 +25,7 @@ const ButtonFilter = () => {
   const [dept, setDept] = useState("-1");
   const [depts, setDepts] = useState([]);
   const [shops, setShops] = useState([]);
-  const {filterTask} = useSelector(state => state)
+  const { filterTask } = useSelector((state) => state);
   const { permissions } = useSelector((state) => state);
   const AUTH = permissions.session;
 
@@ -67,11 +74,9 @@ const ButtonFilter = () => {
 
   useEffect(() => {
     taskFilterAction();
-  },[tasks])
+  }, [tasks]);
 
   // console.log(tasks);
-
- 
 
   function taskFilterAction() {
     // console.log(filterTask)
@@ -85,110 +90,131 @@ const ButtonFilter = () => {
 
     // console.log(filterTask)
 
-    if (company == "-1" || shop == "-1" || dept == "-1") {
-      // console.log(tasks)
-      // console.log('filter')
-      filterDo = tasks.filter((task) =>
-      filterTask.do===true ? Number(task.state_id) === 1 : null
-      );
-      filterDoing = tasks.filter((task) =>
-      filterTask.doing===true   ? Number(task.state_id) === 2 : null
-      );
-      filterAnalyze = tasks.filter((task) =>
-      filterTask.analyze===true  ? Number(task.state_id) === 3 : null
-      );
-      filterStopped = tasks.filter((task) =>
-      filterTask.stopped===true  ? Number(task.state_id) === 4 : null
-      );
-      filterBlocked = tasks.filter((task) =>
-      filterTask.blocked===true  ? Number(task.state_id) === 5 : null
-      );
-      filterDone = tasks.filter((task) =>
-      filterTask.done===true  ? Number(task.state_id) === 6 : null
-      );
-      filterCanceled = tasks.filter((task) =>
-      filterTask.canceled===true   ? Number(task.state_id) === 7 : null
-      );
-    } else {
-      let filterCsds = [];
-      let tasksFilter = [];
-      filterCsds = tasks.filter((task) => task.csds.length>0);  
-      // console.log(filterCsds)
-      filterCsds.forEach(task => {
-        task.csds.forEach(csds => {
-          if(company == csds.company_id && shop == csds.shop_id && dept == csds.depart_id){
-            tasksFilter.push(task);
-          }
-        })
-      })
-
-      if (tasksFilter.length > 0) {
-        filterDo = tasksFilter.filter((task) =>
-        filterTask.do ? task.state_id === 1 : null
+    if(tasks){
+      if (company == "-1" || shop == "-1" || dept == "-1") {
+        // console.log(tasks)
+        // console.log('filter')
+        filterDo = tasks.filter((task) =>
+          filterTask.do === true ? Number(task.state_id) === 1 : null
         );
-        filterDoing = tasksFilter.filter((task) =>
-        filterTask.doing ? task.state_id === 2 : null
+        filterDoing = tasks.filter((task) =>
+          filterTask.doing === true ? Number(task.state_id) === 2 : null
         );
-        filterAnalyze = tasksFilter.filter((task) =>
-        filterTask.analyze ? task.state_id === 3 : null
+        filterAnalyze = tasks.filter((task) =>
+          filterTask.analyze === true ? Number(task.state_id) === 3 : null
         );
-        filterStopped = tasksFilter.filter((task) =>
-        filterTask.stopped ? task.state_id === 4 : null
+        filterStopped = tasks.filter((task) =>
+          filterTask.stopped === true ? Number(task.state_id) === 4 : null
         );
-        filterBlocked = tasksFilter.filter((task) =>
-        filterTask.blocked ? task.state_id === 5 : null
+        filterBlocked = tasks.filter((task) =>
+          filterTask.blocked === true ? Number(task.state_id) === 5 : null
         );
-        filterDone = tasksFilter.filter((task) =>
-        filterTask.done ? task.state_id === 6 : null
+        filterDone = tasks.filter((task) =>
+          filterTask.done === true ? Number(task.state_id) === 6 : null
         );
-        filterCanceled = tasksFilter.filter((task) =>
-        filterTask.canceled ? task.state_id === 7 : null
+        filterCanceled = tasks.filter((task) =>
+          filterTask.canceled === true ? Number(task.state_id) === 7 : null
         );
+      } else {
+        let filterCsds = [];
+        let tasksFilter = [];
+        filterCsds = tasks.filter((task) => task.csds.length > 0);
+        // console.log(filterCsds)
+        filterCsds.forEach((task) => {
+          task.csds.forEach((csds) => {
+            if (
+              company == csds.company_id &&
+              shop == csds.shop_id &&
+              dept == csds.depart_id
+            ) {
+              tasksFilter.push(task);
+            }
+          });
+        });
+  
+        if (tasksFilter.length > 0) {
+          filterDo = tasksFilter.filter((task) =>
+            filterTask.do ? task.state_id === 1 : null
+          );
+          filterDoing = tasksFilter.filter((task) =>
+            filterTask.doing ? task.state_id === 2 : null
+          );
+          filterAnalyze = tasksFilter.filter((task) =>
+            filterTask.analyze ? task.state_id === 3 : null
+          );
+          filterStopped = tasksFilter.filter((task) =>
+            filterTask.stopped ? task.state_id === 4 : null
+          );
+          filterBlocked = tasksFilter.filter((task) =>
+            filterTask.blocked ? task.state_id === 5 : null
+          );
+          filterDone = tasksFilter.filter((task) =>
+            filterTask.done ? task.state_id === 6 : null
+          );
+          filterCanceled = tasksFilter.filter((task) =>
+            filterTask.canceled ? task.state_id === 7 : null
+          );
+        }
       }
+  
+      let finalFilter = [
+        ...filterDo,
+        ...filterDoing,
+        ...filterAnalyze,
+        ...filterStopped,
+        ...filterBlocked,
+        ...filterDone,
+        ...filterCanceled,
+      ];
+      // setFilter([...finalFilter]);
+      // console.log(finalFilter);
+      dispatch(getTaskFilter([...finalFilter]));
     }
 
-    let finalFilter = [
-      ...filterDo,
-      ...filterDoing,
-      ...filterAnalyze,
-      ...filterStopped,
-      ...filterBlocked,
-      ...filterDone,
-      ...filterCanceled,
-    ];
-    // setFilter([...finalFilter]);
-    // console.log(finalFilter);
-    dispatch(getTaskFilter([...finalFilter]));
+    
   }
 
   const setDoVisibility = (value) => {
-    dispatch(setDoVisi(value))
-  }
+    dispatch(setDoVisi(value));
+  };
   const setDoingVisibility = (value) => {
-    dispatch(setDoingVisi(value))
-  }
+    dispatch(setDoingVisi(value));
+  };
   const setAnalyzeVisibility = (value) => {
-    dispatch(setAnalyzeVisi(value))
-  }
+    dispatch(setAnalyzeVisi(value));
+  };
   const setStoppedVisibility = (value) => {
-    dispatch(setStoppedVisi(value))
-  }
+    dispatch(setStoppedVisi(value));
+  };
   const setBlockedVisibility = (value) => {
-    dispatch(setBlockedVisi(value))
-  }
+    dispatch(setBlockedVisi(value));
+  };
   const setDoneVisibility = (value) => {
-    dispatch(setDoneVisi(value))
-  }
+    dispatch(setDoneVisi(value));
+  };
   const setCanceledVisibility = (value) => {
-    dispatch(setCanceledVisi(value))
-  }
+    dispatch(setCanceledVisi(value));
+  };
 
   // console.log(depts)
 
   return (
     <div className="buttonFilterArea" ref={domNode}>
-      <button className="buttonFilter" onClick={() => setShowModal(!showModal)}>
-        <AiTwotoneFilter size={50} style={{ color: "#959595" }} />
+      <button
+        className="buttonFilter"
+        onClick={() => {
+          const element = document.getElementById("buttonFilterIcon");
+          element.classList.add("buttonFilterIcon");
+          setTimeout(() => element.classList.remove("buttonFilterIcon"), 1000);
+          setShowModal(!showModal);
+        }}
+        title="Filtrar lista"
+      >
+        <AiTwotoneFilter
+          size={50}
+          style={{ color: "#959595" }}
+          id="buttonFilterIcon"
+        />
       </button>
       {showModal ? (
         <div className="modal-filter">
@@ -209,11 +235,9 @@ const ButtonFilter = () => {
               >
                 <option value="-1">Selecione</option>
                 {taskCompanies.map((comp) => (
-                  
-                    <option key={comp.id} value={comp.id}>
-                      {comp.description}
-                    </option>
-                  
+                  <option key={comp.id} value={comp.id}>
+                    {comp.description}
+                  </option>
                 ))}
               </select>
             </li>
@@ -251,7 +275,7 @@ const ButtonFilter = () => {
                 type="checkbox"
                 checked={filterTask.do}
                 onChange={() => {
-                 setDoVisibility(!filterTask.do)
+                  setDoVisibility(!filterTask.do);
                 }}
               />
               <label> Fazer</label>
@@ -261,7 +285,7 @@ const ButtonFilter = () => {
                 type="checkbox"
                 checked={filterTask.doing}
                 onChange={() => {
-                  setDoingVisibility(!filterTask.doing)
+                  setDoingVisibility(!filterTask.doing);
                 }}
               />
               <label> Fazendo</label>
@@ -271,7 +295,7 @@ const ButtonFilter = () => {
                 type="checkbox"
                 checked={filterTask.analyze}
                 onChange={() => {
-                  setAnalyzeVisibility(!filterTask.analyze)
+                  setAnalyzeVisibility(!filterTask.analyze);
                 }}
               />
               <label> Análise</label>
@@ -281,7 +305,7 @@ const ButtonFilter = () => {
                 type="checkbox"
                 checked={filterTask.stopped}
                 onChange={() => {
-                  setStoppedVisibility(!filterTask.stopped)
+                  setStoppedVisibility(!filterTask.stopped);
                 }}
               />
               <label> Parado</label>
@@ -291,7 +315,7 @@ const ButtonFilter = () => {
                 type="checkbox"
                 checked={filterTask.blocked}
                 onChange={() => {
-                  setBlockedVisibility(!filterTask.blocked)
+                  setBlockedVisibility(!filterTask.blocked);
                 }}
               />
               <label> Bloqueado</label>
@@ -301,7 +325,7 @@ const ButtonFilter = () => {
                 type="checkbox"
                 checked={filterTask.done}
                 onChange={() => {
-                  setDoneVisibility(!filterTask.done)
+                  setDoneVisibility(!filterTask.done);
                 }}
               />
               <label> Feito</label>
@@ -311,17 +335,20 @@ const ButtonFilter = () => {
                 type="checkbox"
                 checked={filterTask.canceled}
                 onChange={() => {
-                  setCanceledVisibility(!filterTask.canceled)
+                  setCanceledVisibility(!filterTask.canceled);
                 }}
               />
               <label> Cancelado</label>
             </li>
           </ul>
 
-          <button type="button" onClick={() => {
-            taskFilterAction();
-            setShowModal(false);
-          }}>
+          <button
+            type="button"
+            onClick={() => {
+              taskFilterAction();
+              setShowModal(false);
+            }}
+          >
             Ok
           </button>
         </div>

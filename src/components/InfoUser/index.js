@@ -13,8 +13,10 @@ import { store } from "react-notifications-component";
 import api from "../../services/api";
 import Loading from "../Loading";
 import { RiLockPasswordFill } from "react-icons/ri";
+import { AiFillTrophy } from "react-icons/ai";
 import "./style.css";
 import AlterPassword from "../AlterPassword";
+import Ranking from "../Ranking";
 
 let InfoUser = () => {
   let dispatch = useDispatch();
@@ -22,6 +24,8 @@ let InfoUser = () => {
   const { permissions } = useSelector((state) => state);
   const { seeAdminSet } = useSelector((state) => state);
   const { webSocket } = useSelector((state) => state);
+  const [score, setScore] = useState(null);
+  const [showRanking, setShowRanking] = useState(false);
   const [showLoading, setShowLoading] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const [changePassword, setChangePassword] = useState(false);
@@ -65,7 +69,7 @@ let InfoUser = () => {
 
   function seeHowAdm() {
     setShowLoading(true);
-    dispatch(updateModal());
+    // dispatch(updateModal());
     dispatch(seeAdmin());
     if (seeAdm === false) {
       setSeeAdm(true);
@@ -89,6 +93,7 @@ let InfoUser = () => {
       setShowLoading(false);
     }, 1000);
   }
+  
 
   useEffect(() => {
     loadUserInfo()
@@ -147,7 +152,30 @@ let InfoUser = () => {
 
   let domNode = useClickOutside(() => {
     setShowInfo(false);
+    setShowRanking(false);
   });
+
+  const [ranking, setRanking] = useState(null);
+
+  async function loadScore(all) {
+    try {
+      const { data } = await api.get(
+        `GTPP/Score.php?AUTH=${permissions.session}&app_id=3&all=${all}`
+      );
+
+      if (data.error === true) {
+        return null;
+      } else {
+        if (all === "no") {
+          return data.data[0];
+        }
+        return data.data;
+      }
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
 
   useEffect(() => {
     loadUserPhoto();
@@ -164,6 +192,9 @@ let InfoUser = () => {
           onlyRead={false}
         />
       )}
+      {showRanking && (
+        <Ranking close={() => setShowRanking(false)} data={ranking} />
+      )}
       {showLoading === true ? <Loading /> : null}
       <div className="user-img">
         <img
@@ -179,7 +210,13 @@ let InfoUser = () => {
           src={photo}
           width="60"
           height="60"
-          onClick={() => setShowInfo(!showInfo)}
+          onClick={() => {
+            loadScore("no")
+              .then((response) => setScore(response))
+              .then(() => {
+                setShowInfo(!showInfo);
+              });
+          }}
           alt="imagem do usuário logado"
         ></img>
       </div>
@@ -237,6 +274,22 @@ let InfoUser = () => {
                   </p>
                 )
               ) : null}
+              <p>
+                <AiFillTrophy
+                  onClick={() => {
+                    loadScore("yes")
+                      .then((response) => setRanking(response))
+                      .then(() => {
+                        setShowRanking(true);
+                      });
+                  }}
+                  size={20}
+                  color="#fff"
+                  style={{ marginRight: "10px", cursor: "pointer" }}
+                  title="Pontos"
+                />
+                {score && score.score}
+              </p>
             </div>
           </div>
         </div>

@@ -8,6 +8,7 @@ import { getWarning } from "../../redux";
 const TaskWarning = ({ task }) => {
   const finalDate = new Date(String(task.final_date));
   const initialDate = new Date(String(task.initial_date));
+  const { webSocket } = useSelector((state) => state);
   const [warningState, setWarningState] = useState(0);
   const { taskVisible } = useSelector((state) => state);
   const dispatch = useDispatch();
@@ -73,7 +74,7 @@ const TaskWarning = ({ task }) => {
     }
 
     formatWarning(initialDate, finalDate);
-  }, [taskVisible]);
+  }, [taskVisible, task.final_date]);
 
   return (
     <div className="taskWarning">

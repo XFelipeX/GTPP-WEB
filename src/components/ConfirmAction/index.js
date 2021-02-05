@@ -12,9 +12,11 @@ let ConfirmAction = (props) => {
           <li>
             <button
               className="btnConfirm"
-              onClick={(() => {
-                props.confirm(); props.action();
-              })}
+              onClick={() => {
+                // props.confirm();
+
+                props.action();
+              }}
               style={{ marginTop: "0" }}
             >
               Confirmar

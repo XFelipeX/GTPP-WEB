@@ -258,7 +258,11 @@ const TaskInfo = () => {
   });
 
   function updateState(stateId, reason, days) {
-    if (taskVisible.info.state_id == 1 || taskVisible.info.state_id == 2) {
+    if (
+      taskVisible.info.state_id == 1 ||
+      taskVisible.info.state_id == 2 ||
+      taskVisible.info.state_id == 6
+    ) {
       if (reason == null) {
         setShowReasonModal(true);
       } else if (reason === "") {
@@ -329,43 +333,38 @@ const TaskInfo = () => {
         setDays("");
       }
     } else if (taskVisible.info.state_id !== 5) {
-      if (confirm == false) {
-        setShowConfirmAction(true);
-        return;
-      } else if (confirm == true) {
-        updateStateTask(taskVisible.info.task_id, null, null, AUTH)
-          .then((response) => {
-            taskVisible.info.state_id = response[0].id;
-            verifyState(response[0].id);
+      updateStateTask(taskVisible.info.task_id, null, null, AUTH)
+        .then((response) => {
+          taskVisible.info.state_id = response[0].id;
+          verifyState(response[0].id);
 
-            let changes = [...tasks];
-            changes = changes.map((task) => {
-              if (task.id === taskVisible.info.task_id) {
-                if (Number(task.state_id) !== Number(response[0].id)) {
-                  SendInfo("send", 6);
-                }
-
-                task.state_id = response[0].id;
+          let changes = [...tasks];
+          changes = changes.map((task) => {
+            if (task.id === taskVisible.info.task_id) {
+              if (Number(task.state_id) !== Number(response[0].id)) {
+                SendInfo("send", 6);
               }
-            });
 
-            // dispatch(getTask([...changes]));
-          })
-          .then(() => {
-            if (seeAdminSet === true) {
-              dispatch(updateStateAdmin());
-            } else {
-              dispatch(updateTask());
+              task.state_id = response[0].id;
             }
-            dispatch(updateModal());
-            setShowConfirmAction(false);
-          })
-          .catch((error) => {
-            alert(error);
           });
 
-        return;
-      }
+          // dispatch(getTask([...changes]));
+        })
+        .then(() => {
+          if (seeAdminSet === true) {
+            dispatch(updateStateAdmin());
+          } else {
+            // dispatch(updateTask());
+          }
+          // dispatch(updateModal());
+          setShowConfirmAction(false);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      return;
     }
   }
 
@@ -424,7 +423,7 @@ const TaskInfo = () => {
         }
       })
       .catch((error) => {
-        console.log(error);
+        // console.log(error);
       });
   }
 
@@ -540,7 +539,9 @@ const TaskInfo = () => {
             <ul className="menuState">
               <li>
                 <h3>
-                  Alterar tarefa para o estado <strong>parado</strong>?
+                  {taskVisible.info.state_id == 6
+                    ? "Deseja retomar a tarefa?"
+                    : "Alterar tarefa para o estado Parado?"}
                 </h3>
                 <h2>*Informe o motivo:</h2>
                 <textarea
@@ -646,7 +647,7 @@ const TaskInfo = () => {
 
                     setTimeout(() => {
                       if (count == 1 && state.id !== 7) {
-                        if (state.id == 6 || state.id == 3 || state.id == 4) {
+                        if (state.id == 3 || state.id == 4) {
                           setShowConfirmAction(true);
                         } else {
                           updateState(state.id);
@@ -661,6 +662,7 @@ const TaskInfo = () => {
                       count = 0;
                     }, 500);
                   }}
+                  title="Estado atual"
                   className="buttonState stateControl"
                   style={{ backgroundColor: "#" + state.color }}
                 >
@@ -682,6 +684,7 @@ const TaskInfo = () => {
                   size="25"
                   onClick={() => setShowFullDesc(!showFullDesc)}
                   className="btnEdit"
+                  title="Editar"
                 />
               </h1>
               <textarea

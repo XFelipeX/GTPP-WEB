@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 // import {getTask, taskInfoShow} from '../../redux';
-import { logIn } from "../../redux/userAuth/userAuthActions";
+import { logIn, logOff } from "../../redux/userAuth/userAuthActions";
 import "./style.css";
 import img from "../../assets/art.png";
 import logo from "../../assets/logo.png";
@@ -32,11 +32,14 @@ const Login = () => {
   const dispatch = useDispatch();
   const [access, setAccess] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
- 
+
   // console.log(taskVisible)
 
+  useEffect(() => {
+    dispatch(logOff());
+  }, []);
   async function UserLogin() {
-    verifyVersion();
+    // verifyVersion();
     if (access) {
       try {
         let data = {};
@@ -88,16 +91,16 @@ const Login = () => {
                 );
               } else if (msg.includes("Default password is not permited")) {
                 setShowChangePassword(true);
-              } else if(msg.includes("This password do is not match")){
+              } else if (msg.includes("This password do is not match")) {
                 showNotification("Aviso", "Senha incorreta", "warning");
-              } else if(msg.includes("No data")){
+              } else if (msg.includes("No data")) {
                 showNotification("Aviso", "Usuário não encontrado", "warning");
-              } else{
+              } else {
                 showNotification("Aviso", msg, "warning");
               }
             } else {
               sessionStorage.setItem("token", data.data.session);
-              const object = {...data.data};
+              const object = { ...data.data };
               object.user = document.getElementById("user_name").value;
               // console.log(object)
               dispatch(logIn(object));
@@ -113,44 +116,37 @@ const Login = () => {
     }
   }
 
-  async function verifyVersion() {
-    const version = 1.0;
-
-    try {
-      let { data } = await api.get("CCPP/AppVersion.php?id=3");
-
-      if (data.error !== true) {
-        let versionApp = data.data[0].version;
-
-        if (versionApp == version) {
-          setAccess(true);
-        } else {
-          showNotification(
-            "Aviso",
-            "Aplicação desatualizada, a versão necessária é " +
-              versionApp +
-              ", a versão atual é " +
-              version,
-            "warning"
-          );
-          setAccess(false);
-        }
-      }
-    } catch (error) {
-      showNotification("erro", error.message, "danger");
-      return false;
-    }
-  }
-
   useEffect(() => {
+    async function verifyVersion() {
+      const version = "1.2";
+
+      try {
+        let { data } = await api.get("CCPP/AppVersion.php?id=3");
+
+        if (data.error !== true) {
+          let versionApp = String(data.data[0].version);
+
+          if (versionApp === version) {
+            setAccess(true);
+          } else {
+            showNotification(
+              "Aviso",
+              "Aplicação desatualizada, a versão necessária é " +
+                versionApp +
+                ", a versão atual é " +
+                version,
+              "warning"
+            );
+            setAccess(false);
+          }
+        }
+      } catch (error) {
+        showNotification("erro", error.message, "danger");
+        return false;
+      }
+    }
     verifyVersion();
   }, []);
-
- 
-
-  
-
- 
 
   return (
     <div className="container">
@@ -174,7 +170,7 @@ const Login = () => {
         <button onClick={() => UserLogin()}>Entrar</button>
       </form>
       <div className="version">
-        <span>GTPP - App Web - Version 1.0 </span>
+        <span>GTPP - App Web - Version 1.2 </span>
         <span> Created by:</span>
         <span>Front-End - Felipe</span>
         <span>Back-End - Kyo</span>

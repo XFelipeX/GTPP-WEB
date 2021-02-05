@@ -24,6 +24,7 @@ import {
   getNotifications,
 } from "../../redux";
 import Loading from "../Loading";
+import { showNotification } from "../ButtonFilter/functions";
 
 const TaskTable = (props) => {
   const { permissions } = useSelector((state) => state);
@@ -55,7 +56,7 @@ const TaskTable = (props) => {
 
     function sumNotification(type, taskId, object) {
       if (type === 1) {
-        if (amountNotify.length > 0) {
+        if (amountNotify && amountNotify.length > 0) {
           let taskNotification = [...amountNotify];
           let isNewNotification = true;
 
@@ -129,6 +130,7 @@ const TaskTable = (props) => {
     loadVinculateUsers().then(() => {
       loadNotifications(AUTH)
         .then((response) => {
+          // console.log(response)
           if (response.length > 0) {
             response.map((info) => {
               sumNotification(Number(info.type), info.task_id, info);
@@ -137,24 +139,32 @@ const TaskTable = (props) => {
         })
         .then(() => {
           dispatch(getNotifications(amountNotify !== {} ? amountNotify : []));
-        });
+        })
+        .catch((error) => console.log(error));
     });
   }, []);
 
   useEffect(() => {}, []);
 
   useEffect(() => {
-    loadTask(visionMenu, AUTH).then((response) => {
-      if (response.error === true) {
-        console.log(response.error);
-      } else {
-        try {
-          dispatch(getTask(response.data));
-        } catch (error) {
-          console.log(error);
+    loadTask(visionMenu, AUTH)
+      .then((response) => {
+  
+        if (response.error === true) {
+          console.log(response.error);
+        } else {
+          try {
+            // if(!response.data){
+            //   showNotification("Erro","T")
+            // }
+            // console.log(response)
+            dispatch(getTask(response.data ? response.data : [{}]));
+          } catch (error) {
+            console.log(error);
+          }
         }
-      }
-    });
+      })
+      .catch((error) => console.log(error));
   }, [stateUpdate]);
 
   useEffect(() => {
@@ -176,120 +186,134 @@ const TaskTable = (props) => {
       }
     }
     if (seeAdminSet === true) {
-      loadAllTasks().then((response) => dispatch(getTask(response)));
+      loadAllTasks()
+        .then((response) => dispatch(getTask(response)))
+        .catch((error) => console.log(error));
     }
-  }, [stateAdmin]);
+  }, [stateAdmin,seeAdminSet]);
 
-  function taskFilter() {
-    let filter = tasks.filter(
-      (task) =>
-        task.state_id == 1 ||
-        task.state_id == 2 ||
-        task.state_id == 3 ||
-        task.state_id == 4 ||
-        task.state_id == 5
-    );
-
-    dispatch(getTaskFilter(filter));
-  }
+ 
 
   useEffect(() => {
-    tasks.map(
-      (task) => (
-        (task.notifications = [
-          { type: 1, amount: 0, message: "" },
-          { type: 4, amount: 0, message: "" },
-          { type: 6, amount: 0, message: "" },
-          { type: 3, amount: 0, message: "" },
-          { type: 2, amount: 0, message: "" },
-          { type: 6, amount: 0, message: "" },
-          { amount: 0 },
-        ]),
-        (task.warning = { expire: 0, due_date: 0, initial: 0 })
-      )
-    );
-    if (filterTask.filter.length == 0) {
-      taskFilter();
+    function taskFilter() {
+      let filter = tasks.filter(
+        (task) =>
+          task.state_id == 1 ||
+          task.state_id == 2 ||
+          task.state_id == 3 ||
+          task.state_id == 4 ||
+          task.state_id == 5
+      );
+  
+      dispatch(getTaskFilter(filter));
+    }
+
+    if (tasks) {
+      tasks.map(
+        (task) => (
+          (task.notifications = [
+            { type: 1, amount: 0, message: "" },
+            { type: 4, amount: 0, message: "" },
+            { type: 6, amount: 0, message: "" },
+            { type: 3, amount: 0, message: "" },
+            { type: 2, amount: 0, message: "" },
+            { type: 6, amount: 0, message: "" },
+            { amount: 0 },
+          ]),
+          (task.warning = { expire: 0, due_date: 0, initial: 0 })
+        )
+      );
+      if (filterTask.filter.length === 0) {
+        taskFilter();
+      }
     }
   }, [tasks]);
 
   useEffect(() => {
-    loadCompanies(AUTH).then((response) => {
-      if (response.error === true) {
-        alert("error");
-      } else {
-        try {
-          dispatch(getCompany(response.data != "" ? response.data : []));
-        } catch (error) {}
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    loadShop(AUTH).then((response) => {
-      if (response.error === true) {
-        alert("error");
-      } else {
-        try {
-          dispatch(getShop(response.data != "" ? response.data : []));
-        } catch (error) {}
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    loadTaskStates(AUTH).then((response) => {
-      if (response.error === true) {
-        alert("error");
-      } else {
-        try {
-          dispatch(getStates(response.data));
-        } catch (error) {}
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    loadDept(AUTH).then((response) => {
-      if (response.error === true) {
-        alert("error");
-      } else {
-        try {
-          dispatch(getDepts(response.data));
-        } catch (error) {}
-      }
-    });
-  }, []);
-
-  const loadUserImages = async (idUser) => {
-    if (idUser) {
-      try {
-        const { data } = await api.get(
-          "http://192.168.0.99:71/GLOBAL/Controller/CCPP/EmployeePhoto.php?AUTH=" +
-            AUTH +
-            "&app_id=3&id=" +
-            idUser
-        );
-
-        if (data) {
-          if (data.photo == null || data.photo == "") {
-            data.user_id = idUser;
-            data.photo = userEmpty;
-            setTakePhotos((oldarray) => [...oldarray, data]);
-          } else {
-            data.photo = convertImage(data.photo);
-            setTakePhotos((oldarray) => [...oldarray, data]);
-          }
+    loadCompanies(AUTH)
+      .then((response) => {
+        if (response.error === true) {
+          alert("error");
+        } else {
+          try {
+            dispatch(getCompany(response.data != "" ? response.data : []));
+          } catch (error) {}
         }
-
-        return data;
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
+      })
+      .catch((error) => console.log(error));
+  }, []);
 
   useEffect(() => {
+    loadShop(AUTH)
+      .then((response) => {
+        if (response.error === true) {
+          alert("error");
+        } else {
+          try {
+            dispatch(getShop(response.data != "" ? response.data : []));
+          } catch (error) {}
+        }
+      })
+      .catch((error) => console.log(error));
+  }, []);
+
+  useEffect(() => {
+    loadTaskStates(AUTH)
+      .then((response) => {
+        if (response.error === true) {
+          alert("error");
+        } else {
+          try {
+            dispatch(getStates(response.data));
+          } catch (error) {}
+        }
+      })
+      .catch((error) => console.log(error));
+  }, []);
+
+  useEffect(() => {
+    loadDept(AUTH)
+      .then((response) => {
+        if (response.error === true) {
+          alert("error");
+        } else {
+          try {
+            dispatch(getDepts(response.data));
+          } catch (error) {}
+        }
+      })
+      .catch((error) => console.log(error));
+  }, []);
+
+  useEffect(() => {
+    const loadUserImages = async (idUser) => {
+      if (idUser) {
+        try {
+          const { data } = await api.get(
+            "http://192.168.0.99:71/GLOBAL/Controller/CCPP/EmployeePhoto.php?AUTH=" +
+              AUTH +
+              "&app_id=3&id=" +
+              idUser
+          );
+
+          if (data) {
+            if (data.photo == null || data.photo == "") {
+              data.user_id = idUser;
+              data.photo = userEmpty;
+              setTakePhotos((oldarray) => [...oldarray, data]);
+            } else {
+              data.photo = convertImage(data.photo);
+              setTakePhotos((oldarray) => [...oldarray, data]);
+            }
+          }
+
+          return data;
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    };
+
     vinculatedUsers.forEach((user) => {
       loadUserImages(user.id);
     });

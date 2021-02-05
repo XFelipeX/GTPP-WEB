@@ -7,14 +7,16 @@ const ModalNotifications = ({ task }) => {
   const { vinculatedUsers } = useSelector((state) => state);
   const { taskStates } = useSelector((state) => state);
   const [notify, setNotify] = useState([]);
-  const [message, setMessage] = useState("");
+  // const [message, setMessage] = useState("");
 
   useEffect(() => {
     const taskF = notifications.filter(
-      (taskFilter) => taskFilter.task_id === task.id
+      (taskFilter) => +taskFilter.task_id === +task.id
     );
     const { content } = taskF[0];
     let userAuthor;
+    
+    // console.log(taskF);
 
     if (content.object) {
       content.object.map((info) => {

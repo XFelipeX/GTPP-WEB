@@ -11,7 +11,7 @@
 .containerTask .taskContent {
   display: flex;
   justify-content: flex-end;
-  width: 80%;
+  width: 40%;
   margin: 0 1%;
 }
 /*progresso da tarefa*/
@@ -30,15 +30,25 @@
 
 .taskName {
   display: flex;
-  width: 30%;
+  width: 60%;
   padding: 0 5px;
   align-items: center;
 }
 .taskName > h2 {
+  width: 100%;
+  left: 8%;
   margin-left: 10px;
   padding: 5px;
   border-radius: 3px;
   cursor: pointer;
+}
+
+@media only screen and (max-width:1366px){
+  
+}
+
+@media only screen and (max-width:1536px){
+ 
 }
 
 .taskName h2:hover {
@@ -100,7 +110,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    cursor: pointer;
 }
 
 

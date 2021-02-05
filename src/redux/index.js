@@ -52,3 +52,4 @@ export {addUsersOnline} from './webSocket/webSocketActions';
 export {getWarning} from './warning/warningActions';
 export {removeWarning} from './warning/warningActions';
 export {getNotifications} from './notifications/notificationsActions';
+export {updateStateUsers} from './stateUsers/stateUsersActions';

@@ -4,17 +4,23 @@ import { BsFilterLeft } from "react-icons/bs";
 import { getTaskFilter } from "../../redux";
 import { store } from "react-notifications-component";
 import "./style.css";
+import useClickOutside from "../ClickOutside";
 
 let OrderTasks = () => {
   const dispatch = useDispatch();
-  const [count, setCount] = useState(0);
   const { filterTask } = useSelector((state) => state);
   const { orderTask } = useSelector((state) => state);
   const [showAlert, setShowAlert] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [orderPriority, setOrderPriority] = useState(false);
+  const [orderState, setOrderState] = useState(false);
+  const [orderDescription, setOrderDescription] = useState(false);
+  const [orderDueDate, setOrderDueDate] = useState(false);
+
 
   useEffect(() => {
     orderTasks();
-  }, [count]);
+  }, [orderPriority,orderState,orderDescription,orderDueDate]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -23,9 +29,6 @@ let OrderTasks = () => {
   }, [orderTask]);
 
   function orderTasks() {
-    if (count == 0) {
-      return;
-    }
 
     let filterDo = [];
     let filterDoing = [];
@@ -36,7 +39,7 @@ let OrderTasks = () => {
     let filterCanceled = [];
     let finalFilter = [];
 
-    if (count === 1) {
+    if (orderPriority) {
       if (showAlert === true) {
         store.addNotification({
           title: "Sucesso",
@@ -57,8 +60,8 @@ let OrderTasks = () => {
       filterDoing = filterTask.filter.filter((task) => task.priority == 1);
       filterAnalyze = filterTask.filter.filter((task) => task.priority == 2);
 
-      finalFilter = [...filterDo, ...filterDoing, ...filterAnalyze];
-    } else if (count === 2) {
+      finalFilter = [...filterAnalyze, ...filterDoing, ...filterDo];
+    } else if (orderState) {
       if (showAlert === true) {
         store.addNotification({
           title: "Sucesso",
@@ -93,7 +96,7 @@ let OrderTasks = () => {
         ...filterDone,
         ...filterCanceled,
       ];
-    } else if (count === 3) {
+    } else if (orderDescription) {
       if (showAlert === true) {
         store.addNotification({
           title: "Sucesso",
@@ -116,7 +119,7 @@ let OrderTasks = () => {
       finalFilter.sort(function (a, b) {
         return a.description.localeCompare(b.description);
       });
-    } else if (count === 4) {
+    } else if (orderDueDate) {
       if (showAlert === true) {
         store.addNotification({
           title: "Sucesso",
@@ -139,24 +142,98 @@ let OrderTasks = () => {
         return a.final_date.localeCompare(b.final_date);
       });
 
-      if (count == 4) {
-        setCount(0);
-      }
+    }
+
+    if(finalFilter.length===0){
+      return;
     }
 
     dispatch(getTaskFilter(finalFilter));
   }
 
+  let domNode = useClickOutside(() => {
+    setShowMenu(false);
+  });
+
   return (
     <div className="load-tasks-area">
+      {showMenu ? (
+        <ul className="menuExpanded" ref={domNode}>
+          <label htmlFor="">
+            <input
+              type="checkbox"
+              id="priority"
+              onChange={() => {
+                setOrderPriority(!orderPriority);
+                setOrderState(false);
+                setOrderDescription(false);
+                setOrderDueDate(false);
+              }}
+              checked={orderPriority}
+            />
+            Prioridade
+          </label>
+          <label htmlFor="">
+            <input
+              type="checkbox"
+              id="state"
+              onChange={() => {
+                setOrderState(!orderState);
+                setOrderPriority(false);
+                setOrderDescription(false);
+                setOrderDueDate(false);
+              }}
+              checked={orderState}
+            />
+            Estado
+          </label>
+          <label htmlFor="">
+            <input
+              type="checkbox"
+              id="date"
+              onChange={() => {
+                setOrderDescription(!orderDescription);
+                setOrderState(false);
+                setOrderPriority(false);
+                setOrderDueDate(false);
+              }}
+              checked={orderDescription}
+            />
+            Descrição
+          </label>
+          <label htmlFor="">
+            <input
+              type="checkbox"
+              id="userVinculated"
+              onChange={() => {
+                setOrderDueDate(!orderDueDate);
+                setOrderState(false);
+                setOrderDescription(false);
+                setOrderPriority(false);
+              }}
+              checked={orderDueDate}
+            />
+            Vencimento
+          </label>
+        </ul>
+      ) : null}
       <button
         className="button-refresh"
         onClick={() => {
-          setCount(count + 1);
+          const element = document.getElementById("orderTaskIcon");
+          element.classList.add("orderTaskIcon");
+          setTimeout(() => element.classList.remove("orderTaskIcon"), 1000);
+          setShowMenu(true);
+          // setCount(count + 1);
           setShowAlert(true);
         }}
+        title="Ordenar lista"
       >
-        <BsFilterLeft size={75} style={{ color: "#959595" }} />
+        <BsFilterLeft
+          size={75}
+          style={{ color: "#959595" }}
+          id="orderTaskIcon"
+        />
       </button>
     </div>
   );

@@ -2,8 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FaTrash } from "react-icons/fa";
 import { BiCommentAdd } from "react-icons/bi";
-import { AiOutlineClose } from "react-icons/ai";
-import { AiOutlineClockCircle, AiOutlineEdit } from "react-icons/ai";
+import {
+  AiOutlineClose,
+  AiOutlineClockCircle,
+  AiOutlineEdit,
+  AiOutlinePaperClip,
+} from "react-icons/ai";
 import { FaArrowUp } from "react-icons/fa";
 import { FaArrowDown } from "react-icons/fa";
 import { BsCheckAll } from "react-icons/bs";
@@ -20,8 +24,14 @@ import {
   changeYesNoTopic,
   showNotification,
 } from "./functions";
-import { taskInfoShow, updateModal, updateTopic } from "../../redux";
+import {
+  sendInfoModal,
+  taskInfoShow,
+  updateModal,
+  updateTopic,
+} from "../../redux";
 import "./style.css";
+import useClickOutside from "../ClickOutside";
 
 const TaskTopicList = ({ id = "modalEdit" }) => {
   const { topicUpdate } = useSelector((state) => state);
@@ -38,7 +48,9 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   const [idItem, setIdItem] = useState();
   const [taskHistoric, setTaskHistoric] = useState([]);
   const [showOrder, setShowOrder] = useState(false);
+  const [showImage, setShowImage] = useState(null);
   const [orderItem, setOrderItem] = useState(false);
+  const [imageSend, setImageSend] = useState(null);
   const [itemEdit, setItemEdit] = useState();
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const dispatch = useDispatch();
@@ -109,13 +121,18 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   }, [topicUpdate, modalUpdate]);
 
   useEffect(() => {
-    const handleClick = () => {
-      if (ref.current)
-        ref.current.scrollIntoView(true, {
-          behavior: "smooth",
-          block: "end",
-        });
-    };
+    // const handleClick = () => {
+    //   if (ref.current)
+    //     ref.current.scrollIntoView(true, {
+    //       behavior: "smooth",
+    //       block: "end",
+    //     });
+    // };
+
+    function handleClick(){
+      document.getElementById("topicList").scrollTop = 1000000000000;
+    }
+
     handleClick();
   }, [showBottom]);
 
@@ -128,7 +145,6 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
               task_id: taskVisible.info.task_id,
               object: {
                 description: msg,
-                task_id: taskVisible.info.task_id,
                 percent: percent,
                 itemUp: item,
                 remove: remove,
@@ -168,6 +184,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   }
 
   function addNewItem(taskId, description) {
+    let image = document.getElementById("upload-photo").files[0];
     if (taskVisible.info.state_id == 5 || taskVisible.info.state_id == 4) {
       showNotification(
         "Aviso",
@@ -182,8 +199,8 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
         "warning"
       );
     } else {
-      if (description !== "") {
-        addItem(taskId, description, AUTH).then((response) => {
+      if (description !== "" && !image) {
+        addItem(taskId, description, AUTH, null).then((response) => {
           if (response != null) {
             const newItem = {
               check: false,
@@ -191,6 +208,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
               description: description,
               order: response.order,
               yes_no: response.yes_no,
+              file: 0,
             };
 
             taskVisible.task.task_item = [
@@ -221,7 +239,77 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
           }
         });
         setNewItem("");
+      } else if (description !== "") {
+        convertBase64(document.getElementById("upload-photo").files[0]).then(
+          (response) => {
+            // console.log(response);
+            let item = response.split(",");
+            addItem(taskId, description, AUTH, item[1]).then((response) => {
+              if (response != null) {
+                const newItem = {
+                  check: false,
+                  id: response.last_id,
+                  description: description,
+                  order: response.order,
+                  yes_no: response.yes_no,
+                  file: 1,
+                };
+
+                taskVisible.task.task_item = [
+                  ...taskVisible.task.task_item,
+                  newItem,
+                ];
+                SendInfo(
+                  "Novo item adicionado",
+                  2,
+                  response.percent,
+                  "",
+                  newItem
+                );
+                taskVisible.info.percent = response.percent;
+                taskVisible.info.state_id = response.state_id;
+
+                let changes = [...tasks];
+
+                changes = changes.map((task) => {
+                  if (task.id === taskVisible.info.task_id) {
+                    if (task.state_id != response.state_id) {
+                      SendInfo(
+                        " para ",
+                        6,
+                        response.percent,
+                        response.state_id
+                      );
+                    }
+                    task.percent = response.percent;
+                    task.state_id = response.state_id;
+                  }
+                });
+                dispatch(updateTopic());
+                dispatch(updateModal());
+
+                setTimeout(() => {
+                  setShowBottom(!showBottom);
+                }, 500);
+              }
+            });
+            setNewItem("");
+            setImageSend(null);
+            document.getElementById("upload-photo").value = "";
+          }
+        );
       }
+    }
+  }
+
+  function convertBase64(file) {
+    if (file !== null) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+      });
     }
   }
 
@@ -446,10 +534,43 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
     });
   }
 
+  async function loadImage(id) {
+    try {
+      const { data } = await api.get(
+        `GTPP/TaskItem.php?AUTH=${AUTH}&app_id=3&id=${id}`
+      );
+
+      setShowImage(convertImage(data.data));
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  function convertImage(src) {
+    if (src != null) {
+      var image = new Image();
+      image.src = "data:image/jpeg;base64, " + src;
+      return image.src;
+    } else {
+      return null;
+    }
+  }
+
   const ref = React.createRef();
+
+  let domNode = useClickOutside(() => {
+    setShowImage(null)
+  });
 
   return (
     <div className="taskTopicList">
+      {showImage !== null ? (
+        <div className="showImgAttachment" onClick={() => {}}>
+          <img ref={domNode} src={showImage} alt="" />
+        </div>
+      ) : (
+        ""
+      )}
       {showOrder === true ? (
         <div className="orderModal">
           <div className="orderArea">
@@ -497,6 +618,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
               setTaskHistoric(response.data)
             )
           )}
+          title="Exibir histórico da tarefa"
         >
           <AiOutlineClockCircle size="23" color="white" />
         </button>
@@ -505,7 +627,11 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
           <div id={id} className="modalHistoric" onClick={() => {}}>
             <div>
               <div className="btnCloseHistoric">
-                <button type="button" onClick={() => setShowHistoric(false)}>
+                <button
+                  title="Fechar"
+                  type="button"
+                  onClick={() => setShowHistoric(false)}
+                >
                   <AiOutlineClose size={30} />
                 </button>
               </div>
@@ -589,6 +715,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                                 }
                               : null
                           }
+                          title="Posição do tópico"
                         >
                           {item.order}
                         </a>
@@ -604,6 +731,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                             setIdItem(item.id);
                             setItemEdit(item);
                           }}
+                          title="Editar tópico"
                         >
                           <AiOutlineEdit
                             className="topicEdit"
@@ -620,6 +748,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                             setShowOrder(true);
                             setOrderItem(item.id);
                           }}
+                          title="Ordenar tópico"
                         >
                           <GoListUnordered
                             className="topicEdit"
@@ -699,7 +828,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                         item.yes_no === -1 ||
                         item.yes_no === 1 ||
                         item.yes_no === 2
-                          ? { paddingRight: 90 }
+                          ? { paddingRight: 50, textAlign: "center" }
                           : null
                       }
                     >
@@ -708,12 +837,21 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                           item.yes_no === -1 ||
                           item.yes_no === 1 ||
                           item.yes_no === 2
-                            ? { maxWidth: 250 }
+                            ? { maxWidth: "100%" }
                             : null
                         }
                         htmlFor=""
                       >
                         {item.description}
+                        {+item.file === 1 && (
+                          <label
+                            htmlFor=""
+                            className="imgAttachment"
+                            onClick={() => loadImage(item.id)}
+                          >
+                            <AiOutlinePaperClip size={20} />
+                          </label>
+                        )}
                       </label>
                     </div>
 
@@ -725,7 +863,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                       item.yes_no === 1 ||
                       item.yes_no === 2 ? (
                         <div className="topicOptions">
-                          <a style={{ display: "flex" }}>
+                          <a style={{ display: "flex", height: "50px" }}>
                             <div className="yesOption">
                               <input
                                 id="yes"
@@ -765,6 +903,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                             </div>
                           </a>
                           <a
+                            title="Excluir tópico"
                             href=""
                             onClick={(e) =>
                               taskVisible.info.user_id === permissions.id ||
@@ -830,9 +969,17 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
             addNewItem(taskVisible.info.task_id, newItem);
             // console.log(taskItem);
           }}
+          title="Adicionar item"
         >
           <BiCommentAdd size="27" color="white" />
         </button>
+
+        <div style={{ marginLeft: 10 }}>
+          <label className="upload" htmlFor="upload-photo">
+            <AiOutlinePaperClip size={27} />
+          </label>
+          <input type="file" name="photo" id="upload-photo" />
+        </div>
       </div>
 
       {showConfirmDelete === true ? (

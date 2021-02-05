@@ -1,39 +1,65 @@
 .searchContainer{
-    width: 88%;
+    width: 85.6%;
     display: flex;
     align-items: center;
     color:white;
 }
 
+@media only screen and (max-width:1366px){
+    /* .searchContainer{
+        width: 83.7%;
+    }
+
+    .btnSearchTask{
+        position: relative;
+        right: 3em;
+    }
+
+    .typeSearch{
+        position: relative;
+        right: 3em;
+    } */
+}
+
+@media only screen and (max-width:1536px){
+    /* .searchContainer{
+        width: 83.7%;
+    } */
+
+    /* .btnSearchTask{
+        position: relative;
+        right: 3em;
+    }
+
+    .typeSearch{
+        position: relative;
+        right: 3em;
+    } */
+}
+
 .searchArea{
-    padding: 15px 0;
+    width: 100%;
     display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    width: 350px;
-    /* border-bottom: 1px solid #4da6ff; */
 }
 
-.searchArea div{
+.searchArea > div{
     display: flex;
-    align-items: center;
     justify-content: flex-start;
     width: 100%;
 }
 
-.searchArea div input{
-    background-color: #4b4b4b;
-    padding: 3px;
-    width: 100%;
+.searchArea input{
+    background-color: #2b2b2b;
     color: white;
+    padding: 8px;
     font-size: 18px;
-    border-radius: 5px;
-
+    border-radius: 10px;
 }
+
 
 .clearSearch{
     position: relative;
-    right: 1.1em;
+    right: 1.5em;
     top: 0em;
     color: #ccc;
     display: flex;
@@ -41,23 +67,35 @@
     cursor: pointer;
 }
 
-@media screen and (max-width:1366px){
-    .searchArea div{
-        margin: 1.5em;
-    }
+.btnSearchTask{
+    padding:5px  15px;
+    position: relative;
+    right: 1.5em;
+    background-color: transparent;
+    color: white;
+}
 
-    .clearSearch{
-        right: 2.8em;
+.typeSearch{
+    width: 16%;
+    padding: 5px 10px;
+    background-color: #2b2b2b;
+    border-radius: 10px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    margin-right: 1.5em;
+}
+
+@media screen and (max-width:1366px){
+    .typeSearch{
+        width: 22%;
     }
 }
 
 @media screen and (max-width:1536px){
-    .searchArea div{
-        margin: 1.1em;
-    }
-
-    .clearSearch{
-        right: 2.3em;
+    .typeSearch{
+        width: 22%;
     }
 }
 

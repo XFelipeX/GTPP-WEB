@@ -17,6 +17,9 @@ let VisionMenu = () => {
   const dispatch = useDispatch();
 
   function showMenu() {
+    const element = document.getElementById("visionMenuIcon");
+    element.classList.add("visionMenuIcon");
+    setTimeout(() => element.classList.remove("visionMenuIcon"), 1000);
     setOpen(!open);
   }
 
@@ -42,8 +45,8 @@ let VisionMenu = () => {
 
   return (
     <div ref={domNode} className="visionMenu">
-      <p onClick={() => showMenu()} style={{ width: "64px" }}>
-        <CgViewComfortable size={64} color="#959595" />
+      <p onClick={() => showMenu()} style={{ width: "64px" }} title="Itens visualizados">
+        <CgViewComfortable size={64} color="#959595" id="visionMenuIcon"/>
       </p>
 
       {open ? (

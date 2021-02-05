@@ -1,13 +1,38 @@
-.buttonLogoff{
-    outline: none;
-    border: none;
-    background:transparent;
-    color: white;
-    font-size:18px;
-    /* padding: 10px 20px; */
-    border-radius: 5px;
-    /* margin-top: 20px; */
-    display: flex;
-    align-items: center;
-    height: 41px;
+.buttonLogoff {
+  outline: none;
+  border: none;
+  background: transparent;
+  color: white;
+  font-size: 18px;
+  /* padding: 10px 20px; */
+  border-radius: 5px;
+  /* margin-top: 20px; */
+  display: flex;
+  align-items: center;
+  height: 41px;
+  z-index: 100;
+}
+
+/* Animation */
+
+.buttonLogoffIcon {
+  animation: rightItem 0.7s linear 0s 1 alternate;
+}
+
+@keyframes rightItem {
+  0% {
+    transform: translateX(0px);
+  }
+  30% {
+    transform: translateX(10px);
+  }
+  60% {
+    transform: translateX(20px);
+  }
+  80% {
+    transform: translateX(10px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
 }

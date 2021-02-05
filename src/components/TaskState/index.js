@@ -13,6 +13,7 @@ const TaskState = ({ task }) => {
             <button
               className="buttonState"
               style={{ backgroundColor: "#" + state.color }}
+              title="Estado atual"
             >
               <h2>{state.description}</h2>
             </button>

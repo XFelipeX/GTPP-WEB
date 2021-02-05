@@ -1,53 +1,77 @@
-.menuExpanded{
-    display: flex;
-    flex-direction: column;
-    background-color: #2b2b2b;
-    width: auto;
-    color: white;
-    padding: 24px;
-    box-shadow: 0 0px 50px 15px #343434;
-    border-radius: 2px 2px 5px 5px;
-    position: absolute;
-    z-index: 10;
-    font-size: 18px;
+.menuExpanded {
+  display: flex;
+  flex-direction: column;
+  background-color: #2b2b2b;
+  width: auto;
+  color: white;
+  padding: 24px;
+  box-shadow: 0 0px 50px 15px #343434;
+  border-radius: 2px 2px 5px 5px;
+  position: absolute;
+  top: 4.5em;
+  z-index: 10;
+  font-size: 18px;
 }
 
-.menuExpanded label > input{
-    display: inline-block;
-    margin-right: 5px;
-   
+.menuExpanded label > input {
+  display: inline-block;
+  margin-right: 5px;
 }
 
-.menuExpanded > select option{
-    background-color:#ccc;
+.menuExpanded > select option {
+  background-color: #ccc;
 }
 
-.menuExpanded > select{
-    background-color:#ccc;
-    margin: 2px 0;
+.menuExpanded > select {
+  background-color: #ccc;
+  margin: 2px 0;
 }
 
 .menuExpanded > p {
-    padding: .3em 0 .3em 0;
+  padding: 0.3em 0 0.3em 0;
 }
 
-.visionMenu > p{
-    box-sizing: border-box;
-    background-color:transparent;
-    cursor:pointer;
-    display: flex;
-    align-items: center;
-    /* padding:10px 20px; */
-    border-radius: 5px;
-    color:black;
-    font-size: 18px;
-    height: 41px;
+.visionMenu > p {
+  box-sizing: border-box;
+  background-color: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  /* padding:10px 20px; */
+  border-radius: 5px;
+  color: black;
+  font-size: 18px;
+  height: 41px;
 }
 
-.visionMenu{
-    box-sizing: border-box;
-    /* width: 250px; */
-    height: 41px;
-    margin-right: 20px;
-    z-index: 2;
+.visionMenu {
+  box-sizing: border-box;
+  /* width: 250px; */
+  height: 41px;
+  margin-right: 20px;
+  z-index: 2;
+}
+
+/* Animation */
+
+.visionMenuIcon {
+  animation: floatItem 0.7s linear 0s 1 alternate;
+}
+
+@keyframes floatItem {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.2);
+  }
+  60% {
+    transform: scale(1.4);
+  }
+  80% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }

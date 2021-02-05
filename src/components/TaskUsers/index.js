@@ -4,9 +4,10 @@ import "./style.css";
 import api from "../../services/api";
 import { store } from "react-notifications-component";
 import userImg from "../../assets/user@2x.png";
-import { getUsersPhotos, orderTasks } from "../../redux";
+import { getUsersPhotos, orderTasks, updateStateUsers } from "../../redux";
 import useClickOutside from "../ClickOutside";
 import Loading from "../Loading";
+import { AiOutlineClose } from "react-icons/ai";
 import { showNotification } from "../TaskTable/functions";
 
 let TaskUsers = ({ task }) => {
@@ -15,6 +16,7 @@ let TaskUsers = ({ task }) => {
   const { userPhotos } = useSelector((state) => state);
   const { stateUpdate } = useSelector((state) => state);
   const { stateAdmin } = useSelector((state) => state);
+  const { stateUsers } = useSelector((state) => state);
   const { webSocket } = useSelector((state) => state);
   const [loading, setLoading] = useState(false);
   const [takePhotos, setTakePhotos] = useState([]);
@@ -55,44 +57,46 @@ let TaskUsers = ({ task }) => {
     }
 
     loadVinculateUsers();
-  }, [stateUpdate, stateAdmin]);
-
-  async function loadAllUsers() {
-    try {
-      const { data } = await api.get("GTPP/Task_User.php", {
-        params: {
-          AUTH: AUTH,
-          task_id: task.id,
-          list_user: 1,
-          app_id: 3,
-        },
-      });
-
-      if (data.error === true) {
-        let msg = data.message;
-
-        if (msg.includes("No data")) {
-        } else if (msg.includes("Authorization denied")) {
-          showNotification("Erro", "Autorização negada", "danger");
-        } else {
-          showNotification("Erro", msg, "danger");
-        }
-      }
-      return data;
-    } catch (error) {
-      showNotification("Erro", error.message, "danger");
-
-      return { error: true };
-    }
-  }
+  }, [stateUpdate, stateUsers]);
 
   useEffect(() => {
+    async function loadAllUsers() {
+      try {
+        const { data } = await api.get("GTPP/Task_User.php", {
+          params: {
+            AUTH: AUTH,
+            task_id: task.id,
+            list_user: 1,
+            app_id: 3,
+          },
+        });
+
+        // console.log(data.data);
+
+        if (data.error === true) {
+          let msg = data.message;
+
+          if (msg.includes("No data")) {
+          } else if (msg.includes("Authorization denied")) {
+            showNotification("Erro", "Autorização negada", "danger");
+          } else {
+            showNotification("Erro", msg, "danger");
+          }
+        }
+        return data;
+      } catch (error) {
+        showNotification("Erro", error.message, "danger");
+
+        return { error: true };
+      }
+    }
+
     loadAllUsers().then((response) => {
       if (response.error === false) {
         setAllUsers(response.data);
       }
     });
-  }, [stateUpdate, stateAdmin]);
+  }, [stateUpdate, stateAdmin, stateUsers]);
 
   function SendMessage() {
     if (webSocket.websocketState === "connected") {
@@ -111,52 +115,68 @@ let TaskUsers = ({ task }) => {
 
   const [user, setUser] = useState("");
 
-  function searchUser(e) {
-    let userName = e.toLowerCase();
-    if (userName != "") {
-      setFilterUser(
-        allUsers.filter((user) => user.name.toLowerCase().includes(userName))
-      );
-    } else {
-      setFilterUser(null);
-    }
-  }
-
   useEffect(() => {
-    searchUser(user);
+    function searchUser() {
+      // console.log(allUsers);
+      let userName = String(user).toUpperCase();
+      if (userName != "") {
+        setFilterUser(
+          allUsers.filter((user) =>
+            String(user.name.toUpperCase()).includes(userName)
+          )
+        );
+      } else {
+        setFilterUser(null);
+      }
+    }
+    searchUser();
   }, [user]);
 
   useEffect(() => {
     dispatch(getUsersPhotos(takePhotos));
   }, [takePhotos]);
 
-  function SendInfo(msg, changeUser) {
+  function SendInfo(msg, changeUser, type) {
     if (msg !== "" && webSocket.websocketState === "connected") {
-      try {
-        let jsonString = {
-          task_id: task.id,
-          object: {
-            description: msg,
+      if (type === 5) {
+        try {
+          let jsonString = {
             task_id: task.id,
-            // task: taskf[0],
-            changeUser: changeUser,
-            // a:""
-          },
-          date_time: null,
-          user_id: Number(permissions.id),
-          type: 5,
-        };
-        webSocket.websocket.send(JSON.stringify(jsonString));
-      } catch (error) {
-        alert(error);
+            object: {
+              description: msg,
+              task_id: task.id,
+              // task: taskf[0],
+              changeUser: changeUser,
+              // a:""
+            },
+            date_time: null,
+            user_id: Number(permissions.id),
+            type: type,
+          };
+          webSocket.websocket.send(JSON.stringify(jsonString));
+        } catch (error) {
+          alert(error);
+        }
+      } else {
+        try {
+          let jsonString = {
+            task_id: task.id,
+            object: {
+              description: msg,
+            },
+            user_id: changeUser,
+            type: type,
+          };
+          webSocket.websocket.send(JSON.stringify(jsonString));
+        } catch (error) {
+          alert(error);
+        }
       }
     }
   }
 
   async function changeUser(id, vinculated) {
-    if (vinculated == true) {
-      SendInfo("foi removido da tarefa", id);
-    }
+    setLoading(true);
 
     try {
       const { data } = await api.put(
@@ -171,7 +191,9 @@ let TaskUsers = ({ task }) => {
         showNotification("Erro", data.message, "danger");
       } else {
         if (vinculated === false) {
-          SendInfo("foi vinculado a tarefa", id);
+          SendInfo("foi vinculado a tarefa", id, 5);
+        } else {
+          SendInfo("foi removido da tarefa", id, -3);
         }
 
         store.addNotification({
@@ -189,36 +211,36 @@ let TaskUsers = ({ task }) => {
         });
 
         dispatch(orderTasks());
-        setLoading(true);
-        setTimeout(() => {
-          setLoading(false);
-        }, 1200);
 
-        let userReply;
-        allUsers.map((user) => {
-          if (user.user_id == id) {
-            user.check = !vinculated;
-            userReply = user;
-          }
-        });
+        // setTimeout(() => {
+        //   ;
+        // }, 1200);
 
-        if (vinculated == true) {
-          let vinculatedUser = [];
+        // let userReply;
+        // allUsers.map((user) => {
+        //   if (user.user_id == id) {
+        //     user.check = !vinculated;
+        //     userReply = user;
+        //   }
+        // });
 
-          users.map((user) => {
-            if (Number(user.user_id) != Number(userReply.user_id)) {
-              vinculatedUser.push(user);
-            }
-          });
+        // if (vinculated == true) {
+        //   let vinculatedUser = [];
 
-          setUsers([...vinculatedUser]);
-        } else {
-          if (users.length > 0) {
-            setUsers((oldarray) => [...oldarray, userReply]);
-          } else {
-            setUsers([userReply]);
-          }
-        }
+        //   users.map((user) => {
+        //     if (Number(user.user_id) != Number(userReply.user_id)) {
+        //       vinculatedUser.push(user);
+        //     }
+        //   });
+
+        //   setUsers([...vinculatedUser]);
+        // } else {
+        //   if (users.length > 0) {
+        //     setUsers((oldarray) => [...oldarray, userReply]);
+        //   } else {
+        //     setUsers([userReply]);
+        //   }
+        // }
       }
     } catch (error) {
       let msg = "";
@@ -278,6 +300,7 @@ let TaskUsers = ({ task }) => {
         }
       }
     } finally {
+      setLoading(false);
       setFilterUser(null);
       setUser("");
     }
@@ -294,7 +317,7 @@ let TaskUsers = ({ task }) => {
   });
 
   useEffect(() => {
-    if (users.length > 0) {
+    if (users && users.length > 0) {
       users.map((user) => {
         let result = vinculatedUsers.filter(
           (users) => Number(users.id) == Number(user.user_id)
@@ -335,12 +358,18 @@ let TaskUsers = ({ task }) => {
     }
   }
 
+  // console.log(permissions);
+
   return (
     <div className="containerUsers">
       {loading == true ? <Loading /> : null}
-      <div ref={domNode} className="vinculatedUsers">
+      <div
+        ref={domNode}
+        className="vinculatedUsers"
+        title="Usuários vinculados"
+      >
         <div onClick={() => setOpen(!open)}>{users ? users.length : 0}</div>
-        {open && users.length > 0 ? (
+        {open && users && users.length > 0 ? (
           <ul className="vinculatedList">
             {users.map((user) => (
               <React.Fragment key={user.user_id}>
@@ -363,6 +392,20 @@ let TaskUsers = ({ task }) => {
                         >
                           {user.name}
                         </p>
+                        {+task.user_id !== +permissions.id &&
+                          +permissions.administrator === 1 &&
+                          +user.user_id === +permissions.id && (
+                            <span
+                              style={{
+                                position: "relative",
+                                left: 30,
+                                cursor: "pointer",
+                              }}
+                              onClick={() => changeUser(user.user_id, true)}
+                            >
+                              <AiOutlineClose size={25} color="red" />{" "}
+                            </span>
+                          )}
                       </li>
                     ) : null}
                   </React.Fragment>
@@ -372,7 +415,12 @@ let TaskUsers = ({ task }) => {
           </ul>
         ) : null}
       </div>
-      <div ref={domNode2} className="userList" onClick={(e) => {}}>
+      <div
+        ref={domNode2}
+        className="userList"
+        onClick={(e) => {}}
+        title="Todos usuários"
+      >
         <div
           onClick={(e) => {
             setShowUsers(!showUsers);
@@ -394,6 +442,7 @@ let TaskUsers = ({ task }) => {
               <input
                 type="text"
                 value={user}
+                autoFocus
                 onChange={(e) => setUser(e.target.value)}
               />
             </div>
@@ -409,10 +458,10 @@ let TaskUsers = ({ task }) => {
                             className="user"
                           >
                             {user.user_id == userPhoto.user_id &&
-                            user.user_id != permissions.id &&
-                            user.check == false ? (
+                            user.user_id != permissions.id ? (
                               <li>
                                 <img
+                                  className={verifyStatus(user.user_id)}
                                   src={userPhoto.photo}
                                   width="35"
                                   height="35"
@@ -431,7 +480,11 @@ let TaskUsers = ({ task }) => {
                                 <input
                                   type="checkbox"
                                   checked={user.check}
-                                  onChange={() => changeUser(user.user_id)}
+                                  onChange={() =>
+                                    changeUser(user.user_id, user.check)
+                                      .then(() => dispatch(updateStateUsers()))
+                                      .then(() => setLoading(false))
+                                  }
                                 />
                               </li>
                             ) : null}
@@ -477,6 +530,8 @@ let TaskUsers = ({ task }) => {
                                   checked={user.check}
                                   onChange={(e) =>
                                     changeUser(user.user_id, user.check)
+                                      .then(() => dispatch(updateStateUsers()))
+                                      .then(() => setLoading(false))
                                   }
                                 />
                               </li>

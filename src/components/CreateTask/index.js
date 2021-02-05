@@ -35,13 +35,14 @@ let CreateTask = () => {
   const [description, setDescription] = useState("");
   const { permissions } = useSelector((state) => state);
   const { seeAdminSet } = useSelector((state) => state);
-
   const [open, setOpen] = useState(false);
   const [showPriority, setShowPriority] = useState(false);
-
   const auth = permissions.session;
 
   function showMenu() {
+    const element = document.getElementById("createTaskIcon");
+    element.classList.add("createTaskIcon");
+    setTimeout(() => element.classList.remove("createTaskIcon"), 1000);
     setOpen(!open);
   }
 
@@ -137,7 +138,7 @@ let CreateTask = () => {
 
   return (
     <div ref={domNode} className="create-task-area">
-      <ul onClick={() => showMenu()}>
+      <ul onClick={() => showMenu()} id="createTaskIcon" title="Criar tarefa">
         <BiCommentAdd size={50} color="#959595" />
       </ul>
 
@@ -178,22 +179,22 @@ let CreateTask = () => {
             {showPriority ? (
               <>
                 <li value="0" onClick={(e) => changePriority(e)}>
-                  <img src={lowPriority} alt=""/>
+                  <img src={lowPriority} alt="" />
                   Baixa
                 </li>
                 <li value="1" onClick={(e) => changePriority(e)}>
-                  <img src={medPriority} alt=""/>
+                  <img src={medPriority} alt="" />
                   Média
                 </li>
                 <li value="2" onClick={(e) => changePriority(e)}>
-                  <img src={highPriority} alt=""/>
+                  <img src={highPriority} alt="" />
                   Alta
                 </li>
               </>
             ) : null}
           </ul>
           <button type="button" onClick={createTask}>
-            Criar
+            <BiCommentAdd size={40}/>
           </button>
         </li>
       ) : null}

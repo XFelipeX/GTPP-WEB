@@ -22,7 +22,7 @@ let LoadTasks = () => {
 
   return (
     <div className="load-tasks-area">
-      <button className="button-refresh" onClick={() => loadingTasks()}>
+      <button className="button-refresh" onClick={() => loadingTasks()} title="Atualizar lista">
         <VscRefresh size={50} style={{ color: "#959595" }} id="refresh-icon" />
       </button>
     </div>

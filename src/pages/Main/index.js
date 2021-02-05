@@ -1,24 +1,29 @@
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getWebSocketState, getWebSocket } from "../../redux";
 import Header from "../../components/Header/index";
 import TaskTable from "../../components/TaskTable";
 import { getWebSocketMessage } from "../../redux/webSocket/webSocketActions";
-import api from '../../services/api';
+import api from "../../services/api";
 // import socket from "../../utils/socketConfig";
 
 function Main() {
   const dispatch = useDispatch();
   const { permissions } = useSelector((state) => state);
   const { webSocket } = useSelector((state) => state);
-  // const [token,setToken] = useState();
+  // const [token,setToken] = useState(sessionStorage.getItem("token"));
   const AUTH = permissions.session;
-  
 
+ 
   useEffect(() => {
     dispatch(getWebSocketState("error"));
   }, []);
   let socket;
+  let token;
+
+  React.useMemo(() => {
+    token = sessionStorage.getItem("token");
+  },[])
 
   // useEffect(() => {
   //   setToken(sessionStorage.getItem("token"));
@@ -26,9 +31,9 @@ function Main() {
 
   function Connect() {
     // console.log("nova conexão criada");
-    
+
     // console.log(token);
-    const token = sessionStorage.getItem("token");
+    
     // setToken(sessionStorage.getItem("token"));
     if (token && token !== undefined) {
       socket = new WebSocket("ws://192.168.0.99:3333");
@@ -101,14 +106,9 @@ function Main() {
     }
   }
 
- 
   // useEffect(() => {
   //   SendMessage();
   // },[]);
-
-
-
-  
 
   // useEffect(() => {
   //   async function getNotifications() {
@@ -127,6 +127,7 @@ function Main() {
   useEffect(() => {
     Connect();
   }, []);
+  
 
   return (
     <div>

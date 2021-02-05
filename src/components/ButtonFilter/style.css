@@ -45,7 +45,7 @@
     box-shadow: 0 0px 50px 15px #343434;
     border-radius: 2px 2px 5px 5px;
     position: absolute;
-    top: 3em;
+    top: 3.5em;
     right: 5em;
     z-index: 10;
     
@@ -82,11 +82,32 @@
     margin-top: 1em;
     padding: .5em;
     font-size: 16px;
-    background-color: #00a2ff;
+    background-color: #343434;
+    border: 2px solid rgba(0, 0, 0,0.2);
+    border-radius: 8px;
     color: white;
+    transition: .5s;
+}
+
+.modal-filter button:hover{
+    background-color: #4a9cee;
 }
 
 .state-filter li{
     padding: .3em 0 .3em 0;
     border-bottom: 2px solid rgba(77, 166, 255, 0.5);
+}
+
+/* Animation */
+
+.buttonFilterIcon{
+    animation: floatItem .7s linear 0s 1 alternate;
+}
+
+@keyframes floatItem{
+    0%   {transform: scale(1);}
+    30%  {transform: scale(1.2);}
+    60% {transform: scale(1.4);}
+    80%   {transform: scale(1.2);}
+    100%   {transform: scale(1);}
 }

@@ -56,7 +56,6 @@ let TaskModal = ({ id = "modal", close, open }) => {
           task_id: taskVisible.info.task_id,
           object: {
             description: msg,
-            task_id: taskVisible.info.task_id,
             update: update,
           },
           date_time: null,
@@ -190,7 +189,7 @@ let TaskModal = ({ id = "modal", close, open }) => {
 
           <div className="modalTaskDescription">
             <div>
-              <div onClick={() => setShowDesc(true)}>
+              <div onClick={() => setShowDesc(true)} title="Editar">
                 <BiEdit size="20" className="btnEdit" />
               </div>
 
@@ -220,6 +219,7 @@ let TaskModal = ({ id = "modal", close, open }) => {
                 dispatch(taskVisibleUpdate());
                 close();
               }}
+              title="Fechar"
             >
               <AiOutlineClose size={35} />
             </button>

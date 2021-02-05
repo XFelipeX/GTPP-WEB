@@ -6,7 +6,9 @@ import {
   getTask,
   getUsersOnline,
   getWebSocketMessage,
+  logOff,
   taskInfoShow,
+  updateStateUsers,
 } from "../../redux";
 import ButtonLogoff from "../ButtonLogoff";
 import CreateTask from "../CreateTask";
@@ -21,6 +23,7 @@ import "./style.css";
 import SearchTask from "../SearchTask";
 import { removeUsersOnline } from "../../redux/webSocket/webSocketActions";
 
+import { useHistory } from "react-router-dom";
 function showNotification(title, message, type) {
   store.addNotification({
     title: title,
@@ -49,6 +52,7 @@ function Header() {
   const { tasks } = useSelector((state) => state);
   const { notifications } = useSelector((state) => state);
 
+  const history = useHistory();
   function sumNotification(type, taskId, object) {
     if (type === 1) {
       if (notifications.length > 0) {
@@ -229,9 +233,11 @@ function Header() {
     ) {
       //type 2 == itens
 
+      // console.log(webSocket.message)
+
       if (permissions.id !== webSocket.message.send_user_id) {
         let taskf = tasks.filter(
-          (task) => task.id == webSocket.message.object.task_id
+          (task) => task.id == webSocket.message.task_id
         );
         let user = vinculatedUsers.filter(
           (user) => Number(user.id) === Number(webSocket.message.send_user_id)
@@ -274,7 +280,7 @@ function Header() {
         let tasksUp = [...tasks];
 
         tasksUp.map((task) => {
-          if (task.id == webSocket.message.object.task_id) {
+          if (task.id == webSocket.message.task_id) {
             task.percent = webSocket.message.object.percent;
             showNotification(
               taskf[0].description,
@@ -348,6 +354,35 @@ function Header() {
     } else if (
       webSocket.message !== "" &&
       webSocket.message !== undefined &&
+      webSocket.message.type === -3
+    ) {
+      const changeUser = Number(webSocket.message.user_id);
+      let user = vinculatedUsers.filter(
+        (user) => Number(user.id) === Number(changeUser)
+      );
+      const msg = webSocket.message.object.description;
+      // let tasksUp = [...tasks];
+
+      const task = tasks.filter(
+        (task) => task.id === webSocket.message.task_id
+      );
+      // console.log(task)
+      if (permissions.id === +changeUser) {
+        const tasksf = tasks.filter(
+          (taskr) => taskr.id !== webSocket.message.task_id
+        );
+        if (seeAdminSet === false) {
+          dispatch(getTask([...tasksf]));
+        }
+      } else {
+        showNotification(task[0].description, user[0].name + " " + msg, "info");
+        sumNotification(5, task[0].id, webSocket.message);
+        dispatch(updateStateUsers());
+      }
+      // console.log(webSocket.message);
+    } else if (
+      webSocket.message !== "" &&
+      webSocket.message !== undefined &&
       webSocket.message.type === 3
     ) {
       //type 3 == descriptions
@@ -357,7 +392,7 @@ function Header() {
         permissions.id !== webSocket.message.send_user_id
       ) {
         let task = filterTask.filter.filter(
-          (task) => task.id == webSocket.message.object.task_id
+          (task) => task.id == webSocket.message.task_id
         );
         let user = vinculatedUsers.filter(
           (user) => Number(user.id) === Number(webSocket.message.send_user_id)
@@ -418,7 +453,7 @@ function Header() {
 
       if (permissions.id !== webSocket.message.send_user_id) {
         let task = filterTask.filter.filter(
-          (task) => task.id == webSocket.message.object.task_id
+          (task) => task.id == webSocket.message.task_id
         );
         let user = vinculatedUsers.filter(
           (user) => Number(user.id) === Number(webSocket.message.user_id)
@@ -467,26 +502,25 @@ function Header() {
       let user = vinculatedUsers.filter(
         (user) => Number(user.id) === Number(changeUser)
       );
+
       // console.log(webSocket.message);
       if (permissions.id !== webSocket.message.send_user_id && user[0]) {
-        // console.log(webSocket.message);
-
         const msg = webSocket.message.object.description;
 
-        if (msg.includes("vinculado")) {
-          takeTask(webSocket.message.task_id).then((response) => {
-            if (response) {
-              let task = response;
+        takeTask(webSocket.message.task_id).then((response) => {
+          if (response) {
+            let task = response;
 
+            if (msg.includes("vinculado")) {
               // console.log(task);
 
               if (!(taskVisible.info && taskVisible.info.task_id === task.id)) {
-                sumNotification(5, task.id, webSocket.message);
+                sumNotification(5, task[0].id, webSocket.message);
               }
 
               task[0].focus = true;
 
-              if (permissions.id === changeUser) {
+              if (permissions.id === +changeUser) {
                 showNotification(task[0].description, "Você " + msg, "info");
 
                 if (
@@ -505,9 +539,10 @@ function Header() {
                 }
 
                 if (seeAdminSet === false) {
-                  dispatch(getTask([...tasks, task[0]]));
+                  dispatch(getTask([...tasks, { ...task[0] }]));
                 }
               } else {
+                dispatch(updateStateUsers());
                 showNotification(
                   task[0].description,
                   user[0].name + " " + msg,
@@ -527,14 +562,14 @@ function Header() {
                 }
               }
             }
-          });
-        } else if (permissions.id === changeUser) {
-          const tasksf = tasks.filter(
-            (taskr) => taskr.id !== webSocket.message.task_id
-          );
-          if (seeAdminSet === false) {
-            dispatch(getTask([...tasksf]));
           }
+        });
+      } else if (webSocket.message.send_user_id === changeUser) {
+        const tasksf = tasks.filter(
+          (taskr) => taskr.id !== webSocket.message.task_id
+        );
+        if (seeAdminSet === false) {
+          dispatch(getTask([...tasksf]));
         }
       }
     } else if (
@@ -561,63 +596,79 @@ function Header() {
 
         let isNewDate = false;
 
-        const task = tasks.filter((task) => task.id === info.task_id);
-        const lastState = taskStates.filter(
-          (state) => Number(state.id) === Number(task[0].state_id)
-        );
-        const newState = taskStates.filter(
-          (state) => Number(state.id) === Number(info.state_id)
-        );
+        const task = tasks.filter((task) => task.id === +info.task_id);
 
-        let tasksUp = [...tasks];
+        if (task && task[0]) {
+          const lastState = taskStates.filter(
+            (state) => Number(state.id) === Number(task[0].state_id)
+          );
+          const newState = taskStates.filter(
+            (state) => Number(state.id) === Number(info.state_id)
+          );
 
-        tasksUp.map((task) => {
-          if (task.id === info.task_id) {
-            task.state_id = info.state_id;
-            task.percent = info.percent;
-            if (webSocket.message.object.new_final_date) {
-              task.final_date = webSocket.message.object.new_final_date;
-              isNewDate = true;
+          let tasksUp = [...tasks];
+
+          tasksUp.map((task) => {
+            if (task.id === info.task_id) {
+              task.state_id = info.state_id;
+              task.percent = info.percent;
+              if (webSocket.message.object.new_final_date) {
+                task.final_date = webSocket.message.object.new_final_date;
+                isNewDate = true;
+              }
             }
+          });
+
+          dispatch(getTask([...tasksUp]));
+
+          if (isNewDate) {
+            const date = formatDate(webSocket.message.object.new_final_date);
+            showNotification(
+              task[0].description,
+              "A tarefa foi adiada para " + date,
+              "info"
+            );
+
+            if (
+              Notification.permission === "granted" &&
+              document.hidden === true
+            ) {
+              const notification = new Notification(info.description, {
+                body: "A tarefa foi adiada para " + date,
+              });
+
+              window.focus();
+              notification.close();
+            }
+          } else {
+            showNotification(
+              task[0].description,
+              "Mudou de " +
+                lastState[0].description +
+                " para " +
+                newState[0].description +
+                " por " +
+                user[0].name,
+              "info"
+            );
           }
-        });
-
-        dispatch(getTask([...tasksUp]));
-
-        if (isNewDate) {
-          const date = formatDate(webSocket.message.object.new_final_date);
-          showNotification(
-            info.description,
-            "A tarefa foi adiada para " + date,
-            "info"
-          );
-
-          if (
-            Notification.permission === "granted" &&
-            document.hidden === true
-          ) {
-            const notification = new Notification(info.description, {
-              body: "A tarefa foi adiada para " + date,
-            });
-
-            window.focus();
-            notification.close();
-          }
-        } else {
-          showNotification(
-            task[0].description,
-            "Mudou de " +
-              lastState[0].description +
-              " para " +
-              newState[0].description +
-              " por " +
-              user[0].name,
-            "info"
-          );
         }
       }
-    } else {
+    } else if (
+      webSocket.message &&
+      webSocket.message.message &&
+      webSocket.message.message.includes(
+        "This user has been connected to another place"
+      )
+    ) {
+      sessionStorage.removeItem("token");
+
+      dispatch(logOff());
+      history.push("/");
+
+      showNotification("Aviso","Usuário conectado em outro lugar","warning");
     }
+
   }, [webSocket.message]);
 
   async function takeTask(taskId) {
