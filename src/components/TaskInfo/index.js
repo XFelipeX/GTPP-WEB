@@ -24,9 +24,9 @@ import {
   loadShopsCompany,
   loadDeptsCompany,
   updateStateTask,
-  cancelStateTask,
-  showNotification,
+  cancelStateTask
 } from "./functions";
+import {showNotification} from '../../Utils/Notify';
 import api from "../../services/api";
 import "./style.css";
 import useClickOutside from "../ClickOutside";

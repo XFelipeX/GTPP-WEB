@@ -56,6 +56,10 @@
     border-radius: 10px;
 }
 
+.searchArea input:focus{
+    background-color: #2b2b2b;
+}
+
 
 .clearSearch{
     position: relative;

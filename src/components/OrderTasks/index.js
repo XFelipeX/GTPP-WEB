@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BsFilterLeft } from "react-icons/bs";
 import { getTaskFilter } from "../../redux";
-import { store } from "react-notifications-component";
+import {showNotification} from '../../Utils/Notify';
 import "./style.css";
 import useClickOutside from "../ClickOutside";
 
@@ -41,19 +41,7 @@ let OrderTasks = () => {
 
     if (orderPriority) {
       if (showAlert === true) {
-        store.addNotification({
-          title: "Sucesso",
-          message: "Ordenado por prioridade",
-          type: "success",
-          container: "top-center",
-          insert: "top",
-          animationIn: ["animate__animated animate__fadeIn"],
-          animationOut: ["animate__animated animate__fadeOut"],
-          dismiss: {
-            duration: 2000,
-          },
-          width: 400,
-        });
+        showNotification("Sucesso","Ordenado por prioridade","success");
         setShowAlert(false);
       }
       filterDo = filterTask.filter.filter((task) => task.priority == 0);
@@ -63,19 +51,7 @@ let OrderTasks = () => {
       finalFilter = [...filterAnalyze, ...filterDoing, ...filterDo];
     } else if (orderState) {
       if (showAlert === true) {
-        store.addNotification({
-          title: "Sucesso",
-          message: "Ordenado por estado",
-          type: "success",
-          container: "top-center",
-          insert: "top",
-          animationIn: ["animate__animated animate__fadeIn"],
-          animationOut: ["animate__animated animate__fadeOut"],
-          dismiss: {
-            duration: 2000,
-          },
-          width: 400,
-        });
+        showNotification("Sucesso","Ordenado por estado","success");
         setShowAlert(false);
       }
 
@@ -98,19 +74,7 @@ let OrderTasks = () => {
       ];
     } else if (orderDescription) {
       if (showAlert === true) {
-        store.addNotification({
-          title: "Sucesso",
-          message: "Ordenado por descrição",
-          type: "success",
-          container: "top-center",
-          insert: "top",
-          animationIn: ["animate__animated animate__fadeIn"],
-          animationOut: ["animate__animated animate__fadeOut"],
-          dismiss: {
-            duration: 2000,
-          },
-          width: 400,
-        });
+        showNotification("Sucesso","Ordenado por descrição","success");
         setShowAlert(false);
       }
 
@@ -121,19 +85,7 @@ let OrderTasks = () => {
       });
     } else if (orderDueDate) {
       if (showAlert === true) {
-        store.addNotification({
-          title: "Sucesso",
-          message: "Ordenado por vencimento",
-          type: "success",
-          container: "top-center",
-          insert: "top",
-          animationIn: ["animate__animated animate__fadeIn"],
-          animationOut: ["animate__animated animate__fadeOut"],
-          dismiss: {
-            duration: 2000,
-          },
-          width: 400,
-        });
+        showNotification("Sucesso","Ordenado por vencimento","success");
         setShowAlert(false);
       }
 

@@ -8,7 +8,7 @@ import { getUsersPhotos, orderTasks, updateStateUsers } from "../../redux";
 import useClickOutside from "../ClickOutside";
 import Loading from "../Loading";
 import { AiOutlineClose } from "react-icons/ai";
-import { showNotification } from "../TaskTable/functions";
+import {showNotification} from '../../Utils/Notify';
 
 let TaskUsers = ({ task }) => {
   const { permissions } = useSelector((state) => state);

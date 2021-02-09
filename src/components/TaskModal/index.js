@@ -12,9 +12,11 @@ import TaskTopicList from "../TaskTopicList";
 import TaskInfo from "../TaskInfo";
 import Loading from "../Loading";
 import { updateDescription, getMessage } from "./functions";
+import {showNotification} from '../../Utils/Notify';
 import ModalDescription from "../ModalDescription";
 import { BsChatSquareDotsFill } from "react-icons/bs";
 import WebChat from "../WebChat";
+import api from "../../services/api";
 
 let TaskModal = ({ id = "modal", close, open }) => {
   const dispatch = useDispatch();
@@ -115,13 +117,15 @@ let TaskModal = ({ id = "modal", close, open }) => {
         (task) => task.task_id == taskVisible.info.task_id
       );
 
+      // console.log(task);
+
       if (warning.warning.length > 0 && task[0]) {
         const due_date = task[0].due_date;
         const expire = task[0].expire;
         const initial = task[0].initial;
 
-        if (due_date > -1) {
-          if (due_date === 0) {
+        if (due_date >= -1) {
+          if (due_date === 0 || due_date === -1) {
             setWarningState("A tarefa vence hoje");
           } else if (due_date === 1) {
             setWarningState("A tarefa venceu há " + due_date + " dia");
@@ -148,6 +152,86 @@ let TaskModal = ({ id = "modal", close, open }) => {
 
     verifyWarning();
   }, [warning]);
+
+  const [disqualified, setDesqualified] = useState({ disqualify: "0" });
+
+  useEffect(() => {
+    async function getDesqualified() {
+      try {
+        const { data } = await api.get(
+          `GTPP/Score.php?AUTH=${AUTH}&app_id=3&task_id=${taskVisible.info.task_id}`
+        );
+
+        if (data.error === true) {
+          if (data.message === "No data") {
+          } else {
+            showNotification("Erro", data.message, "warning");
+          }
+
+          return { disqualify: "0" };
+        }
+
+        return data.data[0];
+      } catch (error) {
+        let msg;
+        if (error.response) {
+          msg = error.response.data.message;
+        } else {
+          msg = error.message;
+        }
+
+        showNotification("Aviso", msg, "warning");
+        return { disqualify: "0" };
+      }
+    }
+
+    getDesqualified().then((response) => setDesqualified(response));
+  }, []);
+
+  async function updateDesqualify() {
+    async function getDesqualified() {
+      try {
+        const { data } = await api.put(
+          `GTPP/Score.php?AUTH=${AUTH}&app_id=3&task_id=${
+            taskVisible.info.task_id
+          }&disqualify=${disqualified.disqualify === "1" ? "0" : "1"}`
+        );
+
+        if (data.error === true) {
+          if (data.message === "No data") {
+          } else {
+            showNotification("Erro", data.message, "warning");
+          }
+          return;
+        }
+
+        if (disqualified.disqualify === "0") {
+          showNotification("Sucesso", "A tarefa foi desqualificada", "success");
+        } else {
+          showNotification(
+            "Sucesso",
+            "A tarefa agora é qualificada",
+            "success"
+          );
+        }
+      } catch (error) {
+        let msg;
+        if (error.response) {
+          msg = error.response.data.message;
+        } else {
+          msg = error.message;
+        }
+
+        showNotification("Aviso", msg, "warning");
+      }
+    }
+
+    getDesqualified().then(() =>
+      setDesqualified({
+        disqualify: disqualified.disqualify === "1" ? "0" : "1",
+      })
+    );
+  }
 
   return (
     <div id={id} className="modal" onClick={handleOutsideClick}>
@@ -195,8 +279,9 @@ let TaskModal = ({ id = "modal", close, open }) => {
 
               <span>{description}</span>
             </div>
-            {warningState ? (
+            {warningState && (
               <div
+                className="warning"
                 style={
                   warningState.includes("venceu") ||
                   warningState.includes("vence")
@@ -208,8 +293,19 @@ let TaskModal = ({ id = "modal", close, open }) => {
               >
                 {warningState}
               </div>
-            ) : (
-              <div></div>
+            )}
+
+            {+permissions.administrator === 1 && (
+              <div className="desqualify">
+                <label htmlFor="desqualify">Desqualificar tarefa</label>
+                <input
+                  type="checkbox"
+                  name="desqualify"
+                  id="desqualify"
+                  checked={disqualified.disqualify === "1"}
+                  onChange={() => updateDesqualify()}
+                />
+              </div>
             )}
           </div>
           <div>

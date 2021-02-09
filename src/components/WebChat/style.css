@@ -262,7 +262,7 @@
   }
 }
 
-#upload-photo {
+#upload-photo-chat {
   opacity: 0;
   position: absolute;
   z-index: -1;
@@ -272,4 +272,16 @@
 
 .upload{
   cursor: pointer;
+}
+
+.attachmentIcon{
+  animation: animeAttachment 1.1s linear 2s infinite alternate;
+}
+
+@keyframes animeAttachment{
+  0%   {transform: rotate(0deg);}
+  30%  {transform: rotate(20deg);}
+  60% {transform: rotate(40deg);}
+  80%   {transform: rotate(20deg);}
+  100%   {transform: rotate(0deg);}
 }

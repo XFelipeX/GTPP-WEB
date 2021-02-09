@@ -23,6 +23,7 @@ function WebChat({ close }) {
   const [messages, setMessages] = useState([]);
   const [showImage, setShowImage] = useState(false);
   const [imageMessage, setImageMessage] = useState(null);
+  // const [imageSend, setImageSend] = useState(null);
   // const {permissions} = useSelector(state => state);
   const AUTH = permissions.session;
 
@@ -42,6 +43,18 @@ function WebChat({ close }) {
   // },[])
 
   // console.log(webSocket.historic)
+
+  useEffect(() => {
+    const element = document.getElementById("upload-photo-icon-chat");
+   const image = document.getElementById("upload-photo-chat");
+
+   if(image && image.value!==null && image.value !==""){
+     element.classList.add("attachmentIcon");
+   }else{
+    element.classList.remove("attachmentIcon");
+   }
+   
+  },[imageMessage])
 
   function formatDate(dateFormat) {
     if (dateFormat !== undefined) {
@@ -152,7 +165,7 @@ function WebChat({ close }) {
   // console.log(messages)
 
   function SendMessage(msg) {
-    let image = document.getElementById("upload-photo").files[0];
+    let image = document.getElementById("upload-photo-chat").files[0];
 
     if (image) {
       // console.log(image);
@@ -183,8 +196,10 @@ function WebChat({ close }) {
               };
               webSocket.websocket.send(JSON.stringify(jsonString));
 
-              document.getElementById("upload-photo").value = "";
+              document.getElementById("upload-photo-chat").value = "";
+              document.getElementById("upload-photo-chat").classList.remove("attachmentIcon");
               setMsg("");
+              setImageMessage(null);
             } catch (error) {
               alert(error);
             }
@@ -382,13 +397,13 @@ function WebChat({ close }) {
             onChange={(e) => setMsg(e.target.value)}
           />
           <div>
-            <label className="upload" htmlFor="upload-photo">
-              <AiOutlinePaperClip size={37} />
+            <label title="Anexar imagem" className="upload" htmlFor="upload-photo-chat">
+              <AiOutlinePaperClip size={37} id="upload-photo-icon-chat" />
             </label>
-            <input type="file" name="photo" id="upload-photo" />
+            <input type="file" name="photo" id="upload-photo-chat" onChange={({target}) => setImageMessage(target.files[0])}/>
           </div>
 
-          <button type="button" onClick={() => SendMessage(msg)}>
+          <button title="Enviar" type="button" onClick={() => SendMessage(msg)}>
             <IoMdSend size={50} color="#ccc" />
           </button>
         </div>

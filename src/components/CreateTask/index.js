@@ -4,27 +4,12 @@ import "./style.css";
 import lowPriority from "../../assets/Path1.png";
 import medPriority from "../../assets/Path2.png";
 import highPriority from "../../assets/Arrows.png";
-import { updateStateAdmin, updateTask } from "../../redux";
+import { getTask, getTaskFilter, updateStateAdmin, updateTask } from "../../redux";
 import useClickOutside from "../ClickOutside";
 import { BiCommentAdd } from "react-icons/bi";
-import { store } from "react-notifications-component";
+import {showNotification} from '../../Utils/Notify';
 import api from "../../services/api";
 
-function showNotification(title, message, type) {
-  store.addNotification({
-    title: title,
-    message: message,
-    type: type,
-    container: "top-center",
-    insert: "top",
-    animationIn: ["animate__animated animate__fadeIn"],
-    animationOut: ["animate__animated animate__fadeOut"],
-    dismiss: {
-      duration: 2000,
-    },
-    width: 400,
-  });
-}
 
 let CreateTask = () => {
   const dispatch = useDispatch();
@@ -35,6 +20,7 @@ let CreateTask = () => {
   const [description, setDescription] = useState("");
   const { permissions } = useSelector((state) => state);
   const { seeAdminSet } = useSelector((state) => state);
+  const { filterTask } = useSelector((state) => state);
   const [open, setOpen] = useState(false);
   const [showPriority, setShowPriority] = useState(false);
   const auth = permissions.session;
@@ -60,6 +46,7 @@ let CreateTask = () => {
   }
 
   async function createTask() {
+    let object ={};
     if (
       description !== "" &&
       dateFinal !== "" &&
@@ -98,12 +85,20 @@ let CreateTask = () => {
             showNotification("Erro", msg, "danger");
           }
         } else {
+          object.id = data.last_id;
+          object.description = description;
+          object.priority = priority;
+          object.initial_date = dateInitial;
+          object.final_date = dateFinal;
+          object.user_id = permissions.id;
+          object.percent = 0;
+          object.state_id = 1;
+          object.focus = true;
           setOpen(false);
-          if (seeAdminSet === true) {
-            dispatch(updateStateAdmin());
-          } else {
-            dispatch(updateTask());
-          }
+         
+            // dispatch(updateTask());
+            dispatch(getTaskFilter([...filterTask.filter,object]))
+          
           showNotification("Sucesso", "Nova tarefa foi adicionada", "success");
 
           clear();

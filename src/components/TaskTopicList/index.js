@@ -22,10 +22,9 @@ import {
   takeHistoricTask,
   nextOrPreviousTopic,
   changeYesNoTopic,
-  showNotification,
 } from "./functions";
+import {showNotification} from '../../Utils/Notify';
 import {
-  sendInfoModal,
   taskInfoShow,
   updateModal,
   updateTopic,
@@ -135,6 +134,16 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
 
     handleClick();
   }, [showBottom]);
+
+   useEffect(() => {
+     const element = document.getElementById("upload-photo-icon");
+    const image = document.getElementById("upload-photo");
+
+    if(image.value!==null && image.value !==""){
+      element.classList.add("attachmentIcon");
+    }
+    
+   },[imageSend])
 
   function SendInfo(msg, type, percent, state, item, remove) {
     if (msg !== "" && webSocket.websocketState === "connected") {
@@ -296,6 +305,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
             setNewItem("");
             setImageSend(null);
             document.getElementById("upload-photo").value = "";
+            document.getElementById("upload-photo-icon").classList.remove("attachmentIcon");
           }
         );
       }
@@ -760,6 +770,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                     ) : (
                       <div className="topicLeft">
                         <a
+                                 title="Posição do tópico"
                           style={
                             orderItem == item.id
                               ? {
@@ -788,6 +799,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                         </a>
 
                         <a
+                        title="Editar tópico"
                           href=""
                           onClick={(e) => {
                             e.preventDefault();
@@ -805,6 +817,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                         </a>
 
                         <a
+                        title="Ordenar tópico"
                           className="orderTopic"
                           href=""
                           onClick={(e) => {
@@ -924,6 +937,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                         </div>
                       ) : (
                         <a
+                        title="Excluir tópico"
                           href=""
                           onClick={(e) =>
                             taskVisible.info.user_id === permissions.id ||
@@ -975,10 +989,10 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
         </button>
 
         <div style={{ marginLeft: 10 }}>
-          <label className="upload" htmlFor="upload-photo">
-            <AiOutlinePaperClip size={27} />
+          <label className="upload" htmlFor="upload-photo" title="Anexar imagem">
+            <AiOutlinePaperClip size={27} id="upload-photo-icon"/>
           </label>
-          <input type="file" name="photo" id="upload-photo" />
+          <input type="file" name="photo" id="upload-photo" onChange={({target}) => setImageSend(target.files[0])}/>
         </div>
       </div>
 

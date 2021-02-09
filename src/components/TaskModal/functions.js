@@ -1,5 +1,5 @@
 import api from "../../services/api";
-import { store } from "react-notifications-component";
+import {showNotification} from '../../Utils/Notify';
 
 export const updateDescription = async (
   taskId,
@@ -82,18 +82,3 @@ export async function getMessage(auth, taskId) {
   }
 }
 
-export function showNotification(title, message, type) {
-  store.addNotification({
-    title: title,
-    message: message,
-    type: type,
-    container: "top-center",
-    insert: "top",
-    animationIn: ["animate__animated animate__fadeIn"],
-    animationOut: ["animate__animated animate__fadeOut"],
-    dismiss: {
-      duration: 2000,
-    },
-    width: 400,
-  });
-}

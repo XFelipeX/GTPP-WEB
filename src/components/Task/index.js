@@ -14,26 +14,10 @@ import {
   getNotifications,
 } from "../../redux";
 import api from "../../services/api";
-import { store } from "react-notifications-component";
+import { showNotification } from "../../Utils/Notify";
 import TaskWarning from "../TaskWarning";
-import ModalNotifications from "../ModalNotifications/ModalNotifications";
+import ModalNotifications from "../ModalNotifications";
 import useClickOutside from "../ClickOutside";
-
-function showNotification(title, message, type) {
-  store.addNotification({
-    title: title,
-    message: message,
-    type: type,
-    container: "top-center",
-    insert: "top",
-    animationIn: ["animate__animated animate__fadeIn"],
-    animationOut: ["animate__animated animate__fadeOut"],
-    dismiss: {
-      duration: 2000,
-    },
-    width: 400,
-  });
-}
 
 const Task = ({ task }) => {
   const { visionMenu } = useSelector((state) => state);
@@ -202,7 +186,11 @@ const Task = ({ task }) => {
     >
       <div className="tableLeft">
         <div
-          style={notification === 0 ? { backgroundColor: "transparent" } : {cursor:"pointer"}}
+          style={
+            notification === 0
+              ? { backgroundColor: "transparent" }
+              : { cursor: "pointer" }
+          }
           className="tableNotification"
           onClick={() => notification > 0 && setShowNotifications(true)}
         >

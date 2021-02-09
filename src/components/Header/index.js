@@ -17,28 +17,13 @@ import ButtonFilter from "../ButtonFilter";
 import InfoUser from "../InfoUser";
 import LoadTasks from "../LoadTasks";
 import OrderTasks from "../OrderTasks";
-import { store } from "react-notifications-component";
+import {showNotification} from '../../Utils/Notify';
 import api from "../../services/api";
 import "./style.css";
 import SearchTask from "../SearchTask";
 import { removeUsersOnline } from "../../redux/webSocket/webSocketActions";
 
 import { useHistory } from "react-router-dom";
-function showNotification(title, message, type) {
-  store.addNotification({
-    title: title,
-    message: message,
-    type: type,
-    container: "top-center",
-    insert: "top",
-    animationIn: ["animate__animated animate__fadeIn"],
-    animationOut: ["animate__animated animate__fadeOut"],
-    dismiss: {
-      duration: 4000,
-    },
-    width: 400,
-  });
-}
 
 function Header() {
   const dispatch = useDispatch();

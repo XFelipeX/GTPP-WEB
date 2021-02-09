@@ -102,6 +102,7 @@ const Login = () => {
               sessionStorage.setItem("token", data.data.session);
               const object = { ...data.data };
               object.user = document.getElementById("user_name").value;
+              object.token = sessionStorage.getItem("token");
               // console.log(object)
               dispatch(logIn(object));
               history.push("/main");
@@ -118,7 +119,7 @@ const Login = () => {
 
   useEffect(() => {
     async function verifyVersion() {
-      const version = "1.2";
+      const version = "1.3";
 
       try {
         let { data } = await api.get("CCPP/AppVersion.php?id=3");
@@ -170,7 +171,7 @@ const Login = () => {
         <button onClick={() => UserLogin()}>Entrar</button>
       </form>
       <div className="version">
-        <span>GTPP - App Web - Version 1.2 </span>
+        <span>GTPP - App Web - Version 1.3 </span>
         <span> Created by:</span>
         <span>Front-End - Felipe</span>
         <span>Back-End - Kyo</span>

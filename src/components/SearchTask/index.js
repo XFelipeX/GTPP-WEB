@@ -100,10 +100,6 @@ const SearchTask = () => {
             <BsSearch size={25} />
           </button>
         </div>
-       
-       
-          
-       
       </div>
     </div>
   );

@@ -102,7 +102,7 @@ const Ranking = ({ data, close }) => {
                       <GoVerified size={20} style={{ marginRight: "10px" }} />
                       {user.finished_task_count}
                     </h2>
-                    <h2 title="Tarefas desqualificadas">
+                    <h2 title="Tarefas desqualificadas" style={user.disqualify_task_count>0 ? {color:"red"} : {}}>
                       <MdError size={20} style={{ marginRight: "10px" }} />
                       {user.disqualify_task_count}
                     </h2>

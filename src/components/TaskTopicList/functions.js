@@ -1,5 +1,5 @@
 import api from "../../services/api";
-import { store } from "react-notifications-component";
+import {showNotification} from '../../Utils/Notify';
 
 export const changeItemChecked = async (taskId, itemId, check, auth) => {
   const AUTH = auth;
@@ -255,18 +255,4 @@ export const changeYesNoTopic = async (taskId, yesOrNo, itemId, auth) => {
   }
 };
 
-export function showNotification(title, message, type) {
-  store.addNotification({
-    title: title,
-    message: message,
-    type: type,
-    container: "top-center",
-    insert: "top",
-    animationIn: ["animate__animated animate__fadeIn"],
-    animationOut: ["animate__animated animate__fadeOut"],
-    dismiss: {
-      duration: 2000,
-    },
-    width: 400,
-  });
-}
+

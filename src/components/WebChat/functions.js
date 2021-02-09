@@ -1,21 +1,5 @@
 import api from "../../services/api";
-import { store } from "react-notifications-component";
-
-function showNotification(title, message, type) {
-  store.addNotification({
-    title: title,
-    message: message,
-    type: type,
-    container: "top-center",
-    insert: "top",
-    animationIn: ["animate__animated animate__fadeIn"],
-    animationOut: ["animate__animated animate__fadeOut"],
-    dismiss: {
-      duration: 2000,
-    },
-    width: 400,
-  });
-}
+import { showNotification } from "../../Utils/Notify";
 
 export async function getMessage(auth, taskId) {
   const AUTH = auth;
@@ -56,15 +40,14 @@ export async function createMessage(msg, taskId, auth) {
   }
 }
 
-export async function createMessageWithImage(msg,image, taskId, auth) {
-
-  const img = image.split(',');
+export async function createMessageWithImage(msg, image, taskId, auth) {
+  const img = image.split(",");
   // console.log(image);
   try {
     const { data } = await api.post(`GTPP/Message.php?AUTH=${auth}&app_id=3`, {
       description: msg,
       task_id: taskId,
-      image:img[1],
+      image: img[1],
     });
 
     if (data.error === true) {

@@ -9,7 +9,7 @@ import highPriority from "../../assets/Arrows.png";
 import api from "../../services/api";
 import useClickOutside from "../ClickOutside";
 import Loading from "../Loading";
-import { showNotification } from "../TaskModal/functions";
+import {showNotification} from '../../Utils/Notify';
 
 const TaskPriority = ({ task }) => {
   const { permissions } = useSelector((state) => state);

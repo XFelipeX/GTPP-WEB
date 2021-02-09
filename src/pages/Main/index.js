@@ -4,6 +4,7 @@ import { getWebSocketState, getWebSocket } from "../../redux";
 import Header from "../../components/Header/index";
 import TaskTable from "../../components/TaskTable";
 import { getWebSocketMessage } from "../../redux/webSocket/webSocketActions";
+import "./style.css";
 import api from "../../services/api";
 // import socket from "../../utils/socketConfig";
 
@@ -14,16 +15,15 @@ function Main() {
   // const [token,setToken] = useState(sessionStorage.getItem("token"));
   const AUTH = permissions.session;
 
- 
   useEffect(() => {
     dispatch(getWebSocketState("error"));
   }, []);
   let socket;
-  let token;
+  // let token;
 
-  React.useMemo(() => {
-    token = sessionStorage.getItem("token");
-  },[])
+  // React.useMemo(() => {
+  //   token = sessionStorage.getItem("token");
+  // },[])
 
   // useEffect(() => {
   //   setToken(sessionStorage.getItem("token"));
@@ -33,8 +33,8 @@ function Main() {
     // console.log("nova conexão criada");
 
     // console.log(token);
-    
-    // setToken(sessionStorage.getItem("token"));
+
+    const token = sessionStorage.getItem("token");
     if (token && token !== undefined) {
       socket = new WebSocket("ws://192.168.0.99:3333");
 
@@ -127,10 +127,9 @@ function Main() {
   useEffect(() => {
     Connect();
   }, []);
-  
 
   return (
-    <div>
+    <div className="main">
       <Header />
       <TaskTable websocket={socket} />
     </div>

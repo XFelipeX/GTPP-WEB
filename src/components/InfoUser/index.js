@@ -9,7 +9,7 @@ import {
   updateStateAdmin,
   updateModal,
 } from "../../redux";
-import { store } from "react-notifications-component";
+import { showNotification } from "../../Utils/Notify";
 import api from "../../services/api";
 import Loading from "../Loading";
 import { RiLockPasswordFill } from "react-icons/ri";
@@ -32,22 +32,6 @@ let InfoUser = () => {
   const [seeAdm, setSeeAdm] = useState(false);
   const [info, setInfo] = useState([]);
   const [photo, setPhoto] = useState(userEmpty);
-
-  function showNotification(title, message, type) {
-    store.addNotification({
-      title: title,
-      message: message,
-      type: type,
-      container: "top-center",
-      insert: "top",
-      animationIn: ["animate__animated animate__fadeIn"],
-      animationOut: ["animate__animated animate__fadeOut"],
-      dismiss: {
-        duration: 2000,
-      },
-      width: 400,
-    });
-  }
 
   async function loadUserInfo() {
     const AUTH = permissions.session;
@@ -93,7 +77,6 @@ let InfoUser = () => {
       setShowLoading(false);
     }, 1000);
   }
-  
 
   useEffect(() => {
     loadUserInfo()
