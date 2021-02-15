@@ -119,7 +119,7 @@ const Login = () => {
 
   useEffect(() => {
     async function verifyVersion() {
-      const version = "1.3";
+      const version = "1.4";
 
       try {
         let { data } = await api.get("CCPP/AppVersion.php?id=3");
@@ -171,7 +171,7 @@ const Login = () => {
         <button onClick={() => UserLogin()}>Entrar</button>
       </form>
       <div className="version">
-        <span>GTPP - App Web - Version 1.3 </span>
+        <span>GTPP - App Web - Version 1.4 </span>
         <span> Created by:</span>
         <span>Front-End - Felipe</span>
         <span>Back-End - Kyo</span>

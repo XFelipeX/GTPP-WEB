@@ -354,7 +354,7 @@ function WebChat({ close }) {
                         loadImage(message.id).then(() => setShowImage(true));
                       }}
                     >
-                      <AiOutlinePaperClip size={18} />
+                      <AiOutlinePaperClip size={18} title="Visualizar" />
                     </span>
                   )}
                 </div>
@@ -400,7 +400,7 @@ function WebChat({ close }) {
             <label title="Anexar imagem" className="upload" htmlFor="upload-photo-chat">
               <AiOutlinePaperClip size={37} id="upload-photo-icon-chat" />
             </label>
-            <input type="file" name="photo" id="upload-photo-chat" onChange={({target}) => setImageMessage(target.files[0])}/>
+            <input accept="image/jpg,image/png,image/gif, image/jpeg" type="file" name="photo" id="upload-photo-chat" onChange={({target}) => setImageMessage(target.files[0])}/>
           </div>
 
           <button title="Enviar" type="button" onClick={() => SendMessage(msg)}>

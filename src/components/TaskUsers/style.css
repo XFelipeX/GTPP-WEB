@@ -1,8 +1,8 @@
 .containerUsers {
-  margin-right: 15px;
+  margin-right: .5em;
   display: flex;
   align-items: center;
-  width: 60px;
+  min-width: 75px;
   justify-content: space-around;
 }
 @media (max-width: 900px) {

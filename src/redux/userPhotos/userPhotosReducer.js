@@ -1,8 +1,6 @@
 import { SETPHOTOS } from './userPhotosTypes'
 
-const initialState = {
-  items:[]
-};
+const initialState = [];
 
 const userAuthReducer = (state = initialState, action) => {
   // console.log(action.payload)

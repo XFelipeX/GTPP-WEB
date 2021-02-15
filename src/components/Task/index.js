@@ -18,6 +18,7 @@ import { showNotification } from "../../Utils/Notify";
 import TaskWarning from "../TaskWarning";
 import ModalNotifications from "../ModalNotifications";
 import useClickOutside from "../ClickOutside";
+import ComShopDept from "../ComShopDept";
 
 const Task = ({ task }) => {
   const { visionMenu } = useSelector((state) => state);
@@ -30,6 +31,7 @@ const Task = ({ task }) => {
   const [showModal, setShowModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState();
 
+  // console.log(task);
   const dispatch = useDispatch();
 
   async function loadTaskVisible(
@@ -241,6 +243,7 @@ const Task = ({ task }) => {
       <div className="taskContent">
         <TaskWarning task={task} />
         {visionMenu.vinc === true ? <TaskUsers task={task} /> : null}
+        {<ComShopDept task={task}/>}
         {visionMenu.state === true ? <TaskState task={task} /> : null}
         {visionMenu.date === true ? <TaskDate task={task} /> : null}
         {<h2>{task.percent}%</h2>}

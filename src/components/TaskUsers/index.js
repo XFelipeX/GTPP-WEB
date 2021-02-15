@@ -8,7 +8,7 @@ import { getUsersPhotos, orderTasks, updateStateUsers } from "../../redux";
 import useClickOutside from "../ClickOutside";
 import Loading from "../Loading";
 import { AiOutlineClose } from "react-icons/ai";
-import {showNotification} from '../../Utils/Notify';
+import { showNotification } from "../../Utils/Notify";
 
 let TaskUsers = ({ task }) => {
   const { permissions } = useSelector((state) => state);
@@ -115,6 +115,11 @@ let TaskUsers = ({ task }) => {
 
   const [user, setUser] = useState("");
 
+  function verifyCharacter(name) {
+    const parsed = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    return parsed.toUpperCase();
+  }
+
   useEffect(() => {
     function searchUser() {
       // console.log(allUsers);
@@ -122,7 +127,7 @@ let TaskUsers = ({ task }) => {
       if (userName != "") {
         setFilterUser(
           allUsers.filter((user) =>
-            String(user.name.toUpperCase()).includes(userName)
+            verifyCharacter(user.name).includes(userName)
           )
         );
       } else {

@@ -11,6 +11,7 @@
 .containerTask .taskContent {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   width: 40%;
   margin: 0 1%;
 }

@@ -98,7 +98,15 @@ const TaskWarning = ({ task }) => {
               : {}
           }
         />
-      ) : null}
+      ) : <AiOutlineExclamation
+          size={25}
+          color="transparent"
+          style={
+            task.focus === true
+              ? { backgroundColor: "transparent", borderRadius: 50 + "%" }
+              : {}
+          }
+        />}
     </div>
   );
 };

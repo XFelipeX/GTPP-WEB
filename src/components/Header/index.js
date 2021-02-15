@@ -17,7 +17,7 @@ import ButtonFilter from "../ButtonFilter";
 import InfoUser from "../InfoUser";
 import LoadTasks from "../LoadTasks";
 import OrderTasks from "../OrderTasks";
-import {showNotification} from '../../Utils/Notify';
+import { showNotification } from "../../Utils/Notify";
 import api from "../../services/api";
 import "./style.css";
 import SearchTask from "../SearchTask";
@@ -232,17 +232,17 @@ function Header() {
           if (webSocket.message.object.itemUp) {
             if (webSocket.message.object.remove) {
               taskVisible.task.task_item = taskVisible.task.task_item.filter(
-                (item) => item.id !== webSocket.message.object.itemUp
+                (item) => item.id !== webSocket.message.object.itemUp.id
               );
             } else {
               let newItem = true;
               taskVisible.task.task_item.map((item) => {
-                // console.log(webSocket.message.object.itemUp);
                 if (item.id === webSocket.message.object.itemUp.id) {
                   item.check = webSocket.message.object.itemUp.check;
                   item.description =
                     webSocket.message.object.itemUp.description;
                   item.yes_no = webSocket.message.object.itemUp.yes_no;
+                  item.note = webSocket.message.object.itemUp.note;
                   newItem = false;
                 }
               });
@@ -651,9 +651,8 @@ function Header() {
       dispatch(logOff());
       history.push("/");
 
-      showNotification("Aviso","Usuário conectado em outro lugar","warning");
+      showNotification("Aviso", "Usuário conectado em outro lugar", "warning");
     }
-
   }, [webSocket.message]);
 
   async function takeTask(taskId) {
