@@ -12,4 +12,4 @@
 <h2># LOGIN</h2>
 
 <p>O login pede usuário e senha e dá a opção de salvar o usuário.</p>
-![](files/login.gif)
+![](files/chat1.gif)
