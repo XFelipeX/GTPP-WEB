@@ -93,6 +93,7 @@ let CreateTask = () => {
           object.user_id = permissions.id;
           object.percent = 0;
           object.state_id = 1;
+          object.csds = [];
           object.focus = true;
           setOpen(false);
          

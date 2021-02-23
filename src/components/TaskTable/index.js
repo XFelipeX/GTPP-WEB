@@ -297,6 +297,12 @@ const TaskTable = (props) => {
           );
 
           if (data) {
+            
+              // data.user_id = idUser;
+              // data.photo = userEmpty;
+              // setTakePhotos((oldarray) => [...oldarray, data]);
+           
+
             if (data.photo == null || data.photo == "") {
               data.user_id = idUser;
               data.photo = userEmpty;

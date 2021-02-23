@@ -10,13 +10,13 @@ const ComShopDept = ({ task }) => {
   const { taskCompanies } = useSelector((state) => state);
   const { taskDepts } = useSelector((state) => state);
   const [csds, setCsds] = useState([]);
+  const [taskCsds,setTaskCsds] = useState(task.csds ? task.csds : []);
 
   // useEffect(() => {
 
   // },[])
 
   function loadCsds() {
-    const taskCsds = task.csds;
     let amount = [];
 
     if (taskCsds.length > 0) {
@@ -62,7 +62,7 @@ const ComShopDept = ({ task }) => {
           setShowComp(!showComp);
         }}
       >
-        <AiFillShop size={18} color={task.csds.length===0 ? "#696969" : "#000"}/>
+        <AiFillShop size={18} color={taskCsds.length > 0 ? "#000" : "#696969"}/>
       </div>
     </div>
   );
