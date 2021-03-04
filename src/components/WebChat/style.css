@@ -104,7 +104,7 @@
 
 .authorRight {
   border-radius: 10px 10px 0 0;
-  width: 170px;
+  width: 75%;
   display: block;
   justify-content: flex-start;
   /* text-align:justify; */
@@ -121,7 +121,7 @@
 .dateTextRight {
   display: flex;
   justify-content: flex-end;
-  width: 170px;
+  width: 75%;
   background-color: #00a2ff;
   padding: 10px;
   border-radius: 0 0 10px 10px;
@@ -130,7 +130,7 @@
 }
 
 .textRight {
-  width: 170px;
+  width: 75%;
   display: block;
   justify-content: flex-start;
   /* text-align:justify; */
@@ -153,7 +153,7 @@
 
 .authorLeft {
   border-radius: 10px 10px 0 0;
-  width: 170px;
+  width: 75%;
   display: block;
   justify-content: flex-start;
   padding: 0;
@@ -169,7 +169,7 @@
   display: flex;
   justify-content: flex-end;
   text-align: right;
-  width: 170px;
+  width: 75%;
   background-color: #343434;
   padding: 10px;
   border-radius: 0 0 10px 10px;
@@ -178,7 +178,7 @@
 }
 
 .textLeft {
-  width: 170px;
+  width: 75%;
   display: block;
   justify-content: flex-start;
   /* text-align:justify; */

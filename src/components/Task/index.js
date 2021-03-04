@@ -31,7 +31,6 @@ const Task = ({ task }) => {
   const [showModal, setShowModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState();
 
-  // console.log(task);
   const dispatch = useDispatch();
 
   async function loadTaskVisible(
@@ -243,7 +242,7 @@ const Task = ({ task }) => {
       <div className="taskContent">
         <TaskWarning task={task} />
         {visionMenu.vinc === true ? <TaskUsers task={task} /> : null}
-        {<ComShopDept task={task}/>}
+        {<ComShopDept task={task} />}
         {visionMenu.state === true ? <TaskState task={task} /> : null}
         {visionMenu.date === true ? <TaskDate task={task} /> : null}
         {<h2>{task.percent}%</h2>}

@@ -699,15 +699,21 @@
   border: 1px solid black;
   overflow: auto;
   text-align: left;
+  display: flex;
+  flex-direction: column;
 }
 
-.itemObs p {
+.itemObs textarea {
   background-color: #343434;
   padding: 10px;
   border-radius: 8px;
   margin: 0.5em auto;
   width: 90%;
   height: 80%;
+  color: #fff;
+  font-size: 1rem;
+  resize: none;
+  border: none;
 }
 
 .itemObs h3 {

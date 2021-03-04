@@ -39,7 +39,7 @@ const Login = () => {
     dispatch(logOff());
   }, []);
   async function UserLogin() {
-    // verifyVersion();
+    verifyVersion();
     if (access) {
       try {
         let data = {};
@@ -117,35 +117,36 @@ const Login = () => {
     }
   }
 
-  useEffect(() => {
-    async function verifyVersion() {
-      const version = "1.4";
+  async function verifyVersion() {
+    const version = "1.4.2";
 
-      try {
-        let { data } = await api.get("CCPP/AppVersion.php?id=3");
+    try {
+      let { data } = await api.get("CCPP/AppVersion.php?id=3");
 
-        if (data.error !== true) {
-          let versionApp = String(data.data[0].version);
+      if (data.error !== true) {
+        let versionApp = String(data.data[0].version);
 
-          if (versionApp === version) {
-            setAccess(true);
-          } else {
-            showNotification(
-              "Aviso",
-              "Aplicação desatualizada, a versão necessária é " +
-                versionApp +
-                ", a versão atual é " +
-                version,
-              "warning"
-            );
-            setAccess(false);
-          }
+        if (versionApp === version) {
+          setAccess(true);
+        } else {
+          showNotification(
+            "Aviso",
+            "Aplicação desatualizada, a versão necessária é " +
+              versionApp +
+              ", a versão atual é " +
+              version,
+            "warning"
+          );
+          setAccess(false);
         }
-      } catch (error) {
-        showNotification("erro", error.message, "danger");
-        return false;
       }
+    } catch (error) {
+      showNotification("erro", error.message, "danger");
+      return false;
     }
+  }
+
+  useEffect(() => {
     verifyVersion();
   }, []);
 
@@ -171,7 +172,7 @@ const Login = () => {
         <button onClick={() => UserLogin()}>Entrar</button>
       </form>
       <div className="version">
-        <span>GTPP - App Web - Version 1.4 </span>
+        <span>GTPP - App Web - Version 1.4.2 </span>
         <span> Created by:</span>
         <span>Front-End - Felipe</span>
         <span>Back-End - Kyo</span>

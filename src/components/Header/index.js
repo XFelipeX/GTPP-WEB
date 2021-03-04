@@ -482,7 +482,7 @@ function Header() {
       webSocket.message.type === 5
     ) {
       // type 5 == vinculated or remove user
-      // *add update for visualisation of adm
+      // *add update for visualization of adm
       const changeUser = Number(webSocket.message.object.changeUser);
       let user = vinculatedUsers.filter(
         (user) => Number(user.id) === Number(changeUser)

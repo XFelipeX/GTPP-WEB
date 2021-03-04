@@ -89,7 +89,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
             task.state_id = response.state_id;
           }
         });
-        // dispatch(updateTopic());
+        dispatch(updateTopic());
         // dispatch(getTaskFilter([...changes]));
       }
     });
@@ -777,7 +777,9 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
       {showObs && (
         <div ref={domNode} className="itemObs">
           <h3>Observação</h3>
-          <p>{showObs}</p>
+          <textarea readOnly>
+          {showObs}
+          </textarea>
         </div>
       )}
 
