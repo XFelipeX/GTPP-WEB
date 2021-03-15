@@ -691,7 +691,7 @@ const TaskInfo = () => {
                 placeholder="Esta tarefa tem como objetivo..."
                 spellCheck="false"
                 rows="5"
-                value={fullDescription}
+                defaultValue={fullDescription}
                 readOnly
               ></textarea>
             </div>

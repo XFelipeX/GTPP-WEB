@@ -1,6 +1,7 @@
 import { createStore, combineReducers } from "redux";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import localforage from 'localforage';
 
 import userAuthReducer from "./userAuth/userAuthReducer";
 import taskStatesReducer from "./taskStates/taskStatesReducer";
@@ -70,7 +71,7 @@ const rootReducer = (state, action) => {
 
 const persistConfig = {
   key: "primary",
-  storage,
+  storage:localforage,
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -27,45 +27,113 @@ const SearchTask = () => {
     setAllNotifications([]);
     let total = 0;
 
-    if (notifications.length > 0) {
-      notifications.map((notification) => {
-        const filterTask = tasks.filter(
-          (task) => task.id === notification.task_id
+    notifications.map((taskNotification) => {
+      const { content } = taskNotification;
+      if (content.object) {
+        const taskF = tasks.filter(
+          (taskFilter) => +taskFilter.id === +taskNotification.task_id
         );
 
-        notification.content.object.map((obj) => {
-          const filterUser = vinculatedUsers.filter(
-            (user) => user.id === obj.send_user_id
-          );
+        let userAuthor;
 
-          if (obj.task_id === notification.task_id) {
-            obj.task_description = filterTask[0].description;
-            obj.send_user_name = filterUser[0].name;
+        content.object.map((info) => {
+          total++;
+          switch (Number(info.type)) {
+            case 1:
+              userAuthor = vinculatedUsers.filter(
+                (user) => Number(user.id) === Number(info.send_user_id)
+              );
+              setAllNotifications((oldarray) => [
+                ...oldarray,
+                {
+                  message: info.object.description,
+                  description: taskF[0] ? taskF[0].description : "",
+                  user_name: userAuthor[0].name + " disse",
+                },
+              ]);
+              break;
+            case 2:
+              userAuthor = vinculatedUsers.filter(
+                (user) => Number(user.id) === Number(info.send_user_id)
+              );
+              setAllNotifications((oldarray) => [
+                ...oldarray,
+                {
+                  message: info.object.description,
+                  description: taskF[0] ? taskF[0].description : "",
+                  user_name: userAuthor[0].name,
+                },
+              ]);
+              break;
+            case 3:
+              userAuthor = vinculatedUsers.filter(
+                (user) => Number(user.id) === Number(info.send_user_id)
+              );
+              setAllNotifications((oldarray) => [
+                ...oldarray,
+                {
+                  message: info.object.description,
+                  description: taskF[0] ? taskF[0].description : "",
+                  user_name: userAuthor[0].name,
+                },
+              ]);
+              break;
+            case 4:
+              userAuthor = vinculatedUsers.filter(
+                (user) => Number(user.id) === Number(info.send_user_id)
+              );
+              setAllNotifications((oldarray) => [
+                ...oldarray,
+                {
+                  message: info.object.description,
+                  description: taskF[0] ? taskF[0].description : "",
+                  user_name: userAuthor[0].name,
+                },
+              ]);
 
-            if (+obj.type === 6) {
-              const filterState = taskStates.filter(
-                (state) => state.id === obj.object.state_id
+              break;
+            case 5:
+              let user = vinculatedUsers.filter(
+                (user) => Number(user.id) === Number(info.object.changeUser)
               );
 
-              if (filterState.length > 0) {
-                obj.object.description =
-                  "Mudou para " + filterState[0].description;
+              userAuthor = vinculatedUsers.filter(
+                (user) => Number(user.id) === Number(info.send_user_id)
+              );
+              if (userAuthor[0]) {
+                setAllNotifications((oldarray) => [
+                  ...oldarray,
+                  {
+                    message: user[0].name + " " + info.object.description,
+                    description: taskF[0] ? taskF[0].description : "",
+                    user_name: userAuthor[0].name,
+                  },
+                ]);
               }
-            }
 
-            if (+obj.type === 1) {
-              obj.send_user_name = obj.send_user_name + " disse";
-            }
+              break;
+            case 6:
+              userAuthor = vinculatedUsers.filter(
+                (user) => Number(user.id) === Number(info.send_user_id)
+              );
+              const newState = taskStates.filter(
+                (state) => Number(state.id) === Number(info.object.state_id)
+              );
+              setAllNotifications((oldarray) => [
+                ...oldarray,
+                {
+                  message: "Mudou para " + newState[0].description,
+                  description: taskF[0] ? taskF[0].description : "",
+                  user_name: userAuthor[0].name,
+                },
+              ]);
+              break;
           }
         });
-        setAllNotifications((oldArray) => [
-          ...oldArray,
-          ...notification.content.object,
-        ]);
-        total += notification.content.object.length;
-      });
-      setTotaNotifications(total);
-    }
+      }
+    });
+
+    setTotaNotifications(total);
   }, [notifications]);
 
   function search(e) {
@@ -172,12 +240,10 @@ const SearchTask = () => {
           {showAllNotifications && (
             <div className="modalAllNotifications" ref={domNode}>
               <ul>
-                {console.log(allNotifications)}
                 {allNotifications.map((notification, index) => (
                   <li key={index}>
-                    <span>{notification.task_description}</span>
-                    {notification.send_user_name}:{" "}
-                    {notification.object.description}
+                    <span>{notification.description}</span>
+                    {notification.user_name}: {notification.message}
                   </li>
                 ))}
               </ul>
@@ -190,3 +256,48 @@ const SearchTask = () => {
 };
 
 export default SearchTask;
+
+// React.useEffect(() => {
+//   setAllNotifications([]);
+//   let total = 0;
+
+//   if (notifications.length > 0) {
+//     notifications.map((notification) => {
+//       const filterTask = tasks.filter(
+//         (task) => task.id === notification.task_id
+//       );
+
+//       notification.content.object.map((obj) => {
+//         const filterUser = vinculatedUsers.filter(
+//           (user) => user.id === obj.send_user_id
+//         );
+
+//         if (obj.task_id === notification.task_id) {
+//           obj.task_description = filterTask[0].description;
+//           obj.send_user_name = filterUser[0].name;
+
+//           if (+obj.type === 6) {
+//             const filterState = taskStates.filter(
+//               (state) => state.id === obj.object.state_id
+//             );
+
+//             if (filterState.length > 0) {
+//               obj.object.description =
+//                 "Mudou para " + filterState[0].description;
+//             }
+//           }
+
+//           if (+obj.type === 1) {
+//             obj.send_user_name = obj.send_user_name + " disse";
+//           }
+//         }
+//       });
+//       setAllNotifications((oldArray) => [
+//         ...oldArray,
+//         ...notification.content.object,
+//       ]);
+//       total += notification.content.object.length;
+//     });
+//     setTotaNotifications(total);
+//   }
+// }, [notifications]);

@@ -4,12 +4,16 @@ import "./style.css";
 import lowPriority from "../../assets/Path1.png";
 import medPriority from "../../assets/Path2.png";
 import highPriority from "../../assets/Arrows.png";
-import { getTask, getTaskFilter, updateStateAdmin, updateTask } from "../../redux";
+import {
+  getTask,
+  getTaskFilter,
+  updateStateAdmin,
+  updateTask,
+} from "../../redux";
 import useClickOutside from "../ClickOutside";
 import { BiCommentAdd } from "react-icons/bi";
-import {showNotification} from '../../Utils/Notify';
+import { showNotification } from "../../Utils/Notify";
 import api from "../../services/api";
-
 
 let CreateTask = () => {
   const dispatch = useDispatch();
@@ -46,7 +50,7 @@ let CreateTask = () => {
   }
 
   async function createTask() {
-    let object ={};
+    let object = {};
     if (
       description !== "" &&
       dateFinal !== "" &&
@@ -96,16 +100,36 @@ let CreateTask = () => {
           object.csds = [];
           object.focus = true;
           setOpen(false);
-         
-            // dispatch(updateTask());
-            dispatch(getTaskFilter([...filterTask.filter,object]))
-          
+
+          // dispatch(updateTask());
+          dispatch(getTaskFilter([...filterTask.filter, object]));
+
           showNotification("Sucesso", "Nova tarefa foi adicionada", "success");
 
           clear();
         }
       } catch (error) {
-        console.log(error.message);
+        let msg = error.message;
+
+        if (error.response) {
+          msg = error.response.data.message;
+
+          if (
+            msg.includes("The final_date may not be less than the current date")
+          ) {
+            showNotification(
+              "Erro",
+              "A data final não pode ser menor que a data atual",
+              "danger"
+            );
+          } else {
+            showNotification("Erro", msg, "danger");
+          }
+        } else {
+          showNotification("Erro", msg, "danger");
+        }
+
+        console.log(msg);
       }
     } else {
       showNotification("Aviso", "Preencha todos os campos", "warning");
@@ -190,7 +214,7 @@ let CreateTask = () => {
             ) : null}
           </ul>
           <button type="button" onClick={createTask}>
-            <BiCommentAdd size={40}/>
+            <BiCommentAdd size={40} />
           </button>
         </li>
       ) : null}

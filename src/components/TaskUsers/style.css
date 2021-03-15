@@ -112,6 +112,12 @@
   border-radius: 10px 10px 0 0;
 }
 
+@media screen and (max-height:625px){
+  .search-user-middle {
+    margin-top: -14.3em;
+  }
+}
+
 .search-user-middle input {
   padding: 0.2em;
   width: 240px;

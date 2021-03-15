@@ -777,9 +777,8 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
       {showObs && (
         <div ref={domNode} className="itemObs">
           <h3>Observação</h3>
-          <textarea readOnly>
-          {showObs}
-          </textarea>
+
+          <textarea readOnly>{showObs}</textarea>
         </div>
       )}
 
@@ -787,6 +786,19 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
         <div className="editObsModal">
           <div ref={domNode} className="editObsBox">
             <h3>Observação</h3>
+            <button type="button" style={{
+                  position: "absolute",
+                  marginLeft: "304px",
+                  marginBottom: "340px",
+                  backgroundColor:"transparent"
+                }} onClick={() => {setShowEditObs(false)}}>
+              <AiOutlineClose
+                size={30}
+                color="red"
+                
+              />
+            </button>
+
             <textarea
               spellCheck="false"
               rows="5"
@@ -961,7 +973,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
               <button
                 style={{ backgroundColor: "transparent" }}
                 onClick={() => {
-                  setShowEdit(false);
+                  // setShowEdit(false);
                   setShowEditObs(true);
                 }}
               >
@@ -1270,7 +1282,6 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
 };
 
 export default TaskTopicList;
-
 
 // style={
 //   item.check || item.yes_no === 1 || item.yes_no === 2

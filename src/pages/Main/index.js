@@ -34,8 +34,8 @@ function Main() {
 
     // console.log(token);
 
-    const token = sessionStorage.getItem("token");
-    if (token && token !== undefined) {
+    let token = sessionStorage.getItem("token");
+    if (token && token !== undefined && permissions && permissions.id) {
       socket = new WebSocket("ws://192.168.0.99:3333");
 
       let isConnected = false;
