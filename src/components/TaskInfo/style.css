@@ -199,7 +199,7 @@
 /* Área de usuários vinculados */
 .usersVinculated {
   position: relative;
-  top: 11em;
+  top: 7em;
   width: 100%;
 }
 
@@ -233,7 +233,7 @@
 
 .user {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   flex-direction: row;
   overflow: auto;
   width: 100%;

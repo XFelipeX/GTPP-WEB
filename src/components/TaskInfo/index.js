@@ -715,6 +715,7 @@ const TaskInfo = () => {
               value={company}
               onChange={(e) => setCompany(e.target.value)}
               id="company"
+              style={taskcsds ? {pointerEvents:"none",backgroundColor:"#343434",color:"#fff"} : {}}
             >
               <option value="-1">Selecionar Companhia</option>
 
@@ -731,6 +732,7 @@ const TaskInfo = () => {
               id="shop"
               value={shop}
               onChange={(e) => setShop(e.target.value)}
+              style={taskcsds ? {pointerEvents:"none",backgroundColor:"#343434",color:"#fff"} : {}}
             >
               <option value="-1">Selecionar Loja</option>
 

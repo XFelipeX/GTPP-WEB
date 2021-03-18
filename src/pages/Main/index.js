@@ -34,7 +34,7 @@ function Main() {
 
     // console.log(token);
 
-    let token = sessionStorage.getItem("token");
+    let token = localStorage.getItem("token");
     if (token && token !== undefined && permissions && permissions.id) {
       socket = new WebSocket("ws://192.168.0.99:3333");
 

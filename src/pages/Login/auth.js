@@ -2,7 +2,7 @@
 
 function Authenticated(){
   // const [authenticated,setAuthenticated] = useState(false);
-  const token = sessionStorage.getItem('token');
+  const token = localStorage.getItem('token');
   
   if(token){
     // sessionStorage.removeItem('token');

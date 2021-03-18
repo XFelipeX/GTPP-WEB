@@ -170,6 +170,7 @@ let CreateTask = () => {
             type="text"
             id="taskDescription"
             placeholder="Nome da tarefa"
+            maxLength="40"
           />
           <label htmlFor="">Data Ínicio</label>
           <input

@@ -45,7 +45,7 @@ let ModalDescription = (props) => {
             <textarea
               placeholder="Esta tarefa tem como objetivo..."
               spellCheck="false"
-              maxLength="40"
+              maxLength={props.question.includes("completa") ? 400 : 40}
               rows="5"
               value={fullDescription}
               onChange={(e) =>

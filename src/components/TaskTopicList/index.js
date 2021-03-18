@@ -724,6 +724,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
         "",
         itemEdit
       );
+      setShowEditObs(false);
     });
   }
 
@@ -831,6 +832,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                 Alterar
                 <input
                   type="file"
+                  accept=".txt,.pdf,image/jpg,image/png,image/gif, image/jpeg,.rar,.zip"
                   name="photo"
                   id="upload-photo-update"
                   onChange={({ target }) =>

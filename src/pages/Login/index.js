@@ -99,7 +99,7 @@ const Login = () => {
                 showNotification("Aviso", msg, "warning");
               }
             } else {
-              sessionStorage.setItem("token", data.data.session);
+              localStorage.setItem("token", data.data.session);
               const object = { ...data.data };
               object.user = document.getElementById("user_name").value;
               object.token = sessionStorage.getItem("token");

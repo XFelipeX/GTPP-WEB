@@ -14,7 +14,7 @@ const ButtonLogoff = () => {
   let dispatch = useDispatch();
 
   function UserLogoff() {
-    sessionStorage.removeItem("token");
+    localStorage.removeItem("token");
 
     webSocket.websocket.close();
 
