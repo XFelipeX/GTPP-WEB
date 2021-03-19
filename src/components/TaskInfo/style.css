@@ -199,8 +199,9 @@
 /* Área de usuários vinculados */
 .usersVinculated {
   position: relative;
-  top: 7em;
+  top: 10em;
   width: 100%;
+  display: flex;
 }
 
 @media only screen and (max-width: 1740px) {
@@ -233,7 +234,7 @@
 
 .user {
   display: flex;
-  flex-wrap: wrap;
+  /* flex-wrap: wrap; */
   flex-direction: row;
   overflow: auto;
   width: 100%;
@@ -243,7 +244,8 @@
   margin: 0 1em 0.5em 0;
   cursor: pointer;
   background-size: cover;
-  width: 50px;
+  min-width: 50px;
+  max-width: 50px;
   height: 50px;
 }
 
