@@ -28,7 +28,6 @@
 
 .user-info-content {
   display: flex;
-  /* flex-direction: column; */
   background-color: #343434;
   max-width: 460px;
   color: white;
@@ -50,7 +49,7 @@
 }
 
 .user-info-content p > strong::after {
-  content: "";
+  content: '';
   margin-right: 1rem;
 }
 
@@ -69,7 +68,6 @@
 }
 
 .show-admin {
-  /* border-bottom: 1px solid #406d9a; */
   max-width: 320px;
 }
 

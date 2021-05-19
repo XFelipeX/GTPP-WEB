@@ -1,22 +1,23 @@
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import userEmpty from "../../assets/nullphoto.jpeg";
-import useClickOutside from "../ClickOutside";
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import userEmpty from '../../assets/nullphoto.jpeg';
+import useClickOutside from '../ClickOutside';
 import {
   getUserInfo,
   updateTask,
   seeAdmin,
   updateStateAdmin,
-  updateModal,
-} from "../../redux";
-import { showNotification } from "../../Utils/Notify";
-import api from "../../services/api";
-import Loading from "../Loading";
-import { RiLockPasswordFill } from "react-icons/ri";
-import { AiFillTrophy } from "react-icons/ai";
-import "./style.css";
-import AlterPassword from "../AlterPassword";
-import Ranking from "../Ranking";
+  setPageUser,
+  setPageAdmin,
+} from '../../redux';
+import { showNotification } from '../../Utils/Notify';
+import api from '../../services/api';
+import Loading from '../Loading';
+import { RiLockPasswordFill } from 'react-icons/ri';
+import { AiFillTrophy } from 'react-icons/ai';
+import './style.css';
+import AlterPassword from '../AlterPassword';
+import Ranking from '../Ranking';
 
 let InfoUser = () => {
   let dispatch = useDispatch();
@@ -38,38 +39,39 @@ let InfoUser = () => {
     let userId = permissions.id;
     try {
       let { data } = await api.get(
-        "CCPP/Employee.php?AUTH=" + AUTH + "&app_id=3&id=" + userId
+        'CCPP/Employee.php?AUTH=' + AUTH + '&app_id=3&id=' + userId,
       );
       if (data.error === true) {
-        showNotification("Erro", data.message, "danger");
+        showNotification('Erro', data.message, 'danger');
         return {};
       }
       return data;
     } catch (error) {
-      showNotification("Erro", error.message, "danger");
+      showNotification('Erro', error.message, 'danger');
       return { data: {} };
     }
   }
 
   function seeHowAdm() {
     setShowLoading(true);
-    // dispatch(updateModal());
     dispatch(seeAdmin());
     if (seeAdm === false) {
       setSeeAdm(true);
       dispatch(updateStateAdmin());
       showNotification(
-        "Sucesso",
-        "Você está visualizando como administrador",
-        "success"
+        'Sucesso',
+        'Você está visualizando como administrador',
+        'success',
       );
+      dispatch(setPageUser('1'));
     } else {
       showNotification(
-        "Sucesso",
-        "Você está visualizando como um usuário comum",
-        "success"
+        'Sucesso',
+        'Você está visualizando como um usuário comum',
+        'success',
       );
       setSeeAdm(false);
+      dispatch(setPageAdmin('0'));
       dispatch(updateTask());
     }
 
@@ -95,7 +97,7 @@ let InfoUser = () => {
 
     try {
       let { data } = await api.get(
-        "CCPP/EmployeePhoto.php?AUTH=" + AUTH + "&app_id=3&id=" + idUser
+        'CCPP/EmployeePhoto.php?AUTH=' + AUTH + '&app_id=3&id=' + idUser,
       );
 
       if (data.photo != null) {
@@ -105,14 +107,14 @@ let InfoUser = () => {
       if (data.error === true) {
         let msg = data.message;
 
-        if (msg.includes("Authorization denied")) {
-          showNotification("Erro", "Autorização negada", "danger");
+        if (msg.includes('Authorization denied')) {
+          showNotification('Erro', 'Autorização negada', 'danger');
         } else {
-          showNotification("Erro", msg, "danger");
+          showNotification('Erro', msg, 'danger');
         }
       }
     } catch (error) {
-      showNotification("Erro", error.message, "danger");
+      showNotification('Erro', error.message, 'danger');
       dispatch(getUserInfo({}));
       return;
     }
@@ -126,7 +128,7 @@ let InfoUser = () => {
   function convertImage(src) {
     if (src != null) {
       var image = new Image();
-      image.src = "data:image/jpeg;base64, " + src;
+      image.src = 'data:image/jpeg;base64, ' + src;
       return image.src;
     } else {
       return null;
@@ -143,13 +145,13 @@ let InfoUser = () => {
   async function loadScore(all) {
     try {
       const { data } = await api.get(
-        `GTPP/Score.php?AUTH=${permissions.session}&app_id=3&all=${all}`
+        `GTPP/Score.php?AUTH=${permissions.session}&app_id=3&all=${all}`,
       );
 
       if (data.error === true) {
         return null;
       } else {
-        if (all === "no") {
+        if (all === 'no') {
           return data.data[0];
         }
         return data.data;
@@ -170,7 +172,7 @@ let InfoUser = () => {
         <AlterPassword
           closeModal={setChangePassword}
           defaultUser={permissions.user}
-          oldPassword={""}
+          oldPassword={''}
           userLogin={null}
           onlyRead={false}
         />
@@ -182,19 +184,19 @@ let InfoUser = () => {
       <div className="user-img">
         <img
           style={
-            webSocket.websocketState === "connected"
-              ? { border: "3px solid green" }
-              : webSocket.websocketState === "error"
-              ? { border: "3px solid red" }
-              : webSocket.websocketState === "tryload"
-              ? { border: "3px solid yellow" }
+            webSocket.websocketState === 'connected'
+              ? { border: '3px solid green' }
+              : webSocket.websocketState === 'error'
+              ? { border: '3px solid red' }
+              : webSocket.websocketState === 'tryload'
+              ? { border: '3px solid yellow' }
               : null
           }
           src={photo}
           width="60"
           height="60"
           onClick={() => {
-            loadScore("no")
+            loadScore('no')
               .then((response) => setScore(response))
               .then(() => {
                 setShowInfo(!showInfo);
@@ -214,7 +216,7 @@ let InfoUser = () => {
               ></img>
             </div>
             <div>
-              <p style={{ fontSize: "20px", marginLeft: ".3em" }}>
+              <p style={{ fontSize: '20px', marginLeft: '.3em' }}>
                 <strong>{info[0].name} </strong>
               </p>
 
@@ -260,7 +262,7 @@ let InfoUser = () => {
               <p>
                 <AiFillTrophy
                   onClick={() => {
-                    loadScore("yes")
+                    loadScore('yes')
                       .then((response) => setRanking(response))
                       .then(() => {
                         setShowRanking(true);
@@ -268,7 +270,7 @@ let InfoUser = () => {
                   }}
                   size={20}
                   color="#fff"
-                  style={{ marginRight: "10px", cursor: "pointer" }}
+                  style={{ marginRight: '10px', cursor: 'pointer' }}
                   title="Pontos"
                 />
                 {score && score.score}

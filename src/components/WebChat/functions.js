@@ -1,21 +1,19 @@
-import api from "../../services/api";
-import { showNotification } from "../../Utils/Notify";
+import api from '../../services/api';
+import { showNotification } from '../../Utils/Notify';
 
 export async function getMessage(auth, taskId) {
   const AUTH = auth;
 
   try {
     const { data } = await api.get(
-      `GTPP/Message.php?AUTH=${AUTH}&app_id=3&task_id=${taskId}`
+      `GTPP/Message.php?AUTH=${AUTH}&app_id=3&task_id=${taskId}`,
     );
 
     if (data.error === true) {
-      showNotification("Erro", data.message, "danger");
+      showNotification('Erro', data.message, 'danger');
     }
-
-    // console.log(data);
   } catch (error) {
-    showNotification("Erro", error.message, "danger");
+    showNotification('Erro', error.message, 'danger');
   }
 }
 
@@ -41,8 +39,7 @@ export async function createMessage(msg, taskId, auth) {
 }
 
 export async function createMessageWithImage(msg, image, taskId, auth) {
-  const img = image.split(",");
-  // console.log(image);
+  const img = image.split(',');
   try {
     const { data } = await api.post(`GTPP/Message.php?AUTH=${auth}&app_id=3`, {
       description: msg,

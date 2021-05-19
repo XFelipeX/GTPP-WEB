@@ -1,19 +1,20 @@
-import { GET_WARNING } from "./warningTypes";
-import { REMOVE_ITEM } from "./warningTypes";
+import { GET_WARNING } from './warningTypes';
+import { REMOVE_ITEM } from './warningTypes';
 
 const initialState = {
   warning: [],
 };
 
 const warningReducer = (state = initialState, action) => {
-  // console.log(state);
   switch (action.type) {
     case GET_WARNING:
       const task = action.payload;
 
-      const search = state.warning.filter(warning => warning.task_id !== task.task_id);
+      const search = state.warning.filter(
+        (warning) => warning.task_id !== task.task_id,
+      );
 
-      if(search){
+      if (search) {
         state.warning = [...search];
       }
 
@@ -24,7 +25,11 @@ const warningReducer = (state = initialState, action) => {
     case REMOVE_ITEM:
       return {
         ...state,
-        warning: [...state.warning.filter(warning => warning.task_id!== action.payload.task_id)]
+        warning: [
+          ...state.warning.filter(
+            (warning) => warning.task_id !== action.payload.task_id,
+          ),
+        ],
       };
 
     default:

@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from "react";
-import "./style.css";
-import { useSelector, useDispatch } from "react-redux";
-import TaskState from "../TaskState";
-import TaskPriority from "../TaskPriority";
-import TaskDate from "../TaskDate";
-import TaskUsers from "../TaskUsers";
-import TaskModal from "../TaskModal";
+import React, { useState, useEffect } from 'react';
+import './style.css';
+import { useSelector, useDispatch } from 'react-redux';
+import TaskState from '../TaskState';
+import TaskPriority from '../TaskPriority';
+import TaskDate from '../TaskDate';
+import TaskUsers from '../TaskUsers';
+import TaskModal from '../TaskModal';
 import {
   taskInfoShow,
   sendInfoModal,
   taskInfoOwner,
   updateModal,
   getNotifications,
-} from "../../redux";
-import api from "../../services/api";
-import { showNotification } from "../../Utils/Notify";
-import TaskWarning from "../TaskWarning";
-import ModalNotifications from "../ModalNotifications";
-import useClickOutside from "../ClickOutside";
-import ComShopDept from "../ComShopDept";
+} from '../../redux';
+import api from '../../services/api';
+import { showNotification } from '../../Utils/Notify';
+import TaskWarning from '../TaskWarning';
+import ModalNotifications from '../ModalNotifications';
+import useClickOutside from '../ClickOutside';
+import ComShopDept from '../ComShopDept';
 
 const Task = ({ task }) => {
   const { visionMenu } = useSelector((state) => state);
@@ -43,7 +43,7 @@ const Task = ({ task }) => {
     userId,
     priority,
     notificationsTask,
-    warning
+    warning,
   ) {
     SendMessage();
     let newArray = [...notifications];
@@ -52,7 +52,7 @@ const Task = ({ task }) => {
       if (notify.task_id === task.id) {
         notify.content.amount = notify.content.message;
         notify.content.object = notify.content.object.filter(
-          (object) => object.type === 1
+          (object) => object.type === 1,
         );
       }
     });
@@ -63,18 +63,16 @@ const Task = ({ task }) => {
     const AUTH = permissions.session;
     try {
       let { data } = await api.get(
-        "GTPP/Task.php?AUTH=" + AUTH + "&app_id=3&id=" + taskId
+        'GTPP/Task.php?AUTH=' + AUTH + '&app_id=3&id=' + taskId,
       );
-
-      // console.log(data);
 
       if (data.error === true) {
         let msg = data.message;
 
-        if (msg.includes("Authorization denied")) {
-          showNotification("Erro", "Autorização negada", "danger");
+        if (msg.includes('Authorization denied')) {
+          showNotification('Erro', 'Autorização negada', 'danger');
         } else {
-          showNotification("Erro", msg, "danger");
+          showNotification('Erro', msg, 'danger');
         }
       } else {
         dispatch(
@@ -88,8 +86,8 @@ const Task = ({ task }) => {
             userId,
             priority,
             notificationsTask,
-            warning
-          )
+            warning,
+          ),
         );
         dispatch(taskInfoShow(data.data));
         loadUserInfo();
@@ -98,13 +96,13 @@ const Task = ({ task }) => {
       if (error.response) {
         let msg = error.response.data.message;
 
-        if (msg.includes("Authorization denied")) {
-          showNotification("Erro", "Autorização negada", "danger");
+        if (msg.includes('Authorization denied')) {
+          showNotification('Erro', 'Autorização negada', 'danger');
         } else {
-          showNotification("Erro", msg, "danger");
+          showNotification('Erro', msg, 'danger');
         }
       } else {
-        showNotification("Erro", String(error.message), "danger");
+        showNotification('Erro', String(error.message), 'danger');
       }
     }
   }
@@ -117,16 +115,16 @@ const Task = ({ task }) => {
     let userId = task.user_id;
     try {
       let { data } = await api.get(
-        "CCPP/Employee.php?AUTH=" + AUTH + "&app_id=3&id=" + userId
+        'CCPP/Employee.php?AUTH=' + AUTH + '&app_id=3&id=' + userId,
       );
 
       if (data.error === true) {
         let msg = data.message;
 
-        if (msg.includes("Authorization denied")) {
-          showNotification("Erro", "Autorização negada", "danger");
+        if (msg.includes('Authorization denied')) {
+          showNotification('Erro', 'Autorização negada', 'danger');
         } else {
-          showNotification("Erro", msg, "danger");
+          showNotification('Erro', msg, 'danger');
         }
       } else {
         let photoUser = photo[0].photo;
@@ -136,7 +134,7 @@ const Task = ({ task }) => {
         dispatch(taskInfoOwner(info));
       }
     } catch (error) {
-      showNotification("Erro", error.message, "danger");
+      showNotification('Erro', error.message, 'danger');
     }
   }
 
@@ -151,7 +149,7 @@ const Task = ({ task }) => {
           total += notification.content.amount;
 
           if (total > 99) {
-            setNotification("+99");
+            setNotification('+99');
           } else if (total === 0) {
             setNotification(0);
           } else {
@@ -163,7 +161,7 @@ const Task = ({ task }) => {
   }, [notifications]);
 
   function SendMessage() {
-    if (webSocket.websocketState === "connected") {
+    if (webSocket.websocketState === 'connected') {
       try {
         let jsonString = {
           type: -2,
@@ -182,15 +180,15 @@ const Task = ({ task }) => {
   return (
     <li
       className="containerTask"
-      style={task.focus == true ? { backgroundColor: "#f29503" } : {}}
+      style={task.focus == true ? { backgroundColor: '#f29503' } : {}}
       ref={domNode}
     >
       <div className="tableLeft">
         <div
           style={
             notification === 0
-              ? { backgroundColor: "transparent" }
-              : { cursor: "pointer" }
+              ? { backgroundColor: 'transparent' }
+              : { cursor: 'pointer' }
           }
           className="tableNotification"
           onClick={() => notification > 0 && setShowNotifications(true)}
@@ -225,7 +223,7 @@ const Task = ({ task }) => {
               task.user_id,
               task.priority,
               task.notifications,
-              task.warning
+              task.warning,
             );
             setShowModal(true);
           }}

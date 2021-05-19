@@ -1,23 +1,23 @@
-import api from "../../services/api";
-import {showNotification} from '../../Utils/Notify';
+import api from '../../services/api';
+import { showNotification } from '../../Utils/Notify';
 
-export const loadTask = async (order, auth) => {
+export const loadTask = async (order, auth, page) => {
   const AUTH = auth;
 
   try {
-    const { data } = await api.get("GTPP/Task.php", {
-      params: { AUTH: AUTH, col: 1, order: "asc", app_id: 3 },
+    const { data } = await api.get('GTPP/_Task.php', {
+      params: { AUTH: AUTH, app_id: 3, page: page, rows: 15 },
     });
 
     if (data.error === true) {
       let msg = data.message;
 
-      if (msg.includes("No data")) {
-        showNotification("Aviso", "Você ainda não possui tarefas", "warning");
-      } else if (msg.includes("Authorization denied")) {
-        showNotification("Erro", "Autorização negada", "danger");
+      if (msg.includes('No data')) {
+        showNotification('Aviso', 'Você ainda não possui tarefas', 'warning');
+      } else if (msg.includes('Authorization denied')) {
+        showNotification('Erro', 'Autorização negada', 'danger');
       } else {
-        showNotification("Erro", msg, "danger");
+        showNotification('Erro', msg, 'danger');
       }
     }
     return data;
@@ -29,18 +29,18 @@ export const loadTask = async (order, auth) => {
 export const loadTaskStates = async (auth) => {
   const AUTH = auth;
   try {
-    const { data } = await api.get("GTPP/TaskState.php", {
+    const { data } = await api.get('GTPP/TaskState.php', {
       params: { AUTH: AUTH, app_id: 3 },
     });
     if (data.error === true) {
       let msg = data.message;
 
-      if (msg.includes("No data")) {
-        showNotification("Aviso", "Você ainda não possui tarefas", "warning");
-      } else if (msg.includes("Authorization denied")) {
-        showNotification("Erro", "Autorização negada", "danger");
+      if (msg.includes('No data')) {
+        showNotification('Aviso', 'Você ainda não possui tarefas', 'warning');
+      } else if (msg.includes('Authorization denied')) {
+        showNotification('Erro', 'Autorização negada', 'danger');
       } else {
-        showNotification("Erro", msg, "danger");
+        showNotification('Erro', msg, 'danger');
       }
     }
     return data;
@@ -52,22 +52,20 @@ export const loadTaskStates = async (auth) => {
 export const loadUserImages = async (id, auth) => {
   const AUTH = auth;
   try {
-    const {
-      data,
-    } = await api.get(
-      "http://192.168.0.99:71/GLOBAL/Controller/CCPP/EmployeePhoto.php",
-      { params: { AUTH: AUTH, id: id, app_id: 3 } }
+    const { data } = await api.get(
+      'http://192.168.0.99:71/GLOBAL/Controller/CCPP/EmployeePhoto.php',
+      { params: { AUTH: AUTH, id: id, app_id: 3 } },
     );
 
     if (data.error === true) {
       let msg = data.message;
 
-      if (msg.includes("No data")) {
-        showNotification("Aviso", "Você ainda não possui tarefas", "warning");
-      } else if (msg.includes("Authorization denied")) {
-        showNotification("Erro", "Autorização negada", "danger");
+      if (msg.includes('No data')) {
+        showNotification('Aviso', 'Você ainda não possui tarefas', 'warning');
+      } else if (msg.includes('Authorization denied')) {
+        showNotification('Erro', 'Autorização negada', 'danger');
       } else {
-        showNotification("Erro", msg, "danger");
+        showNotification('Erro', msg, 'danger');
       }
     }
     return data;
@@ -80,18 +78,18 @@ export const loadCompanies = async (auth) => {
   const AUTH = auth;
 
   try {
-    const { data } = await api.get("CCPP/Company.php", {
+    const { data } = await api.get('CCPP/Company.php', {
       params: { AUTH: AUTH, app_id: 3 },
     });
     if (data.error === true) {
       let msg = data.message;
 
-      if (msg.includes("No data")) {
-        showNotification("Aviso", "Você ainda não possui tarefas", "warning");
-      } else if (msg.includes("Authorization denied")) {
-        showNotification("Erro", "Autorização negada", "danger");
+      if (msg.includes('No data')) {
+        showNotification('Aviso', 'Você ainda não possui tarefas', 'warning');
+      } else if (msg.includes('Authorization denied')) {
+        showNotification('Erro', 'Autorização negada', 'danger');
       } else {
-        showNotification("Erro", msg, "danger");
+        showNotification('Erro', msg, 'danger');
       }
     }
     return data;
@@ -104,18 +102,18 @@ export const loadShop = async (auth) => {
   const AUTH = auth;
 
   try {
-    const { data } = await api.get("CCPP/Shop.php", {
+    const { data } = await api.get('CCPP/Shop.php', {
       params: { AUTH: AUTH, app_id: 3 },
     });
     if (data.error === true) {
       let msg = data.message;
 
-      if (msg.includes("No data")) {
-        showNotification("Aviso", "Você ainda não possui tarefas", "warning");
-      } else if (msg.includes("Authorization denied")) {
-        showNotification("Erro", "Autorização negada", "danger");
+      if (msg.includes('No data')) {
+        showNotification('Aviso', 'Você ainda não possui tarefas', 'warning');
+      } else if (msg.includes('Authorization denied')) {
+        showNotification('Erro', 'Autorização negada', 'danger');
       } else {
-        showNotification("Erro", msg, "danger");
+        showNotification('Erro', msg, 'danger');
       }
     }
     return data;
@@ -128,18 +126,18 @@ export const loadDept = async (auth) => {
   const AUTH = auth;
 
   try {
-    const { data } = await api.get("CCPP/Department.php", {
+    const { data } = await api.get('CCPP/Department.php', {
       params: { AUTH: AUTH, app_id: 3 },
     });
     if (data.error === true) {
       let msg = data.message;
 
-      if (msg.includes("No data")) {
-        showNotification("Aviso", "Você ainda não possui tarefas", "warning");
-      } else if (msg.includes("Authorization denied")) {
-        showNotification("Erro", "Autorização negada", "danger");
+      if (msg.includes('No data')) {
+        showNotification('Aviso', 'Você ainda não possui tarefas', 'warning');
+      } else if (msg.includes('Authorization denied')) {
+        showNotification('Erro', 'Autorização negada', 'danger');
       } else {
-        showNotification("Erro", msg, "danger");
+        showNotification('Erro', msg, 'danger');
       }
     }
     return data;
@@ -150,15 +148,14 @@ export const loadDept = async (auth) => {
 
 export const loadNotifications = async (auth) => {
   const AUTH = auth;
-  
+
   try {
     const { data } = await api.get(`GTPP/Notify.php?AUTH=${AUTH}&app_id=3`);
-    // console.log(data);
     if (data.error === true) {
       let msg = data.message;
-      if (msg.includes("No data")) {
+      if (msg.includes('No data')) {
       } else {
-        showNotification("Erro", msg, "danger");
+        showNotification('Erro', msg, 'danger');
       }
 
       return [];
@@ -166,7 +163,7 @@ export const loadNotifications = async (auth) => {
       return data.data;
     }
   } catch (error) {
-    showNotification("Erro", String(error.message), "danger");
+    showNotification('Erro', String(error.message), 'danger');
     return [];
   }
 };

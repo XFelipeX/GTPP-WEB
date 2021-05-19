@@ -2,16 +2,13 @@ import { UPDATEMODAL } from './modalUpdateTypes';
 
 const initialState = false;
 
-
-
 const modalUpdateReducer = (state = initialState, action) => {
-  // console.log(action.payload);
   switch (action.type) {
     case UPDATEMODAL:
-      return !state 
+      return !state;
     default:
-      return state
+      return state;
   }
-}
+};
 
 export default modalUpdateReducer;

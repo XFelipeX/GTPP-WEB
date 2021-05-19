@@ -1,23 +1,33 @@
-import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { getTaskFilter, updateStateAdmin, updateTask } from "../../redux";
-import { AiOutlineClose } from "react-icons/ai";
-import { BsSearch, BsFillBellFill } from "react-icons/bs";
-import useClickOutside from "../ClickOutside";
-import "./style.css";
+import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+  getTask,
+  setStatusSearch,
+  setTotalSearch,
+  updateStateAdmin,
+  updateTask,
+} from '../../redux';
+import { AiOutlineClose } from 'react-icons/ai';
+import { BsSearch, BsFillBellFill } from 'react-icons/bs';
+import useClickOutside from '../ClickOutside';
+import './style.css';
+import { searchByDescription, searchByEmployee } from './functions';
 
 const SearchTask = () => {
   const dispatch = useDispatch();
-  const { filterTask } = useSelector((state) => state);
+  const { permissions } = useSelector((state) => state);
   const { tasks } = useSelector((state) => state);
+  const { pagination } = useSelector((state) => state);
   const { seeAdminSet } = useSelector((state) => state);
   const { vinculatedUsers } = useSelector((state) => state);
   const { taskStates } = useSelector((state) => state);
-  const [typeSearch, setTypeSearch] = useState("descricao");
+  const [typeSearch, setTypeSearch] = useState('descricao');
   const { notifications } = useSelector((state) => state);
   const [allNotifications, setAllNotifications] = useState([]);
   const [totalNotificantions, setTotaNotifications] = useState(0);
   const [showAllNotifications, setShowAllNotifications] = useState(false);
+  const [searchDescription, setSearchDescription] = useState('');
+  const [searchEmployeeDesc, setSearchEmployeeDesc] = useState('');
 
   let domNode = useClickOutside(() => {
     setShowAllNotifications(false);
@@ -31,7 +41,7 @@ const SearchTask = () => {
       const { content } = taskNotification;
       if (content.object) {
         const taskF = tasks.filter(
-          (taskFilter) => +taskFilter.id === +taskNotification.task_id
+          (taskFilter) => +taskFilter.id === +taskNotification.task_id,
         );
 
         let userAuthor;
@@ -41,52 +51,52 @@ const SearchTask = () => {
           switch (Number(info.type)) {
             case 1:
               userAuthor = vinculatedUsers.filter(
-                (user) => Number(user.id) === Number(info.send_user_id)
+                (user) => Number(user.id) === Number(info.send_user_id),
               );
               setAllNotifications((oldarray) => [
                 ...oldarray,
                 {
                   message: info.object.description,
-                  description: taskF[0] ? taskF[0].description : "",
-                  user_name: userAuthor[0].name + " disse",
+                  description: taskF[0] ? taskF[0].description : '',
+                  user_name: userAuthor[0].name + ' disse',
                 },
               ]);
               break;
             case 2:
               userAuthor = vinculatedUsers.filter(
-                (user) => Number(user.id) === Number(info.send_user_id)
+                (user) => Number(user.id) === Number(info.send_user_id),
               );
               setAllNotifications((oldarray) => [
                 ...oldarray,
                 {
                   message: info.object.description,
-                  description: taskF[0] ? taskF[0].description : "",
+                  description: taskF[0] ? taskF[0].description : '',
                   user_name: userAuthor[0].name,
                 },
               ]);
               break;
             case 3:
               userAuthor = vinculatedUsers.filter(
-                (user) => Number(user.id) === Number(info.send_user_id)
+                (user) => Number(user.id) === Number(info.send_user_id),
               );
               setAllNotifications((oldarray) => [
                 ...oldarray,
                 {
                   message: info.object.description,
-                  description: taskF[0] ? taskF[0].description : "",
+                  description: taskF[0] ? taskF[0].description : '',
                   user_name: userAuthor[0].name,
                 },
               ]);
               break;
             case 4:
               userAuthor = vinculatedUsers.filter(
-                (user) => Number(user.id) === Number(info.send_user_id)
+                (user) => Number(user.id) === Number(info.send_user_id),
               );
               setAllNotifications((oldarray) => [
                 ...oldarray,
                 {
                   message: info.object.description,
-                  description: taskF[0] ? taskF[0].description : "",
+                  description: taskF[0] ? taskF[0].description : '',
                   user_name: userAuthor[0].name,
                 },
               ]);
@@ -94,18 +104,18 @@ const SearchTask = () => {
               break;
             case 5:
               let user = vinculatedUsers.filter(
-                (user) => Number(user.id) === Number(info.object.changeUser)
+                (user) => Number(user.id) === Number(info.object.changeUser),
               );
 
               userAuthor = vinculatedUsers.filter(
-                (user) => Number(user.id) === Number(info.send_user_id)
+                (user) => Number(user.id) === Number(info.send_user_id),
               );
               if (userAuthor[0]) {
                 setAllNotifications((oldarray) => [
                   ...oldarray,
                   {
-                    message: user[0].name + " " + info.object.description,
-                    description: taskF[0] ? taskF[0].description : "",
+                    message: user[0].name + ' ' + info.object.description,
+                    description: taskF[0] ? taskF[0].description : '',
                     user_name: userAuthor[0].name,
                   },
                 ]);
@@ -114,16 +124,16 @@ const SearchTask = () => {
               break;
             case 6:
               userAuthor = vinculatedUsers.filter(
-                (user) => Number(user.id) === Number(info.send_user_id)
+                (user) => Number(user.id) === Number(info.send_user_id),
               );
               const newState = taskStates.filter(
-                (state) => Number(state.id) === Number(info.object.state_id)
+                (state) => Number(state.id) === Number(info.object.state_id),
               );
               setAllNotifications((oldarray) => [
                 ...oldarray,
                 {
-                  message: "Mudou para " + newState[0].description,
-                  description: taskF[0] ? taskF[0].description : "",
+                  message: 'Mudou para ' + newState[0].description,
+                  description: taskF[0] ? taskF[0].description : '',
                   user_name: userAuthor[0].name,
                 },
               ]);
@@ -136,17 +146,101 @@ const SearchTask = () => {
     setTotaNotifications(total);
   }, [notifications]);
 
+  React.useEffect(() => {
+    if (
+      pagination.search === true &&
+      searchDescription !== '' &&
+      searchEmployeeDesc === ''
+    ) {
+      if (seeAdminSet === true) {
+        searchByDescription(
+          permissions.session,
+          pagination.pageSearch,
+          searchDescription,
+          true,
+        ).then((response) => {
+          if (response.data) {
+            dispatch(getTask([...response.data]));
+          }
+        });
+      } else {
+        searchByDescription(
+          permissions.session,
+          pagination.pageSearch,
+          searchDescription,
+          false,
+        ).then((response) => {
+          if (response.data) {
+            setTimeout(() => {
+              dispatch(getTask([...response.data]));
+            }, 1000);
+          }
+        });
+      }
+    }
+  }, [pagination.pageSearch]);
+
+  React.useEffect(() => {
+    if (
+      pagination.search === true &&
+      searchEmployeeDesc !== '' &&
+      searchDescription === ''
+    ) {
+      if (seeAdminSet === true) {
+        searchByEmployee(
+          permissions.session,
+          pagination.pageSearch,
+          searchEmployeeDesc,
+          true,
+        ).then((response) => {
+          if (response.data) {
+            dispatch(getTask([...response.data]));
+          }
+        });
+      } else {
+        searchByEmployee(
+          permissions.session,
+          pagination.pageSearch,
+          searchEmployeeDesc,
+          false,
+        ).then((response) => {
+          if (response.data) {
+            setTimeout(() => {
+              dispatch(getTask([...response.data]));
+            }, 1000);
+          }
+        });
+      }
+    }
+  }, [pagination.pageSearch]);
+
   function search(e) {
     const text = e.toLowerCase();
+    setSearchDescription(text);
 
-    const filter = filterTask.filter.filter((task) =>
-      task.description.toLowerCase().includes(text)
-    );
-    if (filter.length !== 0) {
-      dispatch(getTaskFilter(filter));
+    dispatch(setStatusSearch(true));
+
+    if (seeAdminSet === true) {
+      searchByDescription(permissions.session, 1, text, true).then(
+        (response) => {
+          if (response.data) {
+            dispatch(getTask(response.data));
+            dispatch(setTotalSearch(response.pages));
+          }
+        },
+      );
+    } else {
+      searchByDescription(permissions.session, 0, text, false).then(
+        (response) => {
+          if (response.data) {
+            dispatch(getTask(response.data));
+            dispatch(setTotalSearch(response.pages));
+          }
+        },
+      );
     }
 
-    if (text === "") {
+    if (text === '') {
       if (seeAdminSet === true) {
         dispatch(updateStateAdmin());
       } else {
@@ -157,24 +251,27 @@ const SearchTask = () => {
 
   function searchEmployee(e) {
     const text = e.toLowerCase();
-    let filter = [];
-    const filterUser = vinculatedUsers.filter((user) =>
-      user.name.toLowerCase().includes(text)
-    );
+    setSearchEmployeeDesc(text);
 
-    filterTask.filter.map((task) => {
-      filterUser.map((user) => {
-        if (+task.user_id === +user.id) {
-          filter.push(task);
+    dispatch(setStatusSearch(true));
+
+    if (seeAdminSet === true) {
+      searchByEmployee(permissions.session, 0, text, true).then((response) => {
+        if (response.data) {
+          dispatch(getTask(response.data));
+          dispatch(setTotalSearch(response.pages));
         }
       });
-    });
-
-    if (filter.length !== 0) {
-      dispatch(getTaskFilter(filter));
+    } else {
+      searchByEmployee(permissions.session, 0, text, false).then((response) => {
+        if (response.data) {
+          dispatch(getTask(response.data));
+          dispatch(setTotalSearch(response.pages));
+        }
+      });
     }
 
-    if (text === "") {
+    if (text === '') {
       if (seeAdminSet === true) {
         dispatch(updateStateAdmin());
       } else {
@@ -184,12 +281,15 @@ const SearchTask = () => {
   }
 
   function clearSearch() {
-    document.getElementById("search").value = "";
+    document.getElementById('search').value = '';
+    dispatch(setStatusSearch(false));
     if (seeAdminSet === true) {
       dispatch(updateStateAdmin());
     } else {
       dispatch(updateTask());
     }
+    setSearchDescription('');
+    setSearchEmployeeDesc('');
   }
 
   return (
@@ -216,9 +316,9 @@ const SearchTask = () => {
             className="btnSearchTask"
             type="button"
             onClick={() =>
-              typeSearch === "descricao"
-                ? search(document.getElementById("search").value)
-                : searchEmployee(document.getElementById("search").value)
+              typeSearch === 'descricao'
+                ? search(document.getElementById('search').value)
+                : searchEmployee(document.getElementById('search').value)
             }
           >
             <BsSearch size={25} />
@@ -233,7 +333,7 @@ const SearchTask = () => {
           >
             <BsFillBellFill
               size={25}
-              color={totalNotificantions > 0 ? "#ff4800" : "#fff"}
+              color={totalNotificantions > 0 ? '#ff4800' : '#fff'}
             />
             {totalNotificantions > 0 && totalNotificantions}
           </div>
@@ -256,48 +356,3 @@ const SearchTask = () => {
 };
 
 export default SearchTask;
-
-// React.useEffect(() => {
-//   setAllNotifications([]);
-//   let total = 0;
-
-//   if (notifications.length > 0) {
-//     notifications.map((notification) => {
-//       const filterTask = tasks.filter(
-//         (task) => task.id === notification.task_id
-//       );
-
-//       notification.content.object.map((obj) => {
-//         const filterUser = vinculatedUsers.filter(
-//           (user) => user.id === obj.send_user_id
-//         );
-
-//         if (obj.task_id === notification.task_id) {
-//           obj.task_description = filterTask[0].description;
-//           obj.send_user_name = filterUser[0].name;
-
-//           if (+obj.type === 6) {
-//             const filterState = taskStates.filter(
-//               (state) => state.id === obj.object.state_id
-//             );
-
-//             if (filterState.length > 0) {
-//               obj.object.description =
-//                 "Mudou para " + filterState[0].description;
-//             }
-//           }
-
-//           if (+obj.type === 1) {
-//             obj.send_user_name = obj.send_user_name + " disse";
-//           }
-//         }
-//       });
-//       setAllNotifications((oldArray) => [
-//         ...oldArray,
-//         ...notification.content.object,
-//       ]);
-//       total += notification.content.object.length;
-//     });
-//     setTotaNotifications(total);
-//   }
-// }, [notifications]);

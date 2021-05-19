@@ -5,38 +5,6 @@
   color: white;
 }
 
-@media only screen and (max-width: 1366px) {
-  /* .searchContainer{
-        width: 83.7%;
-    }
-
-    .btnSearchTask{
-        position: relative;
-        right: 3em;
-    }
-
-    .typeSearch{
-        position: relative;
-        right: 3em;
-    } */
-}
-
-@media only screen and (max-width: 1536px) {
-  /* .searchContainer{
-        width: 83.7%;
-    } */
-
-  /* .btnSearchTask{
-        position: relative;
-        right: 3em;
-    }
-
-    .typeSearch{
-        position: relative;
-        right: 3em;
-    } */
-}
-
 .searchArea {
   width: 100%;
   display: flex;

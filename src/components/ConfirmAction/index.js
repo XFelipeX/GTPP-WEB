@@ -1,5 +1,5 @@
-import React from "react";
-import "./style.css";
+import React from 'react';
+import './style.css';
 
 let ConfirmAction = (props) => {
   return (
@@ -13,18 +13,16 @@ let ConfirmAction = (props) => {
             <button
               className="btnConfirm"
               onClick={() => {
-                // props.confirm();
-
                 props.action();
               }}
-              style={{ marginTop: "0" }}
+              style={{ marginTop: '0' }}
             >
               Confirmar
             </button>
             <button
               className="btnCancel"
               onClick={() => props.cancelAction()}
-              style={{ marginTop: "0" }}
+              style={{ marginTop: '0' }}
             >
               Cancelar
             </button>

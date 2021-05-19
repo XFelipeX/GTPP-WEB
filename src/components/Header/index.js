@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   addUsersOnline,
   getNotifications,
@@ -9,21 +9,20 @@ import {
   logOff,
   taskInfoShow,
   updateStateUsers,
-} from "../../redux";
-import ButtonLogoff from "../ButtonLogoff";
-import CreateTask from "../CreateTask";
-import VisionMenu from "../VisionMenu";
-import ButtonFilter from "../ButtonFilter";
-import InfoUser from "../InfoUser";
-import LoadTasks from "../LoadTasks";
-import OrderTasks from "../OrderTasks";
-import { showNotification } from "../../Utils/Notify";
-import api from "../../services/api";
-import "./style.css";
-import SearchTask from "../SearchTask";
-import { removeUsersOnline } from "../../redux/webSocket/webSocketActions";
-
-import { useHistory } from "react-router-dom";
+} from '../../redux';
+import ButtonLogoff from '../ButtonLogoff';
+import CreateTask from '../CreateTask';
+import VisionMenu from '../VisionMenu';
+import ButtonFilter from '../ButtonFilter';
+import InfoUser from '../InfoUser';
+import LoadTasks from '../LoadTasks';
+import OrderTasks from '../OrderTasks';
+import { showNotification } from '../../Utils/Notify';
+import api from '../../services/api';
+import './style.css';
+import SearchTask from '../SearchTask';
+import { removeUsersOnline } from '../../redux/webSocket/webSocketActions';
+import { useHistory } from 'react-router-dom';
 
 function Header() {
   const dispatch = useDispatch();
@@ -113,16 +112,16 @@ function Header() {
 
   useEffect(() => {
     if (
-      webSocket.message !== "" &&
+      webSocket.message !== '' &&
       webSocket.message !== undefined &&
       webSocket.message.type === 1
     ) {
       //type 1 == Message
       let task = tasks.filter(
-        (task) => Number(task.id) === Number(webSocket.message.task_id)
+        (task) => Number(task.id) === Number(webSocket.message.task_id),
       );
       let user = vinculatedUsers.filter(
-        (user) => Number(user.id) === Number(webSocket.message.send_user_id)
+        (user) => Number(user.id) === Number(webSocket.message.send_user_id),
       );
       let taskIsVisible = false;
 
@@ -139,19 +138,19 @@ function Header() {
           taskIsVisible === false &&
           permissions.id !== webSocket.message.send_user_id
         ) {
-          console.log("notificacao");
+          console.log('notificacao');
           showNotification(
             task[0].description,
-            user[0].name + ": " + webSocket.message.object.description,
-            "info"
+            user[0].name + ': ' + webSocket.message.object.description,
+            'info',
           );
 
           if (
-            Notification.permission === "granted" &&
+            Notification.permission === 'granted' &&
             document.hidden === true
           ) {
             const notification = new Notification(task[0].description, {
-              body: user[0].name + ": " + webSocket.message.object.description,
+              body: user[0].name + ': ' + webSocket.message.object.description,
             });
 
             window.focus();
@@ -166,17 +165,17 @@ function Header() {
             if (webSocket.historic[0].task_id !== taskVisible.info.task_id) {
               showNotification(
                 task[0].description,
-                user[0].name + ": " + webSocket.message.object.description,
-                "info"
+                user[0].name + ': ' + webSocket.message.object.description,
+                'info',
               );
 
               if (
-                Notification.permission === "granted" &&
+                Notification.permission === 'granted' &&
                 document.hidden === true
               ) {
                 const notification = new Notification(task[0].description, {
                   body:
-                    user[0].name + ": " + webSocket.message.object.description,
+                    user[0].name + ': ' + webSocket.message.object.description,
                 });
 
                 window.focus();
@@ -188,17 +187,17 @@ function Header() {
           } else if (permissions.id !== webSocket.message.send_user_id) {
             showNotification(
               task[0].description,
-              user[0].name + ": " + webSocket.message.object.description,
-              "info"
+              user[0].name + ': ' + webSocket.message.object.description,
+              'info',
             );
 
             if (
-              Notification.permission === "granted" &&
+              Notification.permission === 'granted' &&
               document.hidden === true
             ) {
               const notification = new Notification(task[0].description, {
                 body:
-                  user[0].name + ": " + webSocket.message.object.description,
+                  user[0].name + ': ' + webSocket.message.object.description,
               });
 
               window.focus();
@@ -209,30 +208,27 @@ function Header() {
           }
         }
 
-        dispatch(getWebSocketMessage(""));
+        dispatch(getWebSocketMessage(''));
       }
     } else if (
-      webSocket.message !== "" &&
+      webSocket.message !== '' &&
       webSocket.message !== undefined &&
       webSocket.message.type === 2
     ) {
       //type 2 == itens
-
-      // console.log(webSocket.message)
-
       if (permissions.id !== webSocket.message.send_user_id) {
         let taskf = tasks.filter(
-          (task) => task.id == webSocket.message.task_id
+          (task) => task.id == webSocket.message.task_id,
         );
         let user = vinculatedUsers.filter(
-          (user) => Number(user.id) === Number(webSocket.message.send_user_id)
+          (user) => Number(user.id) === Number(webSocket.message.send_user_id),
         );
 
         if (taskVisible.info && taskVisible.info.task_id === taskf[0].id) {
           if (webSocket.message.object.itemUp) {
             if (webSocket.message.object.remove) {
               taskVisible.task.task_item = taskVisible.task.task_item.filter(
-                (item) => item.id !== webSocket.message.object.itemUp.id
+                (item) => item.id !== webSocket.message.object.itemUp.id,
               );
             } else {
               let newItem = true;
@@ -269,17 +265,17 @@ function Header() {
             task.percent = webSocket.message.object.percent;
             showNotification(
               taskf[0].description,
-              webSocket.message.object.description + " por " + user[0].name,
-              "info"
+              webSocket.message.object.description + ' por ' + user[0].name,
+              'info',
             );
 
             if (
-              Notification.permission === "granted" &&
+              Notification.permission === 'granted' &&
               document.hidden === true
             ) {
               const notification = new Notification(taskf[0].description, {
                 body:
-                  webSocket.message.object.description + " por " + user[0].name,
+                  webSocket.message.object.description + ' por ' + user[0].name,
               });
 
               window.focus();
@@ -291,7 +287,7 @@ function Header() {
         dispatch(getTask([...tasksUp]));
       }
     } else if (
-      webSocket.message !== "" &&
+      webSocket.message !== '' &&
       webSocket.message !== undefined &&
       webSocket.message.type === -1
     ) {
@@ -300,13 +296,13 @@ function Header() {
       if (permissions.id !== webSocket.message.send_user_id) {
         const state = webSocket.message.state;
         let user = vinculatedUsers.filter(
-          (user) => Number(user.id) === Number(webSocket.message.send_user_id)
+          (user) => Number(user.id) === Number(webSocket.message.send_user_id),
         );
         const userId = webSocket.message.send_user_id;
 
-        if (state === "connected" && user[0]) {
+        if (state === 'connected' && user[0]) {
           dispatch(addUsersOnline(userId));
-          showNotification(user[0].name, "Acabou de entrar", "info");
+          showNotification(user[0].name, 'Acabou de entrar', 'info');
         } else if (user[0]) {
           let users = [...webSocket.users];
           let item;
@@ -323,11 +319,11 @@ function Header() {
           users.splice(item, indexRemove);
           dispatch(getUsersOnline([...users]));
           dispatch(removeUsersOnline(userId));
-          showNotification(user[0].name, "Acabou de sair", "info");
+          showNotification(user[0].name, 'Acabou de sair', 'info');
         }
       }
     } else if (
-      webSocket.message !== "" &&
+      webSocket.message !== '' &&
       webSocket.message !== undefined &&
       webSocket.message.type === -2
     ) {
@@ -337,36 +333,33 @@ function Header() {
         dispatch(getUsersOnline([...webSocket.message.user]));
       }
     } else if (
-      webSocket.message !== "" &&
+      webSocket.message !== '' &&
       webSocket.message !== undefined &&
       webSocket.message.type === -3
     ) {
       const changeUser = Number(webSocket.message.user_id);
       let user = vinculatedUsers.filter(
-        (user) => Number(user.id) === Number(changeUser)
+        (user) => Number(user.id) === Number(changeUser),
       );
       const msg = webSocket.message.object.description;
-      // let tasksUp = [...tasks];
 
       const task = tasks.filter(
-        (task) => task.id === webSocket.message.task_id
+        (task) => task.id === webSocket.message.task_id,
       );
-      // console.log(task)
       if (permissions.id === +changeUser) {
         const tasksf = tasks.filter(
-          (taskr) => taskr.id !== webSocket.message.task_id
+          (taskr) => taskr.id !== webSocket.message.task_id,
         );
         if (seeAdminSet === false) {
           dispatch(getTask([...tasksf]));
         }
       } else {
-        showNotification(task[0].description, user[0].name + " " + msg, "info");
+        showNotification(task[0].description, user[0].name + ' ' + msg, 'info');
         sumNotification(5, task[0].id, webSocket.message);
         dispatch(updateStateUsers());
       }
-      // console.log(webSocket.message);
     } else if (
-      webSocket.message !== "" &&
+      webSocket.message !== '' &&
       webSocket.message !== undefined &&
       webSocket.message.type === 3
     ) {
@@ -377,10 +370,10 @@ function Header() {
         permissions.id !== webSocket.message.send_user_id
       ) {
         let task = filterTask.filter.filter(
-          (task) => task.id == webSocket.message.task_id
+          (task) => task.id == webSocket.message.task_id,
         );
         let user = vinculatedUsers.filter(
-          (user) => Number(user.id) === Number(webSocket.message.send_user_id)
+          (user) => Number(user.id) === Number(webSocket.message.send_user_id),
         );
 
         const info = webSocket.message.object.update
@@ -399,7 +392,6 @@ function Header() {
           dispatch(getTask([...tasksUp]));
 
           if (taskVisible.info && taskVisible.info.task_id === taskId) {
-            // dispatch(sendInfoModal({...taskVisible.info,description:info}))
             taskVisible.info.description = info;
           } else {
             sumNotification(3, task[0].id, webSocket.message);
@@ -407,7 +399,7 @@ function Header() {
         } else {
           if (taskVisible.info && taskVisible.info.task_id === taskId) {
             dispatch(
-              taskInfoShow({ ...taskVisible.task, full_description: info })
+              taskInfoShow({ ...taskVisible.task, full_description: info }),
             );
           } else {
             sumNotification(3, task[0].id, webSocket.message);
@@ -416,13 +408,13 @@ function Header() {
 
         showNotification(
           task[0].description,
-          webSocket.message.object.description + " por " + user[0].name,
-          "info"
+          webSocket.message.object.description + ' por ' + user[0].name,
+          'info',
         );
 
-        if (Notification.permission === "granted" && document.hidden === true) {
+        if (Notification.permission === 'granted' && document.hidden === true) {
           const notification = new Notification(task[0].description, {
-            body: webSocket.message.object.description + " por " + user[0].name,
+            body: webSocket.message.object.description + ' por ' + user[0].name,
           });
 
           window.focus();
@@ -430,18 +422,17 @@ function Header() {
         }
       }
     } else if (
-      webSocket.message !== "" &&
+      webSocket.message !== '' &&
       webSocket.message !== undefined &&
       webSocket.message.type === 4
     ) {
       //type 4 == priority
-
       if (permissions.id !== webSocket.message.send_user_id) {
         let task = filterTask.filter.filter(
-          (task) => task.id == webSocket.message.task_id
+          (task) => task.id == webSocket.message.task_id,
         );
         let user = vinculatedUsers.filter(
-          (user) => Number(user.id) === Number(webSocket.message.user_id)
+          (user) => Number(user.id) === Number(webSocket.message.user_id),
         );
 
         if (webSocket.message.object.update) {
@@ -451,7 +442,8 @@ function Header() {
           let tasksUp = [...tasks];
 
           tasksUp.map(
-            (task) => task.id == taskId && (task.priority = info > 0 ? info : 0)
+            (task) =>
+              task.id == taskId && (task.priority = info > 0 ? info : 0),
           );
 
           dispatch(getTask([...tasksUp]));
@@ -463,13 +455,13 @@ function Header() {
 
         showNotification(
           task[0].description,
-          webSocket.message.object.description + " por " + user[0].name,
-          "info"
+          webSocket.message.object.description + ' por ' + user[0].name,
+          'info',
         );
 
-        if (Notification.permission === "granted" && document.hidden === true) {
+        if (Notification.permission === 'granted' && document.hidden === true) {
           const notification = new Notification(task[0].description, {
-            body: webSocket.message.object.description + " por " + user[0].name,
+            body: webSocket.message.object.description + ' por ' + user[0].name,
           });
 
           window.focus();
@@ -477,7 +469,7 @@ function Header() {
         }
       }
     } else if (
-      webSocket.message !== "" &&
+      webSocket.message !== '' &&
       webSocket.message !== undefined &&
       webSocket.message.type === 5
     ) {
@@ -485,10 +477,9 @@ function Header() {
       // *add update for visualization of adm
       const changeUser = Number(webSocket.message.object.changeUser);
       let user = vinculatedUsers.filter(
-        (user) => Number(user.id) === Number(changeUser)
+        (user) => Number(user.id) === Number(changeUser),
       );
 
-      // console.log(webSocket.message);
       if (permissions.id !== webSocket.message.send_user_id && user[0]) {
         const msg = webSocket.message.object.description;
 
@@ -496,7 +487,7 @@ function Header() {
           if (response) {
             let task = response;
 
-            if (msg.includes("vinculado")) {
+            if (msg.includes('vinculado')) {
               // console.log(task);
 
               if (!(taskVisible.info && taskVisible.info.task_id === task.id)) {
@@ -506,17 +497,17 @@ function Header() {
               task[0].focus = true;
 
               if (permissions.id === +changeUser) {
-                showNotification(task[0].description, "Você " + msg, "info");
+                showNotification(task[0].description, 'Você ' + msg, 'info');
 
                 if (
-                  Notification.permission === "granted" &&
+                  Notification.permission === 'granted' &&
                   document.hidden === true
                 ) {
                   const notification = new Notification(
                     webSocket.message.object.task.description,
                     {
-                      body: "Você " + msg,
-                    }
+                      body: 'Você ' + msg,
+                    },
                   );
 
                   window.focus();
@@ -530,16 +521,16 @@ function Header() {
                 dispatch(updateStateUsers());
                 showNotification(
                   task[0].description,
-                  user[0].name + " " + msg,
-                  "info"
+                  user[0].name + ' ' + msg,
+                  'info',
                 );
 
                 if (
-                  Notification.permission === "granted" &&
+                  Notification.permission === 'granted' &&
                   document.hidden === true
                 ) {
                   const notification = new Notification(task[0].description, {
-                    body: user[0].name + " " + msg,
+                    body: user[0].name + ' ' + msg,
                   });
 
                   window.focus();
@@ -551,14 +542,14 @@ function Header() {
         });
       } else if (webSocket.message.send_user_id === changeUser) {
         const tasksf = tasks.filter(
-          (taskr) => taskr.id !== webSocket.message.task_id
+          (taskr) => taskr.id !== webSocket.message.task_id,
         );
         if (seeAdminSet === false) {
           dispatch(getTask([...tasksf]));
         }
       }
     } else if (
-      webSocket.message !== "" &&
+      webSocket.message !== '' &&
       webSocket.message !== undefined &&
       webSocket.message.type === 6
     ) {
@@ -566,7 +557,7 @@ function Header() {
       if (permissions.id !== webSocket.message.send_user_id) {
         const info = webSocket.message.object;
         let user = vinculatedUsers.filter(
-          (user) => Number(user.id) === Number(webSocket.message.send_user_id)
+          (user) => Number(user.id) === Number(webSocket.message.send_user_id),
         );
 
         if (taskVisible.info && taskVisible.info.task_id === info.task_id) {
@@ -585,10 +576,10 @@ function Header() {
 
         if (task && task[0]) {
           const lastState = taskStates.filter(
-            (state) => Number(state.id) === Number(task[0].state_id)
+            (state) => Number(state.id) === Number(task[0].state_id),
           );
           const newState = taskStates.filter(
-            (state) => Number(state.id) === Number(info.state_id)
+            (state) => Number(state.id) === Number(info.state_id),
           );
 
           let tasksUp = [...tasks];
@@ -610,16 +601,16 @@ function Header() {
             const date = formatDate(webSocket.message.object.new_final_date);
             showNotification(
               task[0].description,
-              "A tarefa foi adiada para " + date,
-              "info"
+              'A tarefa foi adiada para ' + date,
+              'info',
             );
 
             if (
-              Notification.permission === "granted" &&
+              Notification.permission === 'granted' &&
               document.hidden === true
             ) {
               const notification = new Notification(info.description, {
-                body: "A tarefa foi adiada para " + date,
+                body: 'A tarefa foi adiada para ' + date,
               });
 
               window.focus();
@@ -628,13 +619,13 @@ function Header() {
           } else {
             showNotification(
               task[0].description,
-              "Mudou de " +
+              'Mudou de ' +
                 lastState[0].description +
-                " para " +
+                ' para ' +
                 newState[0].description +
-                " por " +
+                ' por ' +
                 user[0].name,
-              "info"
+              'info',
             );
           }
         }
@@ -643,22 +634,22 @@ function Header() {
       webSocket.message &&
       webSocket.message.message &&
       webSocket.message.message.includes(
-        "This user has been connected to another place"
+        'This user has been connected to another place',
       )
     ) {
-      sessionStorage.removeItem("token");
+      sessionStorage.removeItem('token');
 
       dispatch(logOff());
-      history.push("/");
+      history.push('/');
 
-      showNotification("Aviso", "Usuário conectado em outro lugar", "warning");
+      showNotification('Aviso', 'Usuário conectado em outro lugar', 'warning');
     }
   }, [webSocket.message]);
 
   async function takeTask(taskId) {
     try {
       const { data } = await api.get(
-        `GTPP/Task.php?AUTH=${permissions.session}&app_id=3&simple&id=${taskId}`
+        `GTPP/Task.php?AUTH=${permissions.session}&app_id=3&simple&id=${taskId}`,
       );
 
       if (data.error === true) {
@@ -672,11 +663,11 @@ function Header() {
   }
 
   function formatDate(props) {
-    let data = props.split("-");
+    let data = props.split('-');
     var day = data[2];
     var month = data[1];
     var year = data[0];
-    return day + "/" + month + "/" + year;
+    return day + '/' + month + '/' + year;
   }
 
   return (

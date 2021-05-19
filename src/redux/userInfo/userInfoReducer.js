@@ -1,16 +1,14 @@
-import {GET_USER_INFO} from './userInfoTypes';
+import { GET_USER_INFO } from './userInfoTypes';
 
-const initialState = [{
-}]
+const initialState = [{}];
 
 const userInfoReducer = (state = initialState, action) => {
-    // console.log(action.info)
   switch (action.type) {
     case GET_USER_INFO:
-      return action.info
+      return action.info;
     default:
-      return state
+      return state;
   }
-}
+};
 
 export default userInfoReducer;

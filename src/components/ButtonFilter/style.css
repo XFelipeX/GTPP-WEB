@@ -1,113 +1,117 @@
-.buttonFilter{
-  
-    font-size: 18px;
-    /* padding: 10px 20px; */
-    background-color: transparent;
-    border: none;
-    outline: none;
-    height: 41px;
-    display: flex;
-    align-items: center;
+.buttonFilter {
+  font-size: 18px;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  height: 41px;
+  display: flex;
+  align-items: center;
 }
 
-.buttonFilterArea{
-    margin-right: 20px;
-    display: flex;
-    align-items: center;
-    height: 41px;
+.buttonFilterArea {
+  margin-right: 20px;
+  display: flex;
+  align-items: center;
+  height: 41px;
 }
 
 .company-info li select {
-    width: 120px;
-    padding:.1em 0 .1em 0;
-    position: absolute;
-    right: 1.3em;
-    background-color:#dddddd ;
-    font-size: 16px;
-    border-radius:5px;
+  width: 120px;
+  padding: 0.1em 0 0.1em 0;
+  position: absolute;
+  right: 1.3em;
+  background-color: #dddddd;
+  font-size: 16px;
+  border-radius: 5px;
 }
 
 .company-info li {
-    padding: .3em 0 .3em 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  padding: 0.3em 0 0.3em 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.modal-filter{
-    
-    display: flex;
-    flex-direction: column;
-    background-color: #2b2b2b;
-    width: 280px;
-    color: black;
-    padding: 24px;
-    box-shadow: 0 0px 50px 15px #343434;
-    border-radius: 2px 2px 5px 5px;
-    position: absolute;
-    top: 3.5em;
-    right: 5em;
-    z-index: 10;
-    
+.modal-filter {
+  display: flex;
+  flex-direction: column;
+  background-color: #2b2b2b;
+  width: 280px;
+  color: black;
+  padding: 24px;
+  box-shadow: 0 0px 50px 15px #343434;
+  border-radius: 2px 2px 5px 5px;
+  position: absolute;
+  top: 3.5em;
+  right: 5em;
+  z-index: 10;
 }
 
-.modal-filter > p:first-child{
-    text-transform: uppercase;
-    text-align: left;
-    color: white;
-    font-size: 18px;
+.modal-filter > p:first-child {
+  text-transform: uppercase;
+  text-align: left;
+  color: white;
+  font-size: 18px;
 }
 
-.modal-filter li, .modal-filter ul p {
-    color: white;
-    
-    font-size: 16px;
+.modal-filter li,
+.modal-filter ul p {
+  color: white;
+  font-size: 16px;
 }
 
-.modal-filter ul p{
-    padding: .3em 0 .3em 0;
-    text-align: center;
+.modal-filter ul p {
+  padding: 0.3em 0 0.3em 0;
+  text-align: center;
 }
-
 
 .modal-filter label {
-    padding: .5em 0;
-    font-size: 16px;
-    color: white;
+  padding: 0.5em 0;
+  font-size: 16px;
+  color: white;
 }
 
-.modal-filter button{
-
-    text-transform: uppercase;
-    margin-top: 1em;
-    padding: .5em;
-    font-size: 16px;
-    background-color: #343434;
-    border: 2px solid rgba(0, 0, 0,0.2);
-    border-radius: 8px;
-    color: white;
-    transition: .5s;
+.modal-filter button {
+  text-transform: uppercase;
+  margin-top: 1em;
+  padding: 0.5em;
+  font-size: 16px;
+  background-color: #343434;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  color: white;
+  transition: 0.5s;
 }
 
-.modal-filter button:hover{
-    background-color: #4a9cee;
+.modal-filter button:hover {
+  background-color: #4a9cee;
 }
 
-.state-filter li{
-    padding: .3em 0 .3em 0;
-    border-bottom: 2px solid rgba(77, 166, 255, 0.5);
+.state-filter li {
+  padding: 0.3em 0 0.3em 0;
+  border-bottom: 2px solid rgba(77, 166, 255, 0.5);
 }
 
 /* Animation */
 
-.buttonFilterIcon{
-    animation: floatItem .7s linear 0s 1 alternate;
+.buttonFilterIcon {
+  animation: floatItem 0.7s linear 0s 1 alternate;
 }
 
-@keyframes floatItem{
-    0%   {transform: scale(1);}
-    30%  {transform: scale(1.2);}
-    60% {transform: scale(1.4);}
-    80%   {transform: scale(1.2);}
-    100%   {transform: scale(1);}
+@keyframes floatItem {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.2);
+  }
+  60% {
+    transform: scale(1.4);
+  }
+  80% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }

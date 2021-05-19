@@ -11,18 +11,16 @@
   cursor: pointer;
   width: 150px;
   height: 28px;
-  /* border:1px solid transparent; */
-  /* text-align: center; */
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 @-moz-document url-prefix() {
-  .depts p{
+  .depts p {
     height: 32px;
   }
-}  
+}
 
 .depts {
   max-height: 130px;
@@ -53,7 +51,6 @@
   max-width: 150px;
   background-color: #353535;
   color: white;
-
   font-size: 16px;
 }
 
@@ -67,7 +64,7 @@
   height: 315px;
 }
 
-@media screen and (max-width:1536px){
+@media screen and (max-width: 1536px) {
   .rowCompShop div select option {
     font-size: 12px;
   }
@@ -90,9 +87,6 @@
     margin-top: 8px;
   }
 
-  .depts p {
-  }
-
   .depts {
     margin-bottom: 0;
   }
@@ -103,7 +97,6 @@
     height: 150px;
     margin-top: -1em;
   }
-
 }
 
 @media only screen and (max-width: 1536px) {
@@ -111,7 +104,6 @@
     height: 150px;
     margin-top: -2.5em;
   }
-
 }
 
 .menuDept {
@@ -136,7 +128,6 @@
     bottom: 1.8em;
     left: 9.3em;
   }
-
 }
 
 .menuDept li {
@@ -154,7 +145,7 @@
   height: 250px;
 }
 
-@media only screen and (max-width:1536px){
+@media only screen and (max-width: 1536px) {
   .taskDescription {
     height: 200px;
   }
@@ -164,15 +155,6 @@
   margin-right: 1em;
 }
 
-/* .menuDescription{
-    position: absolute;
-    margin: 0 auto;
-    background-color: #353535;
-    max-height: 300px;
-    padding: 10px;
-    border-radius: 5px;
-} */
-
 /* botões */
 
 .rowControlDescription {
@@ -181,7 +163,6 @@
 
 .btnSaveDescription {
   font-size: 15px;
-
   padding: 5px 30px;
   color: white;
   background-color: #69a312;
@@ -214,7 +195,6 @@
   .usersVinculated {
     top: 11em;
   }
-
 }
 
 @media only screen and (max-width: 1366px) {
@@ -234,7 +214,6 @@
 
 .user {
   display: flex;
-  /* flex-wrap: wrap; */
   flex-direction: row;
   overflow: auto;
   width: 100%;
@@ -258,7 +237,6 @@
 .addUser {
   margin: 0 0 0 2em;
   padding: 10px;
-
   cursor: pointer;
   color: white;
   background-color: #3b6895;
@@ -493,7 +471,6 @@
 
 .status {
   display: block;
-  /* border: 2px solid green; */
   border-radius: 50%;
   width: 10px;
   height: 10px;

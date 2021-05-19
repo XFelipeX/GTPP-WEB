@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { BsFilterLeft } from "react-icons/bs";
-import { getTaskFilter } from "../../redux";
-import {showNotification} from '../../Utils/Notify';
-import "./style.css";
-import useClickOutside from "../ClickOutside";
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { BsFilterLeft } from 'react-icons/bs';
+import { getTaskFilter } from '../../redux';
+import { showNotification } from '../../Utils/Notify';
+import './style.css';
+import useClickOutside from '../ClickOutside';
 
 let OrderTasks = () => {
   const dispatch = useDispatch();
@@ -17,10 +17,9 @@ let OrderTasks = () => {
   const [orderDescription, setOrderDescription] = useState(false);
   const [orderDueDate, setOrderDueDate] = useState(false);
 
-
   useEffect(() => {
     orderTasks();
-  }, [orderPriority,orderState,orderDescription,orderDueDate]);
+  }, [orderPriority, orderState, orderDescription, orderDueDate]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -29,7 +28,6 @@ let OrderTasks = () => {
   }, [orderTask]);
 
   function orderTasks() {
-
     let filterDo = [];
     let filterDoing = [];
     let filterAnalyze = [];
@@ -41,7 +39,7 @@ let OrderTasks = () => {
 
     if (orderPriority) {
       if (showAlert === true) {
-        showNotification("Sucesso","Ordenado por prioridade","success");
+        showNotification('Sucesso', 'Ordenado por prioridade', 'success');
         setShowAlert(false);
       }
       filterDo = filterTask.filter.filter((task) => task.priority == 0);
@@ -51,7 +49,7 @@ let OrderTasks = () => {
       finalFilter = [...filterAnalyze, ...filterDoing, ...filterDo];
     } else if (orderState) {
       if (showAlert === true) {
-        showNotification("Sucesso","Ordenado por estado","success");
+        showNotification('Sucesso', 'Ordenado por estado', 'success');
         setShowAlert(false);
       }
 
@@ -74,18 +72,16 @@ let OrderTasks = () => {
       ];
     } else if (orderDescription) {
       if (showAlert === true) {
-        showNotification("Sucesso","Ordenado por descrição","success");
+        showNotification('Sucesso', 'Ordenado por descrição', 'success');
         setShowAlert(false);
       }
-
-      // console.log(filterTask);
       finalFilter = [...filterTask.filter];
       finalFilter.sort(function (a, b) {
         return a.description.localeCompare(b.description);
       });
     } else if (orderDueDate) {
       if (showAlert === true) {
-        showNotification("Sucesso","Ordenado por vencimento","success");
+        showNotification('Sucesso', 'Ordenado por vencimento', 'success');
         setShowAlert(false);
       }
 
@@ -93,10 +89,9 @@ let OrderTasks = () => {
       finalFilter.sort(function (a, b) {
         return a.final_date.localeCompare(b.final_date);
       });
-
     }
 
-    if(finalFilter.length===0){
+    if (finalFilter.length === 0) {
       return;
     }
 
@@ -172,18 +167,17 @@ let OrderTasks = () => {
       <button
         className="button-refresh"
         onClick={() => {
-          const element = document.getElementById("orderTaskIcon");
-          element.classList.add("orderTaskIcon");
-          setTimeout(() => element.classList.remove("orderTaskIcon"), 1000);
+          const element = document.getElementById('orderTaskIcon');
+          element.classList.add('orderTaskIcon');
+          setTimeout(() => element.classList.remove('orderTaskIcon'), 1000);
           setShowMenu(true);
-          // setCount(count + 1);
           setShowAlert(true);
         }}
         title="Ordenar lista"
       >
         <BsFilterLeft
           size={75}
-          style={{ color: "#959595" }}
+          style={{ color: '#959595' }}
           id="orderTaskIcon"
         />
       </button>

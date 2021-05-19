@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { AiOutlineExclamation } from "react-icons/ai";
-import { BsDot } from "react-icons/bs";
-import "./style.css";
-import { getWarning } from "../../redux";
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { AiOutlineExclamation } from 'react-icons/ai';
+import { BsDot } from 'react-icons/bs';
+import './style.css';
+import { getWarning } from '../../redux';
 
 const TaskWarning = ({ task }) => {
   const finalDate = new Date(String(task.final_date));
   const initialDate = new Date(String(task.initial_date));
-  const { webSocket } = useSelector((state) => state);
   const [warningState, setWarningState] = useState(0);
   const { taskVisible } = useSelector((state) => state);
   const dispatch = useDispatch();
@@ -84,29 +83,31 @@ const TaskWarning = ({ task }) => {
           color="green"
           style={
             task.focus === true
-              ? { backgroundColor: "black", borderRadius: 50 + "%" }
+              ? { backgroundColor: 'black', borderRadius: 50 + '%' }
               : {}
           }
         />
       ) : warningState !== 2 ? (
         <AiOutlineExclamation
           size={25}
-          color={warningState === 0 ? "yellow" : "red"}
+          color={warningState === 0 ? 'yellow' : 'red'}
           style={
             task.focus === true
-              ? { backgroundColor: "black", borderRadius: 50 + "%" }
+              ? { backgroundColor: 'black', borderRadius: 50 + '%' }
               : {}
           }
         />
-      ) : <AiOutlineExclamation
+      ) : (
+        <AiOutlineExclamation
           size={25}
           color="transparent"
           style={
             task.focus === true
-              ? { backgroundColor: "transparent", borderRadius: 50 + "%" }
+              ? { backgroundColor: 'transparent', borderRadius: 50 + '%' }
               : {}
           }
-        />}
+        />
+      )}
     </div>
   );
 };

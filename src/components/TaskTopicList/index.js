@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { FaTrash } from "react-icons/fa";
-import { BiCommentAdd } from "react-icons/bi";
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { FaTrash } from 'react-icons/fa';
+import { BiCommentAdd } from 'react-icons/bi';
 import {
   AiOutlineClose,
   AiOutlineClockCircle,
   AiOutlineEdit,
   AiOutlinePaperClip,
   AiOutlineQuestionCircle,
-} from "react-icons/ai";
-import { FaArrowUp, FaCloudDownloadAlt, FaArrowDown } from "react-icons/fa";
-import { BsCheckAll } from "react-icons/bs";
-import { GoListUnordered, GoNote } from "react-icons/go";
-import { GiHamburgerMenu } from "react-icons/gi";
-import ConfirmAction from "../ConfirmAction";
-import api from "../../services/api";
+} from 'react-icons/ai';
+import { FaArrowUp, FaCloudDownloadAlt, FaArrowDown } from 'react-icons/fa';
+import { BsCheckAll } from 'react-icons/bs';
+import { GoListUnordered, GoNote } from 'react-icons/go';
+import { GiHamburgerMenu } from 'react-icons/gi';
+import ConfirmAction from '../ConfirmAction';
+import api from '../../services/api';
 import {
   changeItemChecked,
   addItem,
@@ -25,13 +25,13 @@ import {
   changeYesNoTopic,
   updateAttachment,
   updateNote,
-} from "./functions";
-import { showNotification } from "../../Utils/Notify";
-import { taskInfoShow, updateModal, updateTopic } from "../../redux";
-import "./style.css";
-import useClickOutside from "../ClickOutside";
+} from './functions';
+import { showNotification } from '../../Utils/Notify';
+import { taskInfoShow, updateModal, updateTopic } from '../../redux';
+import './style.css';
+import useClickOutside from '../ClickOutside';
 
-const TaskTopicList = ({ id = "modalEdit" }) => {
+const TaskTopicList = ({ id = 'modalEdit' }) => {
   const { topicUpdate } = useSelector((state) => state);
   const { taskVisible } = useSelector((state) => state);
   const { tasks } = useSelector((state) => state);
@@ -39,7 +39,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   const { permissions } = useSelector((state) => state);
   const AUTH = permissions.session;
   const { modalUpdate } = useSelector((state) => state);
-  const [newItem, setNewItem] = useState("");
+  const [newItem, setNewItem] = useState('');
   const [showEdit, setShowEdit] = useState(false);
   const [showEditObs, setShowEditObs] = useState(false);
   const [showHistoric, setShowHistoric] = useState(false);
@@ -55,6 +55,8 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   const [showMenu, setShowMenu] = useState(null);
   const [itemEdit, setItemEdit] = useState();
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [obs, setObs] = useState(itemEdit ? itemEdit.note : '');
+  const [showObs, setShowObs] = useState(false);
   const dispatch = useDispatch();
 
   function changeInputCheck(e, taskId, itemId) {
@@ -73,9 +75,9 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
         taskVisible.info.state_id = response.state_id;
 
         if (e === true) {
-          SendInfo("Um item foi desmarcado", 2, response.percent, "", itemUp);
+          SendInfo('Um item foi desmarcado', 2, response.percent, '', itemUp);
         } else {
-          SendInfo("Um item foi marcado", 2, response.percent, "", itemUp);
+          SendInfo('Um item foi marcado', 2, response.percent, '', itemUp);
         }
 
         let changes = [...tasks];
@@ -83,14 +85,13 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
         changes = changes.map((task) => {
           if (task.id === taskVisible.info.task_id) {
             if (task.state_id != response.state_id) {
-              SendInfo("Mudou para ", 6, response.percent, response.state_id);
+              SendInfo('Mudou para ', 6, response.percent, response.state_id);
             }
             task.percent = response.percent;
             task.state_id = response.state_id;
           }
         });
         dispatch(updateTopic());
-        // dispatch(getTaskFilter([...changes]));
       }
     });
   }
@@ -100,7 +101,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   useEffect(() => {
     async function loadTaskItems() {
       try {
-        const { data } = await api.get("GTPP/TaskItem.php", {
+        const { data } = await api.get('GTPP/TaskItem.php', {
           params: { AUTH: AUTH, app_id: 3, task_id: taskVisible.info.task_id },
         });
 
@@ -114,7 +115,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
     loadTaskItems().then((response) => {
       if (response.error == false) {
         dispatch(
-          taskInfoShow({ ...taskVisible.task, task_item: response.data })
+          taskInfoShow({ ...taskVisible.task, task_item: response.data }),
         );
       } else {
         taskVisible.task.task_item = [{}];
@@ -123,51 +124,37 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   }, [topicUpdate, modalUpdate]);
 
   useEffect(() => {
-    // const handleClick = () => {
-    //   if (ref.current)
-    //     ref.current.scrollIntoView(true, {
-    //       behavior: "smooth",
-    //       block: "end",
-    //     });
-    // };
-
     function handleClick() {
-      document.getElementById("topicList").scrollTop = 1000000000000;
+      document.getElementById('topicList').scrollTop = 1000000000000;
     }
 
     handleClick();
   }, [showBottom]);
 
   useEffect(() => {
-    const element = document.getElementById("upload-photo-icon");
-    const image = document.getElementById("upload-photo");
+    const element = document.getElementById('upload-photo-icon');
+    const image = document.getElementById('upload-photo');
 
-    // console.log(image.files[0]);
-
-    if (image.value !== null && image.value !== "") {
-      element.classList.add("attachmentIcon");
+    if (image.value !== null && image.value !== '') {
+      element.classList.add('attachmentIcon');
     }
   }, [attachmentSend]);
 
   useEffect(() => {
     if (attachmentUpdate !== null) {
-      const image = document.getElementById("upload-photo-update").files[0];
+      const image = document.getElementById('upload-photo-update').files[0];
       let base64;
       convertBase64(image)
         .then((response) => (base64 = response))
         .then(() => {
-          let onlyBase = base64.split(",");
+          let onlyBase = base64.split(',');
           upAttachment(onlyBase[1], false);
         });
     }
-
-    // console.log(base64);
   }, [attachmentUpdate]);
 
-  // console.log(itemEdit)
-
   function SendInfo(msg, type, percent, state, item, remove) {
-    if (msg !== "" && webSocket.websocketState === "connected") {
+    if (msg !== '' && webSocket.websocketState === 'connected') {
       switch (type) {
         case 2:
           try {
@@ -214,22 +201,22 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   }
 
   function addNewItem(taskId, description) {
-    let image = document.getElementById("upload-photo").files[0];
+    let image = document.getElementById('upload-photo').files[0];
     if (taskVisible.info.state_id == 5 || taskVisible.info.state_id == 4) {
       showNotification(
-        "Aviso",
-        "Tarefa neste estado não pode ser modificada",
-        "warning"
+        'Aviso',
+        'Tarefa neste estado não pode ser modificada',
+        'warning',
       );
-      setNewItem("");
+      setNewItem('');
     } else if (taskVisible.state_id == 6) {
       showNotification(
-        "Aviso",
-        "Tarefa finalizada! clique no estado atual da tarefa para ativar novamente",
-        "warning"
+        'Aviso',
+        'Tarefa finalizada! clique no estado atual da tarefa para ativar novamente',
+        'warning',
       );
     } else {
-      if (description !== "" && !image) {
+      if (description !== '' && !image) {
         addItem(taskId, description, AUTH, null).then((response) => {
           if (response != null) {
             const newItem = {
@@ -239,14 +226,14 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
               order: response.order,
               yes_no: response.yes_no,
               file: 0,
-              note: "",
+              note: '',
             };
 
             taskVisible.task.task_item = [
               ...taskVisible.task.task_item,
               newItem,
             ];
-            SendInfo("Novo item adicionado", 2, response.percent, "", newItem);
+            SendInfo('Novo item adicionado', 2, response.percent, '', newItem);
             taskVisible.info.percent = response.percent;
             taskVisible.info.state_id = response.state_id;
 
@@ -255,7 +242,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
             changes = changes.map((task) => {
               if (task.id === taskVisible.info.task_id) {
                 if (task.state_id != response.state_id) {
-                  SendInfo(" para ", 6, response.percent, response.state_id);
+                  SendInfo(' para ', 6, response.percent, response.state_id);
                 }
                 task.percent = response.percent;
                 task.state_id = response.state_id;
@@ -269,12 +256,11 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
             }, 500);
           }
         });
-        setNewItem("");
-      } else if (description !== "") {
-        convertBase64(document.getElementById("upload-photo").files[0]).then(
+        setNewItem('');
+      } else if (description !== '') {
+        convertBase64(document.getElementById('upload-photo').files[0]).then(
           (response) => {
-            // console.log(response);
-            let item = response.split(",");
+            let item = response.split(',');
             addItem(taskId, description, AUTH, item[1]).then((response) => {
               if (response != null) {
                 const newItem = {
@@ -291,11 +277,11 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                   newItem,
                 ];
                 SendInfo(
-                  "Novo item adicionado",
+                  'Novo item adicionado',
                   2,
                   response.percent,
-                  "",
-                  newItem
+                  '',
+                  newItem,
                 );
                 taskVisible.info.percent = response.percent;
                 taskVisible.info.state_id = response.state_id;
@@ -306,10 +292,10 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                   if (task.id === taskVisible.info.task_id) {
                     if (task.state_id != response.state_id) {
                       SendInfo(
-                        " para ",
+                        ' para ',
                         6,
                         response.percent,
-                        response.state_id
+                        response.state_id,
                       );
                     }
                     task.percent = response.percent;
@@ -324,27 +310,25 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                 }, 500);
               }
             });
-            setNewItem("");
+            setNewItem('');
             setAttachmentSend(null);
-            document.getElementById("upload-photo").value = "";
+            document.getElementById('upload-photo').value = '';
             document
-              .getElementById("upload-photo-icon")
-              .classList.remove("attachmentIcon");
-          }
+              .getElementById('upload-photo-icon')
+              .classList.remove('attachmentIcon');
+          },
         );
       }
     }
   }
 
   function convertBase64(file) {
-    // console.log(file);
     if (file !== null) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = () => resolve(reader.result);
         reader.onerror = (error) => reject(error);
-        // console.log(reader);
       });
     }
   }
@@ -352,31 +336,31 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   function deleteItemTopic(taskId, itemId) {
     if (taskVisible.info.state_id == 5 || taskVisible.info.state_id == 4) {
       showNotification(
-        "Aviso",
-        "Tarefa neste estado não pode ser modificada",
-        "warning"
+        'Aviso',
+        'Tarefa neste estado não pode ser modificada',
+        'warning',
       );
     } else if (taskVisible.info.state_id == 6) {
       showNotification(
-        "Aviso",
-        "Tarefa finalizada! clique no estado atual da tarefa para ativar novamente",
-        "warning"
+        'Aviso',
+        'Tarefa finalizada! clique no estado atual da tarefa para ativar novamente',
+        'warning',
       );
     } else {
       deleteItem(taskId, itemId, AUTH)
         .then((response) => {
           if (response != null) {
             taskVisible.task.task_item = taskVisible.task.task_item.filter(
-              (item) => item.id !== itemId
+              (item) => item.id !== itemId,
             );
 
             SendInfo(
-              "Um item foi removido",
+              'Um item foi removido',
               2,
               response.percent,
-              "",
+              '',
               itemId,
-              true
+              true,
             );
             taskVisible.info.percent = response.percent;
             taskVisible.info.state_id = response.state_id;
@@ -387,11 +371,11 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
               if (task.id === taskVisible.info.task_id) {
                 if (task.state_id != response.state_id) {
                   SendInfo(
-                    "Mudou para ",
+                    'Mudou para ',
                     6,
                     response.percent,
                     response.state_id,
-                    false
+                    false,
                   );
                 }
                 task.percent = response.percent;
@@ -412,15 +396,15 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   function updateTopicItem(itemId, description, taskId) {
     if (taskVisible.info.state_id == 5 || taskVisible.info.state_id == 4) {
       showNotification(
-        "Aviso",
-        "Tarefa neste estado não pode ser modificada",
-        "warning"
+        'Aviso',
+        'Tarefa neste estado não pode ser modificada',
+        'warning',
       );
     } else if (taskVisible.info.state_id == 6) {
       showNotification(
-        "Aviso",
-        "Tarefa finalizada! clique no estado atual da tarefa para ativar novamente",
-        "warning"
+        'Aviso',
+        'Tarefa finalizada! clique no estado atual da tarefa para ativar novamente',
+        'warning',
       );
     } else {
       updateTopicDescription(itemId, description, taskId, AUTH).then(
@@ -436,17 +420,17 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
             });
 
             SendInfo(
-              "Um item foi atualizado",
+              'Um item foi atualizado',
               2,
               taskVisible.info.percent,
-              "",
-              itemUp
+              '',
+              itemUp,
             );
             dispatch(updateModal());
             dispatch(updateTopic());
           }
           setShowEdit(false);
-        }
+        },
       );
     }
   }
@@ -454,10 +438,10 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   function changeOrderTopic(taskId, nextOrPrevious, itemId) {
     nextOrPreviousTopic(taskId, AUTH, nextOrPrevious, itemId).then(
       () => dispatch(updateModal()),
-      dispatch(updateTopic())
+      dispatch(updateTopic()),
     );
 
-    let element = document.getElementById("topicList");
+    let element = document.getElementById('topicList');
 
     let distance = document.getElementById(itemId);
 
@@ -482,32 +466,30 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
 
           if (change === -1) {
             SendInfo(
-              "Agora é uma questão ",
+              'Agora é uma questão ',
               2,
               response.percent,
               response.state_id,
-              itemUp
+              itemUp,
             );
           } else {
             SendInfo(
-              "Agora é um item comum ",
+              'Agora é um item comum ',
               2,
               response.percent,
               response.state_id,
-              itemUp
+              itemUp,
             );
           }
 
           taskVisible.info.percent = response.percent;
           taskVisible.info.state_id = response.state_id;
 
-          // dispatch(updateModal());
           dispatch(updateTopic());
 
           setItemEdit({ ...itemEdit, yes_no: change });
-          // itemEdit.yes_no = change;
         }
-      }
+      },
     );
   }
 
@@ -526,27 +508,27 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
 
         if (yesOrNo === 1) {
           SendInfo(
-            "Marcou uma questão como sim ",
+            'Marcou uma questão como sim ',
             2,
             response.percent,
             response.state_id,
-            itemUp
+            itemUp,
           );
         } else if (yesOrNo === 2) {
           SendInfo(
-            "Marcou uma questão como não ",
+            'Marcou uma questão como não ',
             2,
             response.percent,
             response.state_id,
-            itemUp
+            itemUp,
           );
         } else {
           SendInfo(
-            "Desmarcou uma questão ",
+            'Desmarcou uma questão ',
             2,
             response.percent,
             response.state_id,
-            itemUp
+            itemUp,
           );
         }
 
@@ -558,7 +540,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
         changes = changes.map((task) => {
           if (task.id === taskVisible.info.task_id) {
             if (task.state_id != response.state_id) {
-              SendInfo("Mudou para ", 6, response.percent, response.state_id);
+              SendInfo('Mudou para ', 6, response.percent, response.state_id);
             }
             task.percent = response.percent;
             task.state_id = response.state_id;
@@ -576,38 +558,31 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   async function loadImage(id) {
     try {
       const { data } = await api.get(
-        `GTPP/TaskItem.php?AUTH=${AUTH}&app_id=3&id=${id}`
+        `GTPP/TaskItem.php?AUTH=${AUTH}&app_id=3&id=${id}`,
       );
-
-      // console.log(data);
 
       let url = String(data.data);
 
-      // console.log(url);
-
-      url = url.split(",");
+      url = url.split(',');
 
       if (
-        url[0].includes("png") ||
-        url[0].includes("jpg") ||
-        url[0].includes("gif") ||
-        url[0].includes("jpeg")
+        url[0].includes('png') ||
+        url[0].includes('jpg') ||
+        url[0].includes('gif') ||
+        url[0].includes('jpeg')
       ) {
         setShowImage(convertImage(data.data));
-      } else if (url[0].includes("zip") || url[0].includes("rar")) {
-        setShowFile(".zip");
+      } else if (url[0].includes('zip') || url[0].includes('rar')) {
+        setShowFile('.zip');
         setSrcFile(String(data.data));
       } else {
         setShowFile(convertFile(String(url[1])));
         setSrcFile(String(data.data));
-        // convertFile(String(data.data));
       }
     } catch (error) {
       console.log(error);
     }
   }
-
-  // console.log(srcFile)
 
   function convertImage(src) {
     try {
@@ -615,7 +590,6 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
         var image = new Image();
         image.src = src;
 
-        // console.log(image.src);
         return image.src;
       } else {
         return null;
@@ -626,65 +600,17 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
   }
 
   function convertFile(src) {
-    // let file;
-    // if (src != null) {
-    //   file = new File([""],"");
-    //   file.src = src;
-
-    //   console.log(file.src);
-    //   // return file.src;
-    // } else {
-    //   // return null;
-    // }
-
-    // console.log(src);
-
-    // console.log(atob(src));
-
     let file;
 
     try {
       file = atob(src);
 
-      // console.log(file);
       return file;
     } catch (error) {
       console.log(error);
-      return "";
+      return '';
     }
-
-    // setShowFile(file);
-
-    // var anchor = document.createElement("a");
-    // anchor.href = src;
-    // anchor.download = src;
-    // document.body.appendChild(anchor);
-    // anchor.click();
-
-    // console.log('convert')
-
-    // document.getElementById('my_iframe').src = src;
-
-    // console.log(document.getElementById('my_iframe'));
-
-    // return src;
-
-    // var arr = src.split(","),
-    //   mime = arr[0].match(/:(.*?);/)[1],
-    //   bstr = atob(arr[1]),
-    //   n = bstr.length,
-    //   u8arr = new Uint8Array(n);
-
-    // while (n--) {
-    //   u8arr[n] = bstr.charCodeAt(n);
-    // }
-
-    // const file =  new File([u8arr], "", { type: mime });
-    // console.log(file);
-    // return file;
   }
-
-  // console.log(showFile);
 
   const ref = React.createRef();
 
@@ -704,7 +630,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
       taskVisible.info.task_id,
       itemEdit.id,
       atacchment,
-      deleteAttachment
+      deleteAttachment,
     ).then(() => {
       dispatch(updateTopic());
       setAttachmentUpdate(null);
@@ -718,11 +644,11 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
       itemEdit.note = obs;
       dispatch(updateTopic());
       SendInfo(
-        "Observação atualizada",
+        'Observação atualizada',
         2,
         taskVisible.info.percent,
-        "",
-        itemEdit
+        '',
+        itemEdit,
       );
       setShowEditObs(false);
     });
@@ -734,12 +660,6 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
     }
   }, [itemEdit]);
 
-  // console.log(itemEdit)
-
-  const [obs, setObs] = useState(itemEdit ? itemEdit.note : "");
-
-  const [showObs, setShowObs] = useState(false);
-
   return (
     <div className="taskTopicList">
       {showImage !== null ? (
@@ -747,14 +667,8 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
           <img ref={domNode} src={showImage} alt="" />
         </div>
       ) : (
-        ""
+        ''
       )}
-
-      {/* <iframe id="my_iframe" style={{display:"none"}} download></iframe> */}
-
-      {/* <a href={showFile} download>
-  <img src={showFile} alt="" width="104" height="142" />
-</a> */}
 
       {showFile && (
         <div className="containerDownloadFile">
@@ -787,23 +701,25 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
         <div className="editObsModal">
           <div ref={domNode} className="editObsBox">
             <h3>Observação</h3>
-            <button type="button" style={{
-                  position: "absolute",
-                  marginLeft: "304px",
-                  marginBottom: "340px",
-                  backgroundColor:"transparent"
-                }} onClick={() => {setShowEditObs(false)}}>
-              <AiOutlineClose
-                size={30}
-                color="red"
-                
-              />
+            <button
+              type="button"
+              style={{
+                position: 'absolute',
+                marginLeft: '304px',
+                marginBottom: '340px',
+                backgroundColor: 'transparent',
+              }}
+              onClick={() => {
+                setShowEditObs(false);
+              }}
+            >
+              <AiOutlineClose size={30} color="red" />
             </button>
 
             <textarea
               spellCheck="false"
               rows="5"
-              value={obs !== null ? obs : ""}
+              value={obs !== null ? obs : ''}
               onChange={(e) => {
                 setObs(e.target.value);
               }}
@@ -820,14 +736,14 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
           <div ref={domNode} className="editAttachmentBox">
             <h3>Editar Anexo</h3>
             <ul>
-              <li onClick={() => upAttachment("", true)}>
+              <li onClick={() => upAttachment('', true)}>
                 <FaTrash size={25} color="red" />
-                <span style={{ marginLeft: ".3em" }}>Excluir</span>
+                <span style={{ marginLeft: '.3em' }}>Excluir</span>
               </li>
               <label className="upload" htmlFor="upload-photo-update">
                 <AiOutlinePaperClip
                   size={30}
-                  style={{ marginRigth: "1.3em" }}
+                  style={{ marginRigth: '1.3em' }}
                 />
                 Alterar
                 <input
@@ -852,8 +768,8 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
               onClick={() => {
                 changeOrderTopic(
                   taskVisible.info.task_id,
-                  "previous",
-                  orderItem
+                  'previous',
+                  orderItem,
                 );
               }}
             >
@@ -873,7 +789,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
             <div
               className="orderDown"
               onClick={() => {
-                changeOrderTopic(taskVisible.info.task_id, "next", orderItem);
+                changeOrderTopic(taskVisible.info.task_id, 'next', orderItem);
               }}
             >
               <FaArrowDown size={40} color="white" />
@@ -888,7 +804,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
           onClick={() => (
             setShowHistoric(!showHistoric),
             takeHistoricTask(taskVisible.info.task_id, AUTH).then((response) =>
-              setTaskHistoric(response.data)
+              setTaskHistoric(response.data),
             )
           )}
           title="Exibir histórico da tarefa"
@@ -909,7 +825,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                 </button>
               </div>
               <div className="modaHistoricContent">
-                <div className="listHistoric" style={{ clear: "both" }}>
+                <div className="listHistoric" style={{ clear: 'both' }}>
                   <div className="historicItems">
                     {taskHistoric
                       ? taskHistoric.map((historic) => (
@@ -937,12 +853,12 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
 
               <button
                 type="button"
-                style={{ backgroundColor: "#69a312", color: "white" }}
+                style={{ backgroundColor: '#69a312', color: 'white' }}
                 onClick={() =>
                   updateTopicItem(
                     idItem,
                     editDescription,
-                    taskVisible.info.task_id
+                    taskVisible.info.task_id,
                   )
                 }
               >
@@ -967,21 +883,20 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                   setYesNoOption(itemEdit);
                 }}
               />
-              <label style={{ marginLeft: " .75em" }}>
+              <label style={{ marginLeft: ' .75em' }}>
                 Definir como questão
               </label>
             </div>
             <div className="defineQuestion">
               <button
-                style={{ backgroundColor: "transparent" }}
+                style={{ backgroundColor: 'transparent' }}
                 onClick={() => {
-                  // setShowEdit(false);
                   setShowEditObs(true);
                 }}
               >
                 <GoNote size={23} color="#fff" />
               </button>
-              <label style={{ marginLeft: "1em" }}>Observação</label>
+              <label style={{ marginLeft: '1em' }}>Observação</label>
             </div>
           </div>
         </div>
@@ -999,9 +914,9 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                           style={
                             orderItem == item.id
                               ? {
-                                  backgroundColor: "#4da6ff",
-                                  borderRadius: "10px",
-                                  padding: "2px",
+                                  backgroundColor: '#4da6ff',
+                                  borderRadius: '10px',
+                                  padding: '2px',
                                 }
                               : null
                           }
@@ -1026,7 +941,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                                     taskVisible.info.task_id,
                                     change,
                                     item.id,
-                                    AUTH
+                                    AUTH,
                                   );
                                 }}
                               />
@@ -1048,7 +963,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                                     taskVisible.info.task_id,
                                     change,
                                     item.id,
-                                    AUTH
+                                    AUTH,
                                   );
                                 }}
                               />
@@ -1076,9 +991,9 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                           style={
                             orderItem == item.id
                               ? {
-                                  backgroundColor: "#4da6ff",
-                                  borderRadius: "10px",
-                                  padding: "2px",
+                                  backgroundColor: '#4da6ff',
+                                  borderRadius: '10px',
+                                  padding: '2px',
                                 }
                               : null
                           }
@@ -1086,7 +1001,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                           {item.order}
                         </a>
 
-                        <a style={{ justifyContent: "center" }}>
+                        <a style={{ justifyContent: 'center' }}>
                           <input
                             className="tick"
                             type="checkbox"
@@ -1094,7 +1009,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                               changeInputCheck(
                                 item.check,
                                 taskVisible.info.task_id,
-                                item.id
+                                item.id,
                               );
                             }}
                             id={item.description + String(item.id)}
@@ -1121,7 +1036,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                         item.yes_no === -1 ||
                         item.yes_no === 1 ||
                         item.yes_no === 2
-                          ? { textAlign: "center" }
+                          ? { textAlign: 'center' }
                           : null
                       }
                     >
@@ -1186,9 +1101,9 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                                   setShowConfirmDelete(true))
                                 : (e.preventDefault(),
                                   showNotification(
-                                    "Aviso",
-                                    "Somente o criador da tarefa ou administrador pode fazer isto",
-                                    "warning"
+                                    'Aviso',
+                                    'Somente o criador da tarefa ou administrador pode fazer isto',
+                                    'warning',
                                   ))
                             }
                           >
@@ -1210,9 +1125,9 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                         )}
                       </label>
 
-                      {item.note !== null && item.note !== "" && (
+                      {item.note !== null && item.note !== '' && (
                         <label
-                          style={{ cursor: "pointer" }}
+                          style={{ cursor: 'pointer' }}
                           onClick={() => setShowObs(item.note)}
                         >
                           <AiOutlineQuestionCircle size={25} />
@@ -1221,7 +1136,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
                     </div>
                   </div>
                 </React.Fragment>
-              ) : null
+              ) : null,
             )
           : null}
       </div>
@@ -1235,7 +1150,7 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
           name="newItem"
           value={newItem}
           onKeyPress={(e) =>
-            e.key === "Enter" && addNewItem(taskVisible.info.task_id, newItem)
+            e.key === 'Enter' && addNewItem(taskVisible.info.task_id, newItem)
           }
           onChange={(e) => setNewItem(e.target.value)}
         />
@@ -1243,7 +1158,6 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
         <button
           onClick={() => {
             addNewItem(taskVisible.info.task_id, newItem);
-            // console.log(taskItem);
           }}
           title="Adicionar item"
         >
@@ -1284,9 +1198,3 @@ const TaskTopicList = ({ id = "modalEdit" }) => {
 };
 
 export default TaskTopicList;
-
-// style={
-//   item.check || item.yes_no === 1 || item.yes_no === 2
-//     ? { textDecoration: "line-through" }
-//     : {}
-// }

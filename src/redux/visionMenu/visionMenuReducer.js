@@ -6,14 +6,14 @@ import {
   SET_STATE_VISIBLE,
   SET_VINC_VISIBLE,
   SET_COMPANY_VISIBLE,
-  SET_SHOP_VISIBLE
-} from "./visionMenuTypes";
+  SET_SHOP_VISIBLE,
+} from './visionMenuTypes';
 
 const initialState = {
-  col: "priority",
-  order: "desc",
-  company: "",
-  shop: "",
+  col: 'priority',
+  order: 'desc',
+  company: '',
+  shop: '',
   priority: true,
   state: true,
   date: true,
@@ -21,7 +21,6 @@ const initialState = {
 };
 
 const visionMenuReducer = (state = initialState, action) => {
-  // console.log(action)
   switch (action.type) {
     case SET_ORDER:
       return {

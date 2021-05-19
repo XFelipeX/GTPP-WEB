@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import api from "../../services/api";
-import "./style.css";
-import userEmpty from "../../assets/nullphoto.jpeg";
-import Task from "../Task";
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import api from '../../services/api';
+import './style.css';
+import userEmpty from '../../assets/nullphoto.jpeg';
+import Task from '../Task';
 import {
   loadTask,
   loadTaskStates,
@@ -11,7 +11,7 @@ import {
   loadShop,
   loadDept,
   loadNotifications,
-} from "./functions";
+} from './functions';
 import {
   getStates,
   setPhotos,
@@ -22,15 +22,21 @@ import {
   getVinculatedUsers,
   getTaskFilter,
   getNotifications,
-} from "../../redux";
-import Loading from "../Loading";
-// import {showNotification} from '../../Utils/Notify';
+  setTotalUser,
+  setTotalAdmin,
+  setPageAdmin,
+  setPageUser,
+} from '../../redux';
+import ReactPaginate from 'react-paginate';
+import Loading from '../Loading';
+import { setPageSearch } from '../../redux/Pagination/PaginationActions';
 
 const TaskTable = (props) => {
   const { permissions } = useSelector((state) => state);
   const { filterTask } = useSelector((state) => state);
   const { stateAdmin } = useSelector((state) => state);
   const { seeAdminSet } = useSelector((state) => state);
+  const { pagination } = useSelector((state) => state);
   const AUTH = permissions.session;
   const { stateUpdate } = useSelector((state) => state);
   const { visionMenu } = useSelector((state) => state);
@@ -43,7 +49,7 @@ const TaskTable = (props) => {
   useEffect(() => {
     async function loadVinculateUsers() {
       const { data } = await api.get(
-        "CCPP/Employee.php?AUTH=" + AUTH + "&app_id=3"
+        'CCPP/Employee.php?AUTH=' + AUTH + '&app_id=3',
       );
 
       try {
@@ -130,7 +136,6 @@ const TaskTable = (props) => {
     loadVinculateUsers().then(() => {
       loadNotifications(AUTH)
         .then((response) => {
-          // console.log(response)
           if (response.length > 0) {
             response.map((info) => {
               sumNotification(Number(info.type), info.task_id, info);
@@ -144,28 +149,27 @@ const TaskTable = (props) => {
     });
   }, []);
 
-  useEffect(() => {}, []);
-
   useEffect(() => {
-    loadTask(visionMenu, AUTH)
-      .then((response) => {
-  
-        if (response.error === true) {
-          console.log(response.error);
-        } else {
-          try {
-            // if(!response.data){
-            //   showNotification("Erro","T")
-            // }
-            // console.log(response)
-            dispatch(getTask(response.data ? response.data : [{}]));
-          } catch (error) {
-            console.log(error);
+    if (!pagination.search) {
+      loadTask(visionMenu, AUTH, pagination.pageUser)
+        .then((response) => {
+          if (response.error === true && response.message !== 'No data') {
+            console.log(response.error);
+            console.log(response);
+          } else {
+            try {
+              if (response.pages) {
+                dispatch(setTotalUser(response.pages));
+              }
+              dispatch(getTask(response.data ? response.data : [{}]));
+            } catch (error) {
+              console.log(error);
+            }
           }
-        }
-      })
-      .catch((error) => console.log(error));
-  }, [stateUpdate]);
+        })
+        .catch((error) => console.log(error));
+    }
+  }, [stateUpdate, pagination.pageUser]);
 
   useEffect(() => {
     async function loadAllTasks() {
@@ -173,11 +177,18 @@ const TaskTable = (props) => {
 
       try {
         const { data } = await api.get(
-          "GTPP/Task.php?AUTH=" + AUTH + "&app_id=3&administrator=1"
+          'GTPP/_Task.php?AUTH=' +
+            AUTH +
+            '&app_id=3&administrator=1&rows=15&page=' +
+            pagination.pageAdmin,
         );
 
         if (data.error === true) {
           return null;
+        }
+
+        if (data.pages) {
+          dispatch(setTotalAdmin(data.pages));
         }
 
         return data.data;
@@ -185,14 +196,12 @@ const TaskTable = (props) => {
         return null;
       }
     }
-    if (seeAdminSet === true) {
+    if (seeAdminSet === true && pagination.search === false) {
       loadAllTasks()
         .then((response) => dispatch(getTask(response)))
         .catch((error) => console.log(error));
     }
-  }, [stateAdmin,seeAdminSet]);
-
- 
+  }, [stateAdmin, seeAdminSet, pagination.pageAdmin]);
 
   useEffect(() => {
     function taskFilter() {
@@ -202,9 +211,9 @@ const TaskTable = (props) => {
           task.state_id == 2 ||
           task.state_id == 3 ||
           task.state_id == 4 ||
-          task.state_id == 5
+          task.state_id == 5,
       );
-  
+
       dispatch(getTaskFilter(filter));
     }
 
@@ -212,31 +221,31 @@ const TaskTable = (props) => {
       tasks.map(
         (task) => (
           (task.notifications = [
-            { type: 1, amount: 0, message: "" },
-            { type: 4, amount: 0, message: "" },
-            { type: 6, amount: 0, message: "" },
-            { type: 3, amount: 0, message: "" },
-            { type: 2, amount: 0, message: "" },
-            { type: 6, amount: 0, message: "" },
+            { type: 1, amount: 0, message: '' },
+            { type: 4, amount: 0, message: '' },
+            { type: 6, amount: 0, message: '' },
+            { type: 3, amount: 0, message: '' },
+            { type: 2, amount: 0, message: '' },
+            { type: 6, amount: 0, message: '' },
             { amount: 0 },
           ]),
           (task.warning = { expire: 0, due_date: 0, initial: 0 })
-        )
+        ),
       );
       if (filterTask.filter.length === 0) {
         taskFilter();
       }
     }
-  }, [tasks]);
+  }, []);
 
   useEffect(() => {
     loadCompanies(AUTH)
       .then((response) => {
         if (response.error === true) {
-          alert("error");
+          alert('error');
         } else {
           try {
-            dispatch(getCompany(response.data != "" ? response.data : []));
+            dispatch(getCompany(response.data != '' ? response.data : []));
           } catch (error) {}
         }
       })
@@ -247,10 +256,10 @@ const TaskTable = (props) => {
     loadShop(AUTH)
       .then((response) => {
         if (response.error === true) {
-          alert("error");
+          alert('error');
         } else {
           try {
-            dispatch(getShop(response.data != "" ? response.data : []));
+            dispatch(getShop(response.data != '' ? response.data : []));
           } catch (error) {}
         }
       })
@@ -261,7 +270,7 @@ const TaskTable = (props) => {
     loadTaskStates(AUTH)
       .then((response) => {
         if (response.error === true) {
-          alert("error");
+          alert('error');
         } else {
           try {
             dispatch(getStates(response.data));
@@ -275,7 +284,7 @@ const TaskTable = (props) => {
     loadDept(AUTH)
       .then((response) => {
         if (response.error === true) {
-          alert("error");
+          alert('error');
         } else {
           try {
             dispatch(getDepts(response.data));
@@ -290,20 +299,14 @@ const TaskTable = (props) => {
       if (idUser) {
         try {
           const { data } = await api.get(
-            "http://192.168.0.99:71/GLOBAL/Controller/CCPP/EmployeePhoto.php?AUTH=" +
+            'http://192.168.0.99:71/GLOBAL/Controller/CCPP/EmployeePhoto.php?AUTH=' +
               AUTH +
-              "&app_id=3&id=" +
-              idUser
+              '&app_id=3&id=' +
+              idUser,
           );
 
           if (data) {
-            
-              // data.user_id = idUser;
-              // data.photo = userEmpty;
-              // setTakePhotos((oldarray) => [...oldarray, data]);
-           
-
-            if (data.photo == null || data.photo == "") {
+            if (data.photo == null || data.photo == '') {
               data.user_id = idUser;
               data.photo = userEmpty;
               setTakePhotos((oldarray) => [...oldarray, data]);
@@ -334,10 +337,10 @@ const TaskTable = (props) => {
   }, [takePhotos]);
 
   useEffect(() => {
-    if (!("Notification" in window)) {
-      console.log("Esse browser não suporta notificações desktop");
+    if (!('Notification' in window)) {
+      console.log('Esse browser não suporta notificações desktop');
     } else {
-      if (Notification.permission !== "denied") {
+      if (Notification.permission !== 'denied') {
         // Pede ao usuário para utilizar a Notificação Desktop
         Notification.requestPermission();
       }
@@ -347,23 +350,58 @@ const TaskTable = (props) => {
   function convertImage(src) {
     if (src != null) {
       var image = new Image();
-      image.src = "data:image/jpeg;base64, " + src;
+      image.src = 'data:image/jpeg;base64, ' + src;
       return image.src;
     } else {
       return null;
     }
   }
 
+  function handlePageClick(e) {
+    if (pagination.search) {
+      dispatch(setPageSearch(e.selected));
+      return;
+    }
+    if (seeAdminSet === true) {
+      dispatch(setPageAdmin(e.selected));
+    } else {
+      dispatch(setPageUser(e.selected + 1));
+    }
+  }
+
   return loading == true ? (
     <Loading />
   ) : (
-    <ul className="taskList">
-      {filterTask.filter
-        ? filterTask.filter.map((task) => (
-            <Task websocket={props} task={task} key={task.id} />
-          ))
-        : null}
-    </ul>
+    <>
+      <ul className="taskList">
+        {filterTask.filter
+          ? filterTask.filter.map((task) => (
+              <Task websocket={props} task={task} key={task.id} />
+            ))
+          : null}
+      </ul>
+      <div className="paginationArea">
+        <ReactPaginate
+          previousLabel={'Anterior'}
+          nextLabel={'Próximo'}
+          breakLabel={'...'}
+          breakClassName={'break-me'}
+          pageCount={
+            pagination.search
+              ? pagination.totalSearch
+              : seeAdminSet === false
+              ? pagination.totalUser
+              : pagination.totalAdmin
+          }
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={5}
+          onPageChange={handlePageClick}
+          containerClassName={'pagination'}
+          subContainerClassName={'pages pagination'}
+          activeClassName={'active'}
+        />
+      </div>
+    </>
   );
 };
 

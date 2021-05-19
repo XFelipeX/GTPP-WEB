@@ -1,38 +1,32 @@
-import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import "./style.css";
-import lowPriority from "../../assets/Path1.png";
-import medPriority from "../../assets/Path2.png";
-import highPriority from "../../assets/Arrows.png";
-import {
-  getTask,
-  getTaskFilter,
-  updateStateAdmin,
-  updateTask,
-} from "../../redux";
-import useClickOutside from "../ClickOutside";
-import { BiCommentAdd } from "react-icons/bi";
-import { showNotification } from "../../Utils/Notify";
-import api from "../../services/api";
+import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import './style.css';
+import lowPriority from '../../assets/Path1.png';
+import medPriority from '../../assets/Path2.png';
+import highPriority from '../../assets/Arrows.png';
+import { getTaskFilter } from '../../redux';
+import useClickOutside from '../ClickOutside';
+import { BiCommentAdd } from 'react-icons/bi';
+import { showNotification } from '../../Utils/Notify';
+import api from '../../services/api';
 
 let CreateTask = () => {
   const dispatch = useDispatch();
 
-  const [dateInitial, setDateInitial] = useState("");
-  const [dateFinal, setDateFinal] = useState("");
-  const [priority, setPriority] = useState("");
-  const [description, setDescription] = useState("");
+  const [dateInitial, setDateInitial] = useState('');
+  const [dateFinal, setDateFinal] = useState('');
+  const [priority, setPriority] = useState('');
+  const [description, setDescription] = useState('');
   const { permissions } = useSelector((state) => state);
-  const { seeAdminSet } = useSelector((state) => state);
   const { filterTask } = useSelector((state) => state);
   const [open, setOpen] = useState(false);
   const [showPriority, setShowPriority] = useState(false);
   const auth = permissions.session;
 
   function showMenu() {
-    const element = document.getElementById("createTaskIcon");
-    element.classList.add("createTaskIcon");
-    setTimeout(() => element.classList.remove("createTaskIcon"), 1000);
+    const element = document.getElementById('createTaskIcon');
+    element.classList.add('createTaskIcon');
+    setTimeout(() => element.classList.remove('createTaskIcon'), 1000);
     setOpen(!open);
   }
 
@@ -43,50 +37,48 @@ let CreateTask = () => {
   });
 
   function clear() {
-    setPriority("");
-    setDateFinal("");
-    setDateInitial("");
-    setDescription("");
+    setPriority('');
+    setDateFinal('');
+    setDateInitial('');
+    setDescription('');
   }
 
   async function createTask() {
     let object = {};
     if (
-      description !== "" &&
-      dateFinal !== "" &&
-      dateInitial !== "" &&
-      priority !== ""
+      description !== '' &&
+      dateFinal !== '' &&
+      dateInitial !== '' &&
+      priority !== ''
     ) {
       try {
         const { data } = await api.post(
-          "http://192.168.0.99:71/GLOBAL/Controller/GTPP/Task.php?AUTH=" +
+          'http://192.168.0.99:71/GLOBAL/Controller/GTPP/Task.php?AUTH=' +
             auth +
-            "&mobile=1&app_id=3",
+            '&mobile=1&app_id=3',
           {
             description: description,
             priority: priority,
             initial_date: dateInitial,
             final_date: dateFinal,
-          }
+          },
         );
-
-        // console.log(data);
 
         if (data.error === true) {
           let msg = data.message;
 
-          if (msg.includes("Authorization denied")) {
-            showNotification("Erro", "Autorização negada", "danger");
+          if (msg.includes('Authorization denied')) {
+            showNotification('Erro', 'Autorização negada', 'danger');
           } else if (
-            msg.includes("The final_date may not be less than the current date")
+            msg.includes('The final_date may not be less than the current date')
           ) {
             showNotification(
-              "Erro",
-              "A data final não pode ser menor que a data atual",
-              "danger"
+              'Erro',
+              'A data final não pode ser menor que a data atual',
+              'danger',
             );
           } else {
-            showNotification("Erro", msg, "danger");
+            showNotification('Erro', msg, 'danger');
           }
         } else {
           object.id = data.last_id;
@@ -100,12 +92,8 @@ let CreateTask = () => {
           object.csds = [];
           object.focus = true;
           setOpen(false);
-
-          // dispatch(updateTask());
           dispatch(getTaskFilter([...filterTask.filter, object]));
-
-          showNotification("Sucesso", "Nova tarefa foi adicionada", "success");
-
+          showNotification('Sucesso', 'Nova tarefa foi adicionada', 'success');
           clear();
         }
       } catch (error) {
@@ -115,29 +103,29 @@ let CreateTask = () => {
           msg = error.response.data.message;
 
           if (
-            msg.includes("The final_date may not be less than the current date")
+            msg.includes('The final_date may not be less than the current date')
           ) {
             showNotification(
-              "Erro",
-              "A data final não pode ser menor que a data atual",
-              "danger"
+              'Erro',
+              'A data final não pode ser menor que a data atual',
+              'danger',
             );
           } else {
-            showNotification("Erro", msg, "danger");
+            showNotification('Erro', msg, 'danger');
           }
         } else {
-          showNotification("Erro", msg, "danger");
+          showNotification('Erro', msg, 'danger');
         }
 
         console.log(msg);
       }
     } else {
-      showNotification("Aviso", "Preencha todos os campos", "warning");
+      showNotification('Aviso', 'Preencha todos os campos', 'warning');
     }
   }
 
   let changePriority = (e) => {
-    let select = document.getElementById("selectOption");
+    let select = document.getElementById('selectOption');
 
     let selectValue = select.value;
     let selectText = select.innerHTML;

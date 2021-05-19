@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
-import ConfirmAction from "../ConfirmAction";
-import { BiEdit } from "react-icons/bi";
-import { useDispatch, useSelector } from "react-redux";
-import ModalCancel from "../ModalCancel";
+import React, { useState, useEffect } from 'react';
+import ConfirmAction from '../ConfirmAction';
+import { BiEdit } from 'react-icons/bi';
+import { useDispatch, useSelector } from 'react-redux';
+import ModalCancel from '../ModalCancel';
 import {
   updateTask,
   updateModal,
@@ -16,7 +16,7 @@ import {
   setDoneVisi,
   setCanceledVisi,
   removeWarning,
-} from "../../redux";
+} from '../../redux';
 import {
   updateFullDescription,
   formatDate,
@@ -24,14 +24,14 @@ import {
   loadShopsCompany,
   loadDeptsCompany,
   updateStateTask,
-  cancelStateTask
-} from "./functions";
-import {showNotification} from '../../Utils/Notify';
-import api from "../../services/api";
-import "./style.css";
-import useClickOutside from "../ClickOutside";
-import ModalDescription from "../ModalDescription";
-import InfoUserCard from "../InfoUserCard";
+  cancelStateTask,
+} from './functions';
+import { showNotification } from '../../Utils/Notify';
+import api from '../../services/api';
+import './style.css';
+import useClickOutside from '../ClickOutside';
+import ModalDescription from '../ModalDescription';
+import InfoUserCard from '../InfoUserCard';
 
 const TaskInfo = () => {
   const dispatch = useDispatch();
@@ -52,11 +52,11 @@ const TaskInfo = () => {
   const [showDayModal, setShowDayModal] = useState(false);
   const [days, setDays] = useState(1);
   const [fullDescription, setFullDescription] = useState(
-    taskVisible.task.full_description
+    taskVisible.task.full_description,
   );
   const [showInfoUser, setShowInfoUser] = useState(false);
   const [infoUserId, setInfoUserId] = useState();
-  const [reason, setReason] = useState("");
+  const [reason, setReason] = useState('');
   const { vinculatedUsers } = useSelector((state) => state);
   const [showFullDesc, setShowFullDesc] = useState(false);
   const [showDept, setShowDept] = useState(false);
@@ -73,10 +73,10 @@ const TaskInfo = () => {
   useEffect(() => {
     async function loadTaskVisible() {
       let { data } = await api.get(
-        "GTPP/Task.php?AUTH=" +
+        'GTPP/Task.php?AUTH=' +
           AUTH +
-          "&app_id=3&id=" +
-          taskVisible.info.task_id
+          '&app_id=3&id=' +
+          taskVisible.info.task_id,
       );
 
       if (data.error === true) {
@@ -96,13 +96,13 @@ const TaskInfo = () => {
           loadShopsCompany(data.data.csds[0].company_id, AUTH).then(
             (response) => {
               setShops(response.data);
-            }
+            },
           );
           loadDeptsCompany(
             data.data.csds[0].company_id,
             data.data.csds[0].shop_id,
             taskVisible.info.task_id,
-            AUTH
+            AUTH,
           ).then((response) => {
             setDepts(response);
           });
@@ -117,62 +117,61 @@ const TaskInfo = () => {
 
   //dates task
   const dateInitial = formatDate(
-    taskVisible.info ? taskVisible.info.initial_date : "00-00-0000"
+    taskVisible.info ? taskVisible.info.initial_date : '00-00-0000',
   );
   const dateFinal = formatDate(
-    taskVisible.info ? taskVisible.info.final_date : "00-00-0000"
+    taskVisible.info ? taskVisible.info.final_date : '00-00-0000',
   );
 
   function upFullDescription(taskId, description) {
     updateFullDescription(taskId, description, AUTH).then((response) => {
       setFullDescription(taskVisible.task.full_description);
-      // console.log(response);
       if (
-        response.includes("Only the task creator or administrator can do this")
+        response.includes('Only the task creator or administrator can do this')
       ) {
         showNotification(
-          "Aviso",
-          "Somente o criador da tarefa ou administrador pode fazer isto",
-          "warning"
+          'Aviso',
+          'Somente o criador da tarefa ou administrador pode fazer isto',
+          'warning',
         );
-      } else if (response.includes("The full description cannot be empty")) {
+      } else if (response.includes('The full description cannot be empty')) {
         showNotification(
-          "Aviso",
-          "A descrição completa não pode estar vazia",
-          "warning"
+          'Aviso',
+          'A descrição completa não pode estar vazia',
+          'warning',
         );
-      } else if (response.includes("Task with this state cannot be modified")) {
+      } else if (response.includes('Task with this state cannot be modified')) {
         showNotification(
-          "Aviso",
-          "Tarefa neste estado não pode ser modificada",
-          "warning"
+          'Aviso',
+          'Tarefa neste estado não pode ser modificada',
+          'warning',
         );
-      } else if (response.includes("No data to Update")) {
+      } else if (response.includes('No data to Update')) {
         showNotification(
-          "Aviso",
-          "Sem dados para atualizar, modifique a descrição",
-          "warning"
+          'Aviso',
+          'Sem dados para atualizar, modifique a descrição',
+          'warning',
         );
       } else if (
         response.includes(
-          "(id, full_description || (description, priority)) is broken"
+          '(id, full_description || (description, priority)) is broken',
         )
       ) {
         showNotification(
-          "Aviso",
-          "Preencha o campo de descrição para atualizar",
-          "warning"
+          'Aviso',
+          'Preencha o campo de descrição para atualizar',
+          'warning',
         );
       } else {
         showNotification(
-          "Sucesso",
-          "Descrição completa atualizada com sucesso",
-          "success"
+          'Sucesso',
+          'Descrição completa atualizada com sucesso',
+          'success',
         );
 
         setFullDescription(description);
         taskVisible.task.full_description = description;
-        SendInfo("A descrição completa da tarefa foi atualizada", 3);
+        SendInfo('A descrição completa da tarefa foi atualizada', 3);
       }
 
       tasks.map((task) => {
@@ -186,7 +185,7 @@ const TaskInfo = () => {
 
   useEffect(() => {
     async function loadVinculateUsers() {
-      const { data } = await api.get("GTPP/Task_User.php", {
+      const { data } = await api.get('GTPP/Task_User.php', {
         params: {
           AUTH: AUTH,
           task_id: taskVisible.info.task_id,
@@ -195,7 +194,6 @@ const TaskInfo = () => {
         },
       });
       try {
-        // console.log(data)
         setUsers(data.data);
       } catch (error) {}
     }
@@ -204,7 +202,7 @@ const TaskInfo = () => {
 
   useEffect(() => {
     function loadShops() {
-      if (company != "-1") {
+      if (company != '-1') {
         setDepts(false);
         setShowDept(false);
         setCompany(company);
@@ -221,13 +219,13 @@ const TaskInfo = () => {
     loadDeptsCompany(company, shop, taskVisible.info.task_id, AUTH).then(
       (response) => {
         setDepts(response);
-      }
+      },
     );
   }, [shop, modalUpdate]);
 
   function changeCheckDept(taskId, deptId, shopId, companyId) {
-    if (shopId == "-1" || companyId == "-1") {
-      showNotification("Aviso", "Selecione companhia e loja", "warning");
+    if (shopId == '-1' || companyId == '-1') {
+      showNotification('Aviso', 'Selecione companhia e loja', 'warning');
     } else {
       try {
         updateCheckDept(taskId, deptId, shopId, companyId, AUTH)
@@ -246,7 +244,7 @@ const TaskInfo = () => {
             }
           });
       } catch (error) {
-        showNotification("Erro", String(error), "danger");
+        showNotification('Erro', String(error), 'danger');
       } finally {
         dispatch(orderTasks());
       }
@@ -265,8 +263,8 @@ const TaskInfo = () => {
     ) {
       if (reason == null) {
         setShowReasonModal(true);
-      } else if (reason === "") {
-        showNotification("Aviso", "motivo é obrigatório", "warning");
+      } else if (reason === '') {
+        showNotification('Aviso', 'motivo é obrigatório', 'warning');
       } else {
         updateStateTask(taskVisible.info.task_id, reason, null, AUTH)
           .then((response) => {
@@ -277,13 +275,11 @@ const TaskInfo = () => {
             changes = changes.map((task) => {
               if (task.id === taskVisible.info.task_id) {
                 if (Number(task.state_id) !== Number(response[0].id)) {
-                  SendInfo("send", 6);
+                  SendInfo('send', 6);
                 }
                 task.state_id = response[0].id;
               }
             });
-
-            // dispatch(getTask([...changes]));
           })
           .catch((error) => {});
         if (seeAdminSet === true) {
@@ -293,7 +289,7 @@ const TaskInfo = () => {
         }
         dispatch(updateModal());
         setShowReasonModal(false);
-        setReason("");
+        setReason('');
       }
     } else if (taskVisible.info.state_id == 5) {
       if (days == null) {
@@ -309,7 +305,7 @@ const TaskInfo = () => {
             changes = changes.map((task) => {
               if (task.id === taskVisible.info.task_id) {
                 if (Number(task.state_id) !== Number(response.id)) {
-                  SendInfo("send", 6, taskVisible.info.final_date);
+                  SendInfo('send', 6, taskVisible.info.final_date);
                 }
                 task.final_date = response.final_date;
                 task.state_id = response.id;
@@ -317,8 +313,6 @@ const TaskInfo = () => {
             });
 
             dispatch(removeWarning(taskVisible.info));
-
-            // dispatch(getTask([...changes]));
           })
           .catch((error) => {
             console.log(error.message);
@@ -330,7 +324,7 @@ const TaskInfo = () => {
         }
         dispatch(updateModal());
         setShowDayModal(false);
-        setDays("");
+        setDays('');
       }
     } else if (taskVisible.info.state_id !== 5) {
       updateStateTask(taskVisible.info.task_id, null, null, AUTH)
@@ -342,22 +336,17 @@ const TaskInfo = () => {
           changes = changes.map((task) => {
             if (task.id === taskVisible.info.task_id) {
               if (Number(task.state_id) !== Number(response[0].id)) {
-                SendInfo("send", 6);
+                SendInfo('send', 6);
               }
 
               task.state_id = response[0].id;
             }
           });
-
-          // dispatch(getTask([...changes]));
         })
         .then(() => {
           if (seeAdminSet === true) {
             dispatch(updateStateAdmin());
-          } else {
-            // dispatch(updateTask());
           }
-          // dispatch(updateModal());
           setShowConfirmAction(false);
         })
         .catch((error) => {
@@ -393,8 +382,8 @@ const TaskInfo = () => {
   }
 
   function cancelTask(taskId, reason) {
-    if (reason === "") {
-      showNotification("Aviso", "O motivo é obrigatório", "warning");
+    if (reason === '') {
+      showNotification('Aviso', 'O motivo é obrigatório', 'warning');
       return;
     }
 
@@ -408,7 +397,7 @@ const TaskInfo = () => {
         changes = changes.map((task) => {
           if (task.id === taskVisible.info.task_id) {
             if (Number(task.state_id) !== Number(response.id)) {
-              SendInfo("send", 6);
+              SendInfo('send', 6);
             }
             task.state_id = response.id;
           }
@@ -423,7 +412,7 @@ const TaskInfo = () => {
         }
       })
       .catch((error) => {
-        // console.log(error);
+        console.log(error);
       });
   }
 
@@ -436,7 +425,7 @@ const TaskInfo = () => {
   if (users.length > 0) {
     users.map((user) => {
       let result = vinculatedUsers.filter(
-        (users) => Number(users.id) === Number(user.user_id)
+        (users) => Number(users.id) === Number(user.user_id),
       );
       user.name = result[0].name;
     });
@@ -455,7 +444,7 @@ const TaskInfo = () => {
   }, [webSocket]);
 
   function SendInfo(msg, type, newDateFinal) {
-    if (msg !== "" && webSocket.websocketState === "connected") {
+    if (msg !== '' && webSocket.websocketState === 'connected') {
       switch (type) {
         case 3:
           try {
@@ -504,9 +493,9 @@ const TaskInfo = () => {
     const filter = webSocket.users.filter((id) => id == userId);
 
     if (filter[0]) {
-      return "online";
+      return 'online';
     } else {
-      return "";
+      return '';
     }
   }
 
@@ -540,8 +529,8 @@ const TaskInfo = () => {
               <li>
                 <h3>
                   {taskVisible.info.state_id == 6
-                    ? "Deseja retomar a tarefa?"
-                    : "Alterar tarefa para o estado Parado?"}
+                    ? 'Deseja retomar a tarefa?'
+                    : 'Alterar tarefa para o estado Parado?'}
                 </h3>
                 <h2>*Informe o motivo:</h2>
                 <textarea
@@ -664,7 +653,7 @@ const TaskInfo = () => {
                   }}
                   title="Estado atual"
                   className="buttonState stateControl"
-                  style={{ backgroundColor: "#" + state.color }}
+                  style={{ backgroundColor: '#' + state.color }}
                 >
                   <h2>{state.description}</h2>
                 </button>
@@ -679,7 +668,7 @@ const TaskInfo = () => {
           <div className="col taskDescription">
             <div className="descriptionArea">
               <h1>
-                Descrição Completa:{" "}
+                Descrição Completa:{' '}
                 <BiEdit
                   size="25"
                   onClick={() => setShowFullDesc(!showFullDesc)}
@@ -715,7 +704,15 @@ const TaskInfo = () => {
               value={company}
               onChange={(e) => setCompany(e.target.value)}
               id="company"
-              style={taskcsds ? {pointerEvents:"none",backgroundColor:"#343434",color:"#fff"} : {}}
+              style={
+                taskcsds
+                  ? {
+                      pointerEvents: 'none',
+                      backgroundColor: '#343434',
+                      color: '#fff',
+                    }
+                  : {}
+              }
             >
               <option value="-1">Selecionar Companhia</option>
 
@@ -732,7 +729,15 @@ const TaskInfo = () => {
               id="shop"
               value={shop}
               onChange={(e) => setShop(e.target.value)}
-              style={taskcsds ? {pointerEvents:"none",backgroundColor:"#343434",color:"#fff"} : {}}
+              style={
+                taskcsds
+                  ? {
+                      pointerEvents: 'none',
+                      backgroundColor: '#343434',
+                      color: '#fff',
+                    }
+                  : {}
+              }
             >
               <option value="-1">Selecionar Loja</option>
 
@@ -766,7 +771,7 @@ const TaskInfo = () => {
                                 taskVisible.info.task_id,
                                 dept.id,
                                 shop,
-                                company
+                                company,
                               );
                               dispatch(updateTask());
                             }}

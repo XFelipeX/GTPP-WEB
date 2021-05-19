@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import "./style.css";
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import './style.css';
 import {
   taskVisibleUpdate,
   getWebSocketHistoric,
   getNotifications,
-} from "../../redux";
-import { AiOutlineClose } from "react-icons/ai";
-import { BiEdit } from "react-icons/bi";
-import TaskTopicList from "../TaskTopicList";
-import TaskInfo from "../TaskInfo";
-import Loading from "../Loading";
-import { updateDescription, getMessage } from "./functions";
-import {showNotification} from '../../Utils/Notify';
-import ModalDescription from "../ModalDescription";
-import { BsChatSquareDotsFill } from "react-icons/bs";
-import WebChat from "../WebChat";
-import api from "../../services/api";
+} from '../../redux';
+import { AiOutlineClose } from 'react-icons/ai';
+import { BiEdit } from 'react-icons/bi';
+import TaskTopicList from '../TaskTopicList';
+import TaskInfo from '../TaskInfo';
+import Loading from '../Loading';
+import { updateDescription, getMessage } from './functions';
+import { showNotification } from '../../Utils/Notify';
+import ModalDescription from '../ModalDescription';
+import { BsChatSquareDotsFill } from 'react-icons/bs';
+import WebChat from '../WebChat';
+import api from '../../services/api';
 
-let TaskModal = ({ id = "modal", close, open }) => {
+let TaskModal = ({ id = 'modal', close, open }) => {
   const dispatch = useDispatch();
   const { taskVisible } = useSelector((state) => state);
   const { tasks } = useSelector((state) => state);
@@ -39,7 +39,7 @@ let TaskModal = ({ id = "modal", close, open }) => {
     updateDescription(taskId, description, priority, AUTH).then((response) => {
       if (response !== null) {
         setDescription(description);
-        SendInfo("A descrição simples da tarefa foi atualizada", description);
+        SendInfo('A descrição simples da tarefa foi atualizada', description);
       }
     });
     setShowDesc(false);
@@ -52,7 +52,7 @@ let TaskModal = ({ id = "modal", close, open }) => {
   }
 
   function SendInfo(msg, update) {
-    if (msg !== "" && webSocket.websocketState === "connected") {
+    if (msg !== '' && webSocket.websocketState === 'connected') {
       try {
         let jsonString = {
           task_id: taskVisible.info.task_id,
@@ -98,7 +98,7 @@ let TaskModal = ({ id = "modal", close, open }) => {
           total += notification.content.message;
 
           if (total > 99) {
-            setNotification("+99");
+            setNotification('+99');
           } else if (total === 0) {
             setNotification(0);
           } else {
@@ -109,15 +109,13 @@ let TaskModal = ({ id = "modal", close, open }) => {
     }
   }, [notifications]);
 
-  const [warningState, setWarningState] = useState("");
+  const [warningState, setWarningState] = useState('');
 
   useEffect(() => {
     function verifyWarning() {
       let task = warning.warning.filter(
-        (task) => task.task_id == taskVisible.info.task_id
+        (task) => task.task_id == taskVisible.info.task_id,
       );
-
-      // console.log(task);
 
       if (warning.warning.length > 0 && task[0]) {
         const due_date = task[0].due_date;
@@ -126,23 +124,23 @@ let TaskModal = ({ id = "modal", close, open }) => {
 
         if (due_date >= -1) {
           if (due_date === 0 || due_date === -1) {
-            setWarningState("A tarefa vence hoje");
+            setWarningState('A tarefa vence hoje');
           } else if (due_date === 1) {
-            setWarningState("A tarefa venceu há " + due_date + " dia");
+            setWarningState('A tarefa venceu há ' + due_date + ' dia');
           } else {
-            setWarningState("A tarefa venceu há " + due_date + " dias");
+            setWarningState('A tarefa venceu há ' + due_date + ' dias');
           }
         } else if (expire > 0) {
           if (expire === 1) {
-            setWarningState("A tarefa expira em " + expire + " dia");
+            setWarningState('A tarefa expira em ' + expire + ' dia');
           } else {
-            setWarningState("A tarefa expira em " + expire + " dias");
+            setWarningState('A tarefa expira em ' + expire + ' dias');
           }
         } else if (initial > 0) {
           if (initial === 1) {
-            setWarningState("A tarefa começa em " + initial + " dia");
+            setWarningState('A tarefa começa em ' + initial + ' dia');
           } else {
-            setWarningState("A tarefa começa em " + initial + " dias");
+            setWarningState('A tarefa começa em ' + initial + ' dias');
           }
         }
       } else {
@@ -153,22 +151,22 @@ let TaskModal = ({ id = "modal", close, open }) => {
     verifyWarning();
   }, [warning]);
 
-  const [disqualified, setDesqualified] = useState({ disqualify: "0" });
+  const [disqualified, setDesqualified] = useState({ disqualify: '0' });
 
   useEffect(() => {
     async function getDesqualified() {
       try {
         const { data } = await api.get(
-          `GTPP/Score.php?AUTH=${AUTH}&app_id=3&task_id=${taskVisible.info.task_id}`
+          `GTPP/Score.php?AUTH=${AUTH}&app_id=3&task_id=${taskVisible.info.task_id}`,
         );
 
         if (data.error === true) {
-          if (data.message === "No data") {
+          if (data.message === 'No data') {
           } else {
-            showNotification("Erro", data.message, "warning");
+            showNotification('Erro', data.message, 'warning');
           }
 
-          return { disqualify: "0" };
+          return { disqualify: '0' };
         }
 
         return data.data[0];
@@ -180,8 +178,8 @@ let TaskModal = ({ id = "modal", close, open }) => {
           msg = error.message;
         }
 
-        showNotification("Aviso", msg, "warning");
-        return { disqualify: "0" };
+        showNotification('Aviso', msg, 'warning');
+        return { disqualify: '0' };
       }
     }
 
@@ -194,24 +192,24 @@ let TaskModal = ({ id = "modal", close, open }) => {
         const { data } = await api.put(
           `GTPP/Score.php?AUTH=${AUTH}&app_id=3&task_id=${
             taskVisible.info.task_id
-          }&disqualify=${disqualified.disqualify === "1" ? "0" : "1"}`
+          }&disqualify=${disqualified.disqualify === '1' ? '0' : '1'}`,
         );
 
         if (data.error === true) {
-          if (data.message === "No data") {
+          if (data.message === 'No data') {
           } else {
-            showNotification("Erro", data.message, "warning");
+            showNotification('Erro', data.message, 'warning');
           }
           return;
         }
 
-        if (disqualified.disqualify === "0") {
-          showNotification("Sucesso", "A tarefa foi desqualificada", "success");
+        if (disqualified.disqualify === '0') {
+          showNotification('Sucesso', 'A tarefa foi desqualificada', 'success');
         } else {
           showNotification(
-            "Sucesso",
-            "A tarefa agora é qualificada",
-            "success"
+            'Sucesso',
+            'A tarefa agora é qualificada',
+            'success',
           );
         }
       } catch (error) {
@@ -222,14 +220,14 @@ let TaskModal = ({ id = "modal", close, open }) => {
           msg = error.message;
         }
 
-        showNotification("Aviso", msg, "warning");
+        showNotification('Aviso', msg, 'warning');
       }
     }
 
     getDesqualified().then(() =>
       setDesqualified({
-        disqualify: disqualified.disqualify === "1" ? "0" : "1",
-      })
+        disqualify: disqualified.disqualify === '1' ? '0' : '1',
+      }),
     );
   }
 
@@ -245,7 +243,7 @@ let TaskModal = ({ id = "modal", close, open }) => {
             upDescription(
               taskVisible.info.task_id,
               info,
-              taskVisible.info.priority
+              taskVisible.info.priority,
             )
           }
           question="Descrição da tarefa"
@@ -255,18 +253,18 @@ let TaskModal = ({ id = "modal", close, open }) => {
         <div className="modalHeader">
           <div
             style={{
-              position: "absolute",
-              top: 5 + "em",
-              width: 100 + "%",
-              height: 3 + "px",
-              backgroundColor: "#1b1b1b",
+              position: 'absolute',
+              top: 5 + 'em',
+              width: 100 + '%',
+              height: 3 + 'px',
+              backgroundColor: '#1b1b1b',
             }}
           >
             <div
               style={{
-                backgroundColor: "#00a2ff",
-                width: taskVisible.info.percent + "%",
-                height: 100 + "%",
+                backgroundColor: '#00a2ff',
+                width: taskVisible.info.percent + '%',
+                height: 100 + '%',
               }}
             />
           </div>
@@ -283,11 +281,11 @@ let TaskModal = ({ id = "modal", close, open }) => {
               <div
                 className="warning"
                 style={
-                  warningState.includes("venceu") ||
-                  warningState.includes("vence")
-                    ? { color: "red" }
-                    : warningState.includes("expira")
-                    ? { color: "yellow" }
+                  warningState.includes('venceu') ||
+                  warningState.includes('vence')
+                    ? { color: 'red' }
+                    : warningState.includes('expira')
+                    ? { color: 'yellow' }
                     : {}
                 }
               >
@@ -302,7 +300,7 @@ let TaskModal = ({ id = "modal", close, open }) => {
                   type="checkbox"
                   name="desqualify"
                   id="desqualify"
-                  checked={disqualified.disqualify === "1"}
+                  checked={disqualified.disqualify === '1'}
                   onChange={() => updateDesqualify()}
                 />
               </div>
@@ -337,7 +335,7 @@ let TaskModal = ({ id = "modal", close, open }) => {
             .then((response) => dispatch(getWebSocketHistoric(response)))
             .then(() => {});
           setShowWebChat(!showWebChat);
-          document.getElementById("openChat").style.display = "none";
+          document.getElementById('openChat').style.display = 'none';
           let newArray = [...notifications];
 
           newArray.map((notify) => {
@@ -353,7 +351,7 @@ let TaskModal = ({ id = "modal", close, open }) => {
       >
         <div
           className="webChatNotification"
-          style={notification === 0 ? { backgroundColor: "transparent" } : null}
+          style={notification === 0 ? { backgroundColor: 'transparent' } : null}
         >
           <div>{notification > 0 && notification}</div>
         </div>

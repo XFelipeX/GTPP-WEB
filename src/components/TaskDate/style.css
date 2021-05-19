@@ -1,5 +1,5 @@
 .containerDate {
-  margin:0 14px;
+  margin: 0 14px;
   padding: 0 5px;
   border-radius: 5px;
   color: #000;
@@ -8,7 +8,6 @@
   position: relative;
 }
 .dataShow {
-  /* cursor: pointer; */
   width: 95px;
   height: 100%;
   display: flex;
@@ -46,7 +45,7 @@
   background-color: #85be15;
 }
 
-.initialDate{
+.initialDate {
   width: 95px;
   padding: 5px;
   display: inline-block;

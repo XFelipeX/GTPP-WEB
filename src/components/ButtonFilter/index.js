@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { loadShopsCompany, loadDeptsCompany } from "./functions";
-import "./style.css";
-import { AiTwotoneFilter } from "react-icons/ai";
-import useClickOutside from "../ClickOutside";
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { loadShopsCompany, loadDeptsCompany } from './functions';
+import './style.css';
+import { AiTwotoneFilter } from 'react-icons/ai';
+import useClickOutside from '../ClickOutside';
 import {
   getTaskFilter,
   setAnalyzeVisi,
@@ -13,17 +13,16 @@ import {
   setDoneVisi,
   setDoVisi,
   setStoppedVisi,
-} from "../../redux";
-
+} from '../../redux';
 
 const ButtonFilter = () => {
   const dispatch = useDispatch();
   const { taskCompanies } = useSelector((state) => state);
   const { tasks } = useSelector((state) => state);
   const [showModal, setShowModal] = useState(false);
-  const [company, setCompany] = useState("-1");
-  const [shop, setShop] = useState("-1");
-  const [dept, setDept] = useState("-1");
+  const [company, setCompany] = useState('-1');
+  const [shop, setShop] = useState('-1');
+  const [dept, setDept] = useState('-1');
   const [depts, setDepts] = useState([]);
   const [shops, setShops] = useState([]);
   const { filterTask } = useSelector((state) => state);
@@ -31,11 +30,8 @@ const ButtonFilter = () => {
   const AUTH = permissions.session;
 
   useEffect(() => {
-    // console.log(company)
     function loadShops() {
-      if (company != "-1") {
-        // dispatch(getDepts([]));
-
+      if (company != '-1') {
         loadShopsCompany(company, AUTH).then((response) => {
           setShops(response.data);
         });
@@ -55,32 +51,18 @@ const ButtonFilter = () => {
 
   let domNode = useClickOutside(() => {
     setShowModal(false);
-    setCompany("-1");
-    setShop("-1");
-    setDept("-1");
+    setCompany('-1');
+    setShop('-1');
+    setDept('-1');
     setDepts([]);
     setShops([]);
-    // setStateFilter({
-    //   fazer: true,
-    //   fazendo: true,
-    //   analise: true,
-    //   parado: true,
-    //   bloqueado: true,
-    //   feito: false,
-    //   cancelado: false,
-    // });
   });
-
-  // const [filter,setFilter] = useState([]);
 
   useEffect(() => {
     taskFilterAction();
   }, [tasks]);
 
-  // console.log(tasks);
-
   function taskFilterAction() {
-    // console.log(filterTask)
     let filterDo = [];
     let filterDoing = [];
     let filterAnalyze = [];
@@ -89,38 +71,33 @@ const ButtonFilter = () => {
     let filterDone = [];
     let filterCanceled = [];
 
-    // console.log(filterTask)
-
-    if(tasks){
-      if (company == "-1" || shop == "-1" || dept == "-1") {
-        // console.log(tasks)
-        // console.log('filter')
+    if (tasks) {
+      if (company == '-1' || shop == '-1' || dept == '-1') {
         filterDo = tasks.filter((task) =>
-          filterTask.do === true ? Number(task.state_id) === 1 : null
+          filterTask.do === true ? Number(task.state_id) === 1 : null,
         );
         filterDoing = tasks.filter((task) =>
-          filterTask.doing === true ? Number(task.state_id) === 2 : null
+          filterTask.doing === true ? Number(task.state_id) === 2 : null,
         );
         filterAnalyze = tasks.filter((task) =>
-          filterTask.analyze === true ? Number(task.state_id) === 3 : null
+          filterTask.analyze === true ? Number(task.state_id) === 3 : null,
         );
         filterStopped = tasks.filter((task) =>
-          filterTask.stopped === true ? Number(task.state_id) === 4 : null
+          filterTask.stopped === true ? Number(task.state_id) === 4 : null,
         );
         filterBlocked = tasks.filter((task) =>
-          filterTask.blocked === true ? Number(task.state_id) === 5 : null
+          filterTask.blocked === true ? Number(task.state_id) === 5 : null,
         );
         filterDone = tasks.filter((task) =>
-          filterTask.done === true ? Number(task.state_id) === 6 : null
+          filterTask.done === true ? Number(task.state_id) === 6 : null,
         );
         filterCanceled = tasks.filter((task) =>
-          filterTask.canceled === true ? Number(task.state_id) === 7 : null
+          filterTask.canceled === true ? Number(task.state_id) === 7 : null,
         );
       } else {
         let filterCsds = [];
         let tasksFilter = [];
         filterCsds = tasks.filter((task) => task.csds.length > 0);
-        // console.log(filterCsds)
         filterCsds.forEach((task) => {
           task.csds.forEach((csds) => {
             if (
@@ -132,32 +109,32 @@ const ButtonFilter = () => {
             }
           });
         });
-  
+
         if (tasksFilter.length > 0) {
           filterDo = tasksFilter.filter((task) =>
-            filterTask.do ? task.state_id === 1 : null
+            filterTask.do ? task.state_id === 1 : null,
           );
           filterDoing = tasksFilter.filter((task) =>
-            filterTask.doing ? task.state_id === 2 : null
+            filterTask.doing ? task.state_id === 2 : null,
           );
           filterAnalyze = tasksFilter.filter((task) =>
-            filterTask.analyze ? task.state_id === 3 : null
+            filterTask.analyze ? task.state_id === 3 : null,
           );
           filterStopped = tasksFilter.filter((task) =>
-            filterTask.stopped ? task.state_id === 4 : null
+            filterTask.stopped ? task.state_id === 4 : null,
           );
           filterBlocked = tasksFilter.filter((task) =>
-            filterTask.blocked ? task.state_id === 5 : null
+            filterTask.blocked ? task.state_id === 5 : null,
           );
           filterDone = tasksFilter.filter((task) =>
-            filterTask.done ? task.state_id === 6 : null
+            filterTask.done ? task.state_id === 6 : null,
           );
           filterCanceled = tasksFilter.filter((task) =>
-            filterTask.canceled ? task.state_id === 7 : null
+            filterTask.canceled ? task.state_id === 7 : null,
           );
         }
       }
-  
+
       let finalFilter = [
         ...filterDo,
         ...filterDoing,
@@ -167,12 +144,8 @@ const ButtonFilter = () => {
         ...filterDone,
         ...filterCanceled,
       ];
-      // setFilter([...finalFilter]);
-      // console.log(finalFilter);
       dispatch(getTaskFilter([...finalFilter]));
     }
-
-    
   }
 
   const setDoVisibility = (value) => {
@@ -197,23 +170,21 @@ const ButtonFilter = () => {
     dispatch(setCanceledVisi(value));
   };
 
-  // console.log(depts)
-
   return (
     <div className="buttonFilterArea" ref={domNode}>
       <button
         className="buttonFilter"
         onClick={() => {
-          const element = document.getElementById("buttonFilterIcon");
-          element.classList.add("buttonFilterIcon");
-          setTimeout(() => element.classList.remove("buttonFilterIcon"), 1000);
+          const element = document.getElementById('buttonFilterIcon');
+          element.classList.add('buttonFilterIcon');
+          setTimeout(() => element.classList.remove('buttonFilterIcon'), 1000);
           setShowModal(!showModal);
         }}
         title="Filtrar lista"
       >
         <AiTwotoneFilter
           size={50}
-          style={{ color: "#959595" }}
+          style={{ color: '#959595' }}
           id="buttonFilterIcon"
         />
       </button>
@@ -228,8 +199,8 @@ const ButtonFilter = () => {
                 value={company}
                 onChange={(e) => {
                   setCompany(e.target.value);
-                  setShop("-1");
-                  setDept("-1");
+                  setShop('-1');
+                  setDept('-1');
                   setDepts([]);
                   setShops([]);
                 }}

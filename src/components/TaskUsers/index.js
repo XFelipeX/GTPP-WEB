@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import "./style.css";
-import api from "../../services/api";
-import { store } from "react-notifications-component";
-import userImg from "../../assets/user@2x.png";
-import { getUsersPhotos, orderTasks, updateStateUsers } from "../../redux";
-import useClickOutside from "../ClickOutside";
-import Loading from "../Loading";
-import { AiOutlineClose } from "react-icons/ai";
-import { showNotification } from "../../Utils/Notify";
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import './style.css';
+import api from '../../services/api';
+import { store } from 'react-notifications-component';
+import userImg from '../../assets/user@2x.png';
+import { getUsersPhotos, orderTasks, updateStateUsers } from '../../redux';
+import useClickOutside from '../ClickOutside';
+import Loading from '../Loading';
+import { AiOutlineClose } from 'react-icons/ai';
+import { showNotification } from '../../Utils/Notify';
 
 let TaskUsers = ({ task }) => {
   const { permissions } = useSelector((state) => state);
@@ -29,7 +29,7 @@ let TaskUsers = ({ task }) => {
 
   useEffect(() => {
     async function loadVinculateUsers() {
-      const { data } = await api.get("GTPP/Task_User.php", {
+      const { data } = await api.get('GTPP/Task_User.php', {
         params: {
           AUTH: AUTH,
           task_id: task.id,
@@ -41,18 +41,18 @@ let TaskUsers = ({ task }) => {
       if (data.error === true) {
         let msg = data.message;
 
-        if (msg.includes("No data")) {
-        } else if (msg.includes("Authorization denied")) {
-          showNotification("Erro", "Autorização negada", "danger");
+        if (msg.includes('No data')) {
+        } else if (msg.includes('Authorization denied')) {
+          showNotification('Erro', 'Autorização negada', 'danger');
         } else {
-          showNotification("Erro", msg, "danger");
+          showNotification('Erro', msg, 'danger');
         }
       }
 
       try {
         setUsers(data.data);
       } catch (error) {
-        showNotification("Erro", error, "danger");
+        showNotification('Erro', error, 'danger');
       }
     }
 
@@ -62,7 +62,7 @@ let TaskUsers = ({ task }) => {
   useEffect(() => {
     async function loadAllUsers() {
       try {
-        const { data } = await api.get("GTPP/Task_User.php", {
+        const { data } = await api.get('GTPP/Task_User.php', {
           params: {
             AUTH: AUTH,
             task_id: task.id,
@@ -71,21 +71,19 @@ let TaskUsers = ({ task }) => {
           },
         });
 
-        // console.log(data.data);
-
         if (data.error === true) {
           let msg = data.message;
 
-          if (msg.includes("No data")) {
-          } else if (msg.includes("Authorization denied")) {
-            showNotification("Erro", "Autorização negada", "danger");
+          if (msg.includes('No data')) {
+          } else if (msg.includes('Authorization denied')) {
+            showNotification('Erro', 'Autorização negada', 'danger');
           } else {
-            showNotification("Erro", msg, "danger");
+            showNotification('Erro', msg, 'danger');
           }
         }
         return data;
       } catch (error) {
-        showNotification("Erro", error.message, "danger");
+        showNotification('Erro', error.message, 'danger');
 
         return { error: true };
       }
@@ -99,7 +97,7 @@ let TaskUsers = ({ task }) => {
   }, [stateUpdate, stateAdmin, stateUsers]);
 
   function SendMessage() {
-    if (webSocket.websocketState === "connected") {
+    if (webSocket.websocketState === 'connected') {
       try {
         let jsonString = {
           type: -2,
@@ -113,22 +111,21 @@ let TaskUsers = ({ task }) => {
 
   const [filterUser, setFilterUser] = useState(null);
 
-  const [user, setUser] = useState("");
+  const [user, setUser] = useState('');
 
   function verifyCharacter(name) {
-    const parsed = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const parsed = name.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     return parsed.toUpperCase();
   }
 
   useEffect(() => {
     function searchUser() {
-      // console.log(allUsers);
       let userName = String(user).toUpperCase();
-      if (userName != "") {
+      if (userName != '') {
         setFilterUser(
           allUsers.filter((user) =>
-            verifyCharacter(user.name).includes(userName)
-          )
+            verifyCharacter(user.name).includes(userName),
+          ),
         );
       } else {
         setFilterUser(null);
@@ -142,7 +139,7 @@ let TaskUsers = ({ task }) => {
   }, [takePhotos]);
 
   function SendInfo(msg, changeUser, type) {
-    if (msg !== "" && webSocket.websocketState === "connected") {
+    if (msg !== '' && webSocket.websocketState === 'connected') {
       if (type === 5) {
         try {
           let jsonString = {
@@ -150,9 +147,7 @@ let TaskUsers = ({ task }) => {
             object: {
               description: msg,
               task_id: task.id,
-              // task: taskf[0],
               changeUser: changeUser,
-              // a:""
             },
             date_time: null,
             user_id: Number(permissions.id),
@@ -189,26 +184,26 @@ let TaskUsers = ({ task }) => {
         {
           task_id: task.id,
           user_id: id,
-        }
+        },
       );
 
       if (data.error === true) {
-        showNotification("Erro", data.message, "danger");
+        showNotification('Erro', data.message, 'danger');
       } else {
         if (vinculated === false) {
-          SendInfo("foi vinculado a tarefa", id, 5);
+          SendInfo('foi vinculado a tarefa', id, 5);
         } else {
-          SendInfo("foi removido da tarefa", id, -3);
+          SendInfo('foi removido da tarefa', id, -3);
         }
 
         store.addNotification({
-          title: "Sucesso",
-          message: "A lista de usuários vinculados foi atualizada",
-          type: "success",
-          container: "top-center",
-          insert: "top",
-          animationIn: ["animate__animated animate__fadeIn"],
-          animationOut: ["animate__animated animate__fadeOut"],
+          title: 'Sucesso',
+          message: 'A lista de usuários vinculados foi atualizada',
+          type: 'success',
+          container: 'top-center',
+          insert: 'top',
+          animationIn: ['animate__animated animate__fadeIn'],
+          animationOut: ['animate__animated animate__fadeOut'],
           dismiss: {
             duration: 2000,
           },
@@ -216,69 +211,39 @@ let TaskUsers = ({ task }) => {
         });
 
         dispatch(orderTasks());
-
-        // setTimeout(() => {
-        //   ;
-        // }, 1200);
-
-        // let userReply;
-        // allUsers.map((user) => {
-        //   if (user.user_id == id) {
-        //     user.check = !vinculated;
-        //     userReply = user;
-        //   }
-        // });
-
-        // if (vinculated == true) {
-        //   let vinculatedUser = [];
-
-        //   users.map((user) => {
-        //     if (Number(user.user_id) != Number(userReply.user_id)) {
-        //       vinculatedUser.push(user);
-        //     }
-        //   });
-
-        //   setUsers([...vinculatedUser]);
-        // } else {
-        //   if (users.length > 0) {
-        //     setUsers((oldarray) => [...oldarray, userReply]);
-        //   } else {
-        //     setUsers([userReply]);
-        //   }
-        // }
       }
     } catch (error) {
-      let msg = "";
+      let msg = '';
 
       if (error.response) {
         msg = error.response.data.message;
 
-        if (msg.includes("Task with this state cannot be modified")) {
+        if (msg.includes('Task with this state cannot be modified')) {
           store.addNotification({
-            title: "Aviso",
-            message: "Tarefa neste estado não pode ser modificada",
-            type: "warning",
-            container: "top-center",
-            insert: "top",
-            animationIn: ["animate__animated animate__fadeIn"],
-            animationOut: ["animate__animated animate__fadeOut"],
+            title: 'Aviso',
+            message: 'Tarefa neste estado não pode ser modificada',
+            type: 'warning',
+            container: 'top-center',
+            insert: 'top',
+            animationIn: ['animate__animated animate__fadeIn'],
+            animationOut: ['animate__animated animate__fadeOut'],
             dismiss: {
               duration: 2000,
             },
             width: 400,
           });
         } else if (
-          msg.includes("Only the task creator or administrator can do this")
+          msg.includes('Only the task creator or administrator can do this')
         ) {
           store.addNotification({
-            title: "Aviso",
+            title: 'Aviso',
             message:
-              "Somente o criador da tarefa ou administrador pode fazer isto!",
-            type: "warning",
-            container: "top-center",
-            insert: "top",
-            animationIn: ["animate__animated animate__fadeIn"],
-            animationOut: ["animate__animated animate__fadeOut"],
+              'Somente o criador da tarefa ou administrador pode fazer isto!',
+            type: 'warning',
+            container: 'top-center',
+            insert: 'top',
+            animationIn: ['animate__animated animate__fadeIn'],
+            animationOut: ['animate__animated animate__fadeOut'],
             dismiss: {
               duration: 2000,
             },
@@ -288,15 +253,15 @@ let TaskUsers = ({ task }) => {
       } else {
         msg = error.message;
 
-        if (msg.includes("Network Error")) {
+        if (msg.includes('Network Error')) {
           store.addNotification({
-            title: "Aviso",
-            message: "Autorização negada",
-            type: "warning",
-            container: "top-center",
-            insert: "top",
-            animationIn: ["animate__animated animate__fadeIn"],
-            animationOut: ["animate__animated animate__fadeOut"],
+            title: 'Aviso',
+            message: 'Autorização negada',
+            type: 'warning',
+            container: 'top-center',
+            insert: 'top',
+            animationIn: ['animate__animated animate__fadeIn'],
+            animationOut: ['animate__animated animate__fadeOut'],
             dismiss: {
               duration: 2000,
             },
@@ -307,7 +272,7 @@ let TaskUsers = ({ task }) => {
     } finally {
       setLoading(false);
       setFilterUser(null);
-      setUser("");
+      setUser('');
     }
   }
 
@@ -318,14 +283,14 @@ let TaskUsers = ({ task }) => {
   let domNode2 = useClickOutside(() => {
     setShowUsers(false);
     setFilterUser(null);
-    setUser("");
+    setUser('');
   });
 
   useEffect(() => {
     if (users && users.length > 0) {
       users.map((user) => {
         let result = vinculatedUsers.filter(
-          (users) => Number(users.id) == Number(user.user_id)
+          (users) => Number(users.id) == Number(user.user_id),
         );
         user.name = result[0].name;
       });
@@ -335,20 +300,20 @@ let TaskUsers = ({ task }) => {
   function verifyPosition(e) {
     const client = e.clientY;
     const windowY = window.innerHeight / 2;
-    let menu = document.querySelector(".menu-users-top");
-    let searchUser = document.querySelector(".search-user-top");
+    let menu = document.querySelector('.menu-users-top');
+    let searchUser = document.querySelector('.search-user-top');
 
     if (menu !== null) {
       if (client > windowY) {
-        menu.classList.remove("menu-users-top");
-        searchUser.classList.remove("search-user-top");
-        menu.classList.add("menu-users-bottom");
-        searchUser.classList.add("search-user-middle");
+        menu.classList.remove('menu-users-top');
+        searchUser.classList.remove('search-user-top');
+        menu.classList.add('menu-users-bottom');
+        searchUser.classList.add('search-user-middle');
       } else {
-        menu.classList.remove("menu-users-bottom");
-        searchUser.classList.remove("search-user-middle");
-        menu.classList.add("menu-users-top");
-        searchUser.classList.add("search-user-top");
+        menu.classList.remove('menu-users-bottom');
+        searchUser.classList.remove('search-user-middle');
+        menu.classList.add('menu-users-top');
+        searchUser.classList.add('search-user-top');
       }
     }
   }
@@ -357,13 +322,11 @@ let TaskUsers = ({ task }) => {
     const filter = webSocket.users.filter((id) => id == userId);
 
     if (filter[0]) {
-      return "online";
+      return 'online';
     } else {
-      return "";
+      return '';
     }
   }
-
-  // console.log(permissions);
 
   return (
     <div className="containerUsers">
@@ -390,9 +353,9 @@ let TaskUsers = ({ task }) => {
                         />
                         <p
                           style={{
-                            color: "white",
-                            paddingLeft: "5px",
-                            fontSize: "16px",
+                            color: 'white',
+                            paddingLeft: '5px',
+                            fontSize: '16px',
                           }}
                         >
                           {user.name}
@@ -402,13 +365,13 @@ let TaskUsers = ({ task }) => {
                           +user.user_id === +permissions.id && (
                             <span
                               style={{
-                                position: "relative",
+                                position: 'relative',
                                 left: 30,
-                                cursor: "pointer",
+                                cursor: 'pointer',
                               }}
                               onClick={() => changeUser(user.user_id, true)}
                             >
-                              <AiOutlineClose size={25} color="red" />{" "}
+                              <AiOutlineClose size={25} color="red" />{' '}
                             </span>
                           )}
                       </li>
@@ -474,10 +437,10 @@ let TaskUsers = ({ task }) => {
                                 />
                                 <p
                                   style={{
-                                    color: "white",
-                                    paddingLeft: "5px",
-                                    fontSize: "16px",
-                                    width: "80%",
+                                    color: 'white',
+                                    paddingLeft: '5px',
+                                    fontSize: '16px',
+                                    width: '80%',
                                   }}
                                 >
                                   {user.name}
@@ -520,10 +483,10 @@ let TaskUsers = ({ task }) => {
 
                                 <p
                                   style={{
-                                    color: "white",
-                                    paddingLeft: "5px",
-                                    fontSize: "16px",
-                                    width: "240px",
+                                    color: 'white',
+                                    paddingLeft: '5px',
+                                    fontSize: '16px',
+                                    width: '240px',
                                     marginRight: 20,
                                   }}
                                 >

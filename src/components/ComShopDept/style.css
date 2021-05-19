@@ -37,9 +37,7 @@
   box-shadow: 0 2px 3px 0 rgb(0 0 0 / 5%), 0 3px 10px 0 rgb(0 0 0 / 15%);
 }
 
-.compShopDeptList li{
-    /* display: flex;
-    justify-content: baseline; */
-    padding: 10px 0;
-    border-bottom: 1px solid #4da6ff;
+.compShopDeptList li {
+  padding: 10px 0;
+  border-bottom: 1px solid #4da6ff;
 }

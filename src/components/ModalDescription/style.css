@@ -1,187 +1,183 @@
 /* Modal editar descricao */
 
-.menuDescription li textarea{
-    width: 100%;
-    max-height: 120px;
-    font-size: 18px;
-    border-radius: 5px;
-    background-color: #c5c5c5;
-    color: black;
-    padding: .6em;
-    resize: none;
-} 
-
-.menuDescription li:first-child{
-    padding: 1em;
+.menuDescription li textarea {
+  width: 100%;
+  max-height: 120px;
+  font-size: 18px;
+  border-radius: 5px;
+  background-color: #c5c5c5;
+  color: black;
+  padding: 0.6em;
+  resize: none;
 }
 
-.menuDescription li:first-child h2{
-    width: 276px;
-    margin: 0 auto;
-    text-align: center;
-    padding-bottom: .5em;
-    font-size: 20px;
-    border-top: 2px solid #00a2ff;
-    padding-top: .2em;
+.menuDescription li:first-child {
+  padding: 1em;
 }
 
-.menuDescription li:first-child h2:hover{
-    text-decoration: none;
-    background-color: transparent;
+.menuDescription li:first-child h2 {
+  width: 276px;
+  margin: 0 auto;
+  text-align: center;
+  padding-bottom: 0.5em;
+  font-size: 20px;
+  border-top: 2px solid #00a2ff;
+  padding-top: 0.2em;
+}
+
+.menuDescription li:first-child h2:hover {
+  text-decoration: none;
+  background-color: transparent;
 }
 
 .menuDescription li:nth-child(2) {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    position: relative;
-    padding: 1em;
-    bottom: .7em;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  position: relative;
+  padding: 1em;
+  bottom: 0.7em;
 }
 
-.menuDescription li:nth-child(3){
-    display: flex;
-    width: 100%;
-    justify-content: flex-end;
-    position: relative;
-    padding: 1em;
-    bottom: .7em;
+.menuDescription li:nth-child(3) {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  position: relative;
+  padding: 1em;
+  bottom: 0.7em;
 }
 
-.modalDescription{
-    height: 99vh;
-    width: 100%;
-    position:absolute;
-    left: 0;
-    top: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-direction: column;
-    z-index: 15;
+.modalDescription {
+  height: 99vh;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+  z-index: 15;
 }
 
-.modalDescription > div:first-child{
-    width: 350px;
-    max-height: 600px;
-    border: 1px solid black;
-    margin-top: 21.5em;
-    background-color: #2b2b2b;
-    border-radius: 10px;
+.modalDescription > div:first-child {
+  width: 350px;
+  max-height: 600px;
+  border: 1px solid black;
+  margin-top: 21.5em;
+  background-color: #2b2b2b;
+  border-radius: 10px;
 }
 
 @media only screen and (max-width: 1536px) {
-    .modalDescription > div:first-child{
-        margin-top: 15.5em;
-        
-    }
-  
+  .modalDescription > div:first-child {
+    margin-top: 15.5em;
   }
-
-@media only screen and (max-width:1366px){
-    .modalDescription > div:first-child{
-        margin-top: 16em;
-    }
 }
 
-.modalDescription > div{
-    width: 350px;
-    max-height: 600px;
-    border-top: 1px solid black;
-    border-left: 1px solid black;
-    border-right: 1px solid black;
-    margin-top: 20em;
-    background-color: #2b2b2b;
-    border-radius: 10px;
+@media only screen and (max-width: 1366px) {
+  .modalDescription > div:first-child {
+    margin-top: 16em;
+  }
 }
 
-.modalDescription > div:nth-child(2){
-    width: 350px;
-    height: 130px;
-    border: 1px solid black;
-    margin-top: 20em;
-    background-color: #2b2b2b;
-    border-radius: 10px;
+.modalDescription > div {
+  width: 350px;
+  max-height: 600px;
+  border-top: 1px solid black;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  margin-top: 20em;
+  background-color: #2b2b2b;
+  border-radius: 10px;
 }
 
-.descriptionArea{
-    width: 100%;
+.modalDescription > div:nth-child(2) {
+  width: 350px;
+  height: 130px;
+  border: 1px solid black;
+  margin-top: 20em;
+  background-color: #2b2b2b;
+  border-radius: 10px;
 }
 
-.descriptionArea h1{
-    /* margin-right: 1em; */
-    padding-bottom: .5em;
-    display: flex;
-    align-items: center;
+.descriptionArea {
+  width: 100%;
 }
 
-.descriptionArea textarea{
-    background-color: #343434;
-    color: white;
-    font-size: 18px;
-    width: 100%;
-    height: 88%;
-    outline: none;
-    border: 1px solid black;
-    border-radius: 10px;
-    padding: 10px;
-    resize: none;
+.descriptionArea h1 {
+  padding-bottom: 0.5em;
+  display: flex;
+  align-items: center;
 }
 
-@media only screen and (max-width:1536px){
-    .descriptionArea textarea{
-        height: 60%;
-    } 
+.descriptionArea textarea {
+  background-color: #343434;
+  color: white;
+  font-size: 18px;
+  width: 100%;
+  height: 88%;
+  outline: none;
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 10px;
+  resize: none;
 }
 
-.btnDeleteTask{
-    font-size: 15px;
-    padding: 7px 18px;
-    background-color: #e45747;
-    color: white;
-    width: 130px;
+@media only screen and (max-width: 1536px) {
+  .descriptionArea textarea {
+    height: 60%;
+  }
 }
 
-.confirmDelete{
-    width: 100%;
-    text-align: center;
-    height: 250px;
-    position: absolute;
-    padding: 10px;
-    /* top: 35em; */
+.btnDeleteTask {
+  font-size: 15px;
+  padding: 7px 18px;
+  background-color: #e45747;
+  color: white;
+  width: 130px;
 }
 
-.confirmDelete h1{
-    margin: 0 auto;
-    border-top: 2px solid #00a2ff;
-    font-size: 20px;
-    padding: 2px;
+.confirmDelete {
+  width: 100%;
+  text-align: center;
+  height: 250px;
+  position: absolute;
+  padding: 10px;
 }
 
-.confirmDelete > div{
-    display: flex;
-    justify-content: space-between;
-    padding: 1em;
+.confirmDelete h1 {
+  margin: 0 auto;
+  border-top: 2px solid #00a2ff;
+  font-size: 20px;
+  padding: 2px;
 }
 
-.confirmDelete > div button:first-child{
-    width: 130px;
-    font-size: 15px;
-    padding: 5px 30px;
-    color: white;
-    background-color: #e45747;
+.confirmDelete > div {
+  display: flex;
+  justify-content: space-between;
+  padding: 1em;
 }
 
-.confirmDelete > div button:last-child{
-    width: 130px;
-    font-size: 15px;
-    padding: 5px 30px;
-    color: white;
-    background-color: #c7a002;
+.confirmDelete > div button:first-child {
+  width: 130px;
+  font-size: 15px;
+  padding: 5px 30px;
+  color: white;
+  background-color: #e45747;
 }
 
-@media only screen and (max-width: 1366px){
-    .taskDescription{
-        height:  120px;
-    }
+.confirmDelete > div button:last-child {
+  width: 130px;
+  font-size: 15px;
+  padding: 5px 30px;
+  color: white;
+  background-color: #c7a002;
+}
+
+@media only screen and (max-width: 1366px) {
+  .taskDescription {
+    height: 120px;
+  }
 }

@@ -1,11 +1,11 @@
-import { GET_TASK_FILTER } from "./filterTasksTypes";
-import { SET_DO_VISIBLE } from "./filterTasksTypes";
-import { SET_DOING_VISIBLE } from "./filterTasksTypes";
-import { SET_ANALYZE_VISIBLE } from "./filterTasksTypes";
-import { SET_STOPPED_VISIBLE } from "./filterTasksTypes";
-import { SET_BLOCKED_VISIBLE } from "./filterTasksTypes";
-import { SET_DONE_VISIBLE } from "./filterTasksTypes";
-import { SET_CANCELED_VISIBLE } from "./filterTasksTypes";
+import { GET_TASK_FILTER } from './filterTasksTypes';
+import { SET_DO_VISIBLE } from './filterTasksTypes';
+import { SET_DOING_VISIBLE } from './filterTasksTypes';
+import { SET_ANALYZE_VISIBLE } from './filterTasksTypes';
+import { SET_STOPPED_VISIBLE } from './filterTasksTypes';
+import { SET_BLOCKED_VISIBLE } from './filterTasksTypes';
+import { SET_DONE_VISIBLE } from './filterTasksTypes';
+import { SET_CANCELED_VISIBLE } from './filterTasksTypes';
 
 const initialState = {
   do: true,
@@ -19,7 +19,6 @@ const initialState = {
   filter: [],
 };
 const filterTasksReducer = (state = initialState, action) => {
-  // console.log(action)
   switch (action.type) {
     case GET_TASK_FILTER:
       return {
