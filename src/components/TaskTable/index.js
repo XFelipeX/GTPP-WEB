@@ -30,6 +30,7 @@ import {
 import ReactPaginate from 'react-paginate';
 import Loading from '../Loading';
 import { setPageSearch } from '../../redux/Pagination/PaginationActions';
+import { showNotification } from '../../Utils/Notify';
 
 const TaskTable = (props) => {
   const { permissions } = useSelector((state) => state);
@@ -213,8 +214,8 @@ const TaskTable = (props) => {
           task.state_id == 4 ||
           task.state_id == 5,
       );
-
-      dispatch(getTaskFilter(filter));
+      const verifyFilter = filter.length === 0 ? {} : [...filter];
+      dispatch(getTaskFilter(verifyFilter));
     }
 
     if (tasks) {
@@ -232,7 +233,7 @@ const TaskTable = (props) => {
           (task.warning = { expire: 0, due_date: 0, initial: 0 })
         ),
       );
-      if (filterTask.filter.length === 0) {
+      if (filterTask.filter.length === 1) {
         taskFilter();
       }
     }
@@ -368,6 +369,16 @@ const TaskTable = (props) => {
       dispatch(setPageUser(e.selected + 1));
     }
   }
+
+  React.useEffect(() => {
+    if (filterTask.filter.length === 0) {
+      showNotification(
+        'Aviso',
+        'Nenhuma tarefa encontrada para o filtro atual',
+        'warning',
+      );
+    }
+  }, [filterTask.filter]);
 
   return loading == true ? (
     <Loading />

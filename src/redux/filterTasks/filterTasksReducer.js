@@ -15,8 +15,7 @@ const initialState = {
   blocked: true,
   done: false,
   canceled: false,
-
-  filter: [],
+  filter: [{}],
 };
 const filterTasksReducer = (state = initialState, action) => {
   switch (action.type) {
