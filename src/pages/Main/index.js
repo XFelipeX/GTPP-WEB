@@ -48,7 +48,7 @@ function Main() {
           };
           dispatch(getWebSocketState('connected'));
           dispatch(getWebSocket(socket));
-          socket.send(JSON.stringify(jsonString));
+          // socket.send(JSON.stringify(jsonString));
 
           //Enviar um ping para o servidor a cada 10 segundos
           setInterval(Ping, 10000);

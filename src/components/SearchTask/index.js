@@ -217,7 +217,7 @@ const SearchTask = () => {
   function search(e) {
     const text = e.toLowerCase();
     setSearchDescription(text);
-
+    setSearchEmployeeDesc('');
     dispatch(setStatusSearch(true));
 
     if (seeAdminSet === true) {
@@ -252,7 +252,7 @@ const SearchTask = () => {
   function searchEmployee(e) {
     const text = e.toLowerCase();
     setSearchEmployeeDesc(text);
-
+    setSearchDescription('');
     dispatch(setStatusSearch(true));
 
     if (seeAdminSet === true) {
@@ -307,7 +307,18 @@ const SearchTask = () => {
             <option value="funcionario">Funcionário</option>
           </select>
 
-          <input placeholder="Tarefa..." id="search" type="text" />
+          <input
+            placeholder="Tarefa..."
+            id="search"
+            type="text"
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                typeSearch === 'descricao'
+                  ? search(document.getElementById('search').value)
+                  : searchEmployee(document.getElementById('search').value);
+              }
+            }}
+          />
           <span className="clearSearch" onClick={() => clearSearch()}>
             <AiOutlineClose color="#ccc" />
           </span>
