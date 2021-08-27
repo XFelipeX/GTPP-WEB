@@ -2,7 +2,7 @@
 
 <h3>Desenvolvido por:</h3>
 <p>><strong>FrontEnd</strong> Felipe</p>
-<p>><strong>BackEnd</strong> Kyo</p>
+<p>><strong>BackEnd</strong><a href="https://github.com/kyotsuyoi"> Kyo</href></p>
 
 <h3>Ideia Geral</h3>
 <p>Aplicação para gerenciar e designar tarefas, funcionalidades aplicadas em tempo real (webSocket).</p>
@@ -63,7 +63,7 @@
 <li>Estado</li>
 <li>Descrição</li>
 <li>Vencimento</li>
-<ul>
+</ul>
 
 
 ![](files/ordenarTarefas.gif)
